@@ -1,0 +1,28 @@
+[0.324s] Invoking command in '/home/islem/Documents/PFE/ros/build/py_pubsub': PYTHONPATH=/home/islem/Documents/PFE/ros/build/py_pubsub/prefix_override:/home/islem/Documents/PFE/ros/install/py_pubsub/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/islem/Documents/PFE/ros/build/py_pubsub/build --no-deps install_data
+[0.461s] running develop
+[0.462s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[0.462s]   warnings.warn(
+[0.462s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[0.462s]   warnings.warn(
+[0.493s] /usr/lib/python3/dist-packages/pkg_resources/__init__.py:116: PkgResourcesDeprecationWarning: 1.16.0-unknown is an invalid version and will not be supported in a future release
+[0.493s]   warnings.warn(
+[0.493s] /usr/lib/python3/dist-packages/pkg_resources/__init__.py:116: PkgResourcesDeprecationWarning: 1.1build1 is an invalid version and will not be supported in a future release
+[0.493s]   warnings.warn(
+[0.493s] /usr/lib/python3/dist-packages/pkg_resources/__init__.py:116: PkgResourcesDeprecationWarning: 0.1.43ubuntu1 is an invalid version and will not be supported in a future release
+[0.493s]   warnings.warn(
+[0.553s] running egg_info
+[0.553s] writing py_pubsub.egg-info/PKG-INFO
+[0.554s] writing dependency_links to py_pubsub.egg-info/dependency_links.txt
+[0.554s] writing entry points to py_pubsub.egg-info/entry_points.txt
+[0.554s] writing requirements to py_pubsub.egg-info/requires.txt
+[0.554s] writing top-level names to py_pubsub.egg-info/top_level.txt
+[0.555s] reading manifest file 'py_pubsub.egg-info/SOURCES.txt'
+[0.555s] writing manifest file 'py_pubsub.egg-info/SOURCES.txt'
+[0.556s] running build_ext
+[0.556s] Creating /home/islem/Documents/PFE/ros/install/py_pubsub/lib/python3.10/site-packages/py-pubsub.egg-link (link to .)
+[0.557s] Installing listener script to /home/islem/Documents/PFE/ros/install/py_pubsub/lib/py_pubsub
+[0.557s] Installing talker script to /home/islem/Documents/PFE/ros/install/py_pubsub/lib/py_pubsub
+[0.557s] 
+[0.557s] Installed /home/islem/Documents/PFE/ros/build/py_pubsub
+[0.557s] running install_data
+[0.573s] Invoked command in '/home/islem/Documents/PFE/ros/build/py_pubsub' returned '0': PYTHONPATH=/home/islem/Documents/PFE/ros/build/py_pubsub/prefix_override:/home/islem/Documents/PFE/ros/install/py_pubsub/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/islem/Documents/PFE/ros/build/py_pubsub/build --no-deps install_data
