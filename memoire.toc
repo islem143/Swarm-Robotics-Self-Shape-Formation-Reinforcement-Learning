@@ -16,3 +16,6 @@
 \contentsline {subsubsection}{\numberline {2.6.1}Aggregation}{8}{subsubsection.2.6.1}%
 \contentsline {subsubsection}{\numberline {2.6.2}Dispersion}{8}{subsubsection.2.6.2}%
 \contentsline {subsubsection}{\numberline {2.6.3}Pattern formation}{8}{subsubsection.2.6.3}%
+\contentsline {subsubsection}{\numberline {2.6.4}Cordinated movement}{8}{subsubsection.2.6.4}%
+\contentsline {subsubsection}{\numberline {2.6.5}Hole avoidance}{8}{subsubsection.2.6.5}%
+\contentsline {subsubsection}{\numberline {2.6.6}Foraging}{8}{subsubsection.2.6.6}%
