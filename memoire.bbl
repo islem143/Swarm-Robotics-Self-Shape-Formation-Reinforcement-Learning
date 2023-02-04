@@ -1,8 +1,18 @@
 \begin{thebibliography}{1}
 
-\bibitem{stats}
-varonis.com, ``134 cybersecurity statistics and trends for 2021.''
-  \url{https://www.varonis.com/blog/cybersecurity-statistics/}.
-\newblock Accessed JULY 9,2021 [Online].
+\bibitem{rubio2019review}
+F.~Rubio, F.~Valero, and C.~Llopis-Albert, ``A review of mobile robots:
+  Concepts, methods, theoretical framework, and applications,'' {\em
+  International Journal of Advanced Robotic Systems}, vol.~16, no.~2,
+  p.~1729881419839596, 2019.
+
+\bibitem{bayindir2016review}
+L.~Bay{\i}nd{\i}r, ``A review of swarm robotics tasks,'' {\em Neurocomputing},
+  vol.~172, pp.~292--321, 2016.
+
+\bibitem{brambilla2013swarm}
+M.~Brambilla, E.~Ferrante, M.~Birattari, and M.~Dorigo, ``Swarm robotics: a
+  review from the swarm engineering perspective,'' {\em Swarm Intelligence},
+  vol.~7, pp.~1--41, 2013.
 
 \end{thebibliography}
