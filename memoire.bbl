@@ -10,9 +10,33 @@ F.~Rubio, F.~Valero, and C.~Llopis-Albert, ``A review of mobile robots:
 L.~Bay{\i}nd{\i}r, ``A review of swarm robotics tasks,'' {\em Neurocomputing},
   vol.~172, pp.~292--321, 2016.
 
+\bibitem{bayindir2007review}
+L.~Bayindir and E.~{\c{S}}ahin, ``A review of studies in swarm robotics,'' {\em
+  Turkish Journal of Electrical Engineering and Computer Sciences}, vol.~15,
+  no.~2, pp.~115--147, 2007.
+
+\bibitem{navarro2013introduction}
+I.~Navarro and F.~Mat{\'\i}a, ``An introduction to swarm robotics,'' {\em Isrn
+  robotics}, vol.~2013, pp.~1--10, 2013.
+
+\bibitem{arai2002advances}
+T.~Arai, E.~Pagello, L.~E. Parker, {\em et~al.}, ``Advances in multi-robot
+  systems,'' {\em IEEE Transactions on robotics and automation}, vol.~18,
+  no.~5, pp.~655--661, 2002.
+
+\bibitem{csahin2005swarm}
+E.~{\c{S}}ahin, ``Swarm robotics: From sources of inspiration to domains of
+  application,'' in {\em Swarm Robotics: SAB 2004 International Workshop, Santa
+  Monica, CA, USA, July 17, 2004, Revised Selected Papers 1}, pp.~10--20,
+  Springer, 2005.
+
 \bibitem{brambilla2013swarm}
 M.~Brambilla, E.~Ferrante, M.~Birattari, and M.~Dorigo, ``Swarm robotics: a
   review from the swarm engineering perspective,'' {\em Swarm Intelligence},
   vol.~7, pp.~1--41, 2013.
+
+\bibitem{olaronke2020systematic}
+I.~Olaronke, I.~Rhoda, I.~Gambo, O.~Ojerinde, and O.~Janet, ``A systematic
+  review of swarm robots,'' 2020.
 
 \end{thebibliography}

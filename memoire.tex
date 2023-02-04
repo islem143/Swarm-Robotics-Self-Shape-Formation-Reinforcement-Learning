@@ -1,6 +1,14 @@
 \documentclass[12pt]{article}
 
-\usepackage{geometry}
+\usepackage[%
+    left=1.3in,%
+    right=1.3in,%
+    top=1.0in,%
+    bottom=1.0in,%
+    paperheight=11in,%
+    paperwidth=8.5in%
+]{geometry}%
+
 \usepackage[english]{babel}
 \usepackage{blindtext}
 \usepackage[]{hyperref}
@@ -15,7 +23,13 @@
 \usepackage[acronym]{glossaries}
 \newacronym{ny}{NY}{New York}
 \begin{document}
+\newpage
+\thispagestyle{empty}
+{
+\hypersetup{linkcolor=false}
+\tableofcontents
 
+}
 \newpage
 \pagebreak
 \hspace{0pt}
@@ -35,37 +49,118 @@ Swarm robotics is relatively a new research topic that has gained more attractio
 
 One of the main challgenes that swarm robotics researchs face, is pattern formation. Where the agents (robots) try to form diffrent gemoetric shapes like squeres,trinagles and circles in order to perform a specific task.
 
-We can solve this problem using two different aproches. The first one is a Centrelized method where there exist a centel unit  which controles the swarm and give global state access. However,  implementing this apporch  can be coslty and less robust to faillures. The second aproch is a dicentrilzed one, where each robot have uses local commucintion and have access only to his local state.
+We can solve this problem using two different aproches. The first one is a Centrelized method where there exist a centel unit  which controles the swarm and give global state access. However,  implementing this apporch  can be coslty and less robust to faillures. The second aproch is a dicentrilzed one, where each robot have uses local commucintion and have access only to his local state.\cite{bayindir2007review}
 
-Our main goal in this thesis is trying to impelment an RL algorithm in a  system consiting of  group of robots  to form some specif paterns using decentriled method.
+Our primary objective in this thesis is to implement an RL algorithm in a system made up of a group of robots in order to form some specific geometric patterns using a decentralized  method. Each robot will only have access to its local state and will interact and communicate with its neighbors in order to form the desired shapes.
  
 
 
- witout having a centerlized control of the swarm and with limited sense cababilites for each member.
+
+
+\newpage
+\pagebreak
+\hspace{0pt}
+\vfill
+\begin{center}
+\section{Swarm Robotics}
+\end{center}
+\vfill
+\hspace{0pt}
+\pagebreak
 
 
 
 
+                  
+\subsection{Swarm Intelligence and Social animal inspiration}
+Social animal and insects behavior in groups like the bees dancing, wasp’s nest-building, ant's collaboration , bird flocking and fish schooling  has caught the attention of researchers for their ability to archive complex tasks and working in coordination, which demonstrate some form of swarm intelligence  that researchers have taken inspiration from to design and implement swarm robotics systems.\cite{navarro2013introduction} 
+
+They also report that social insects were able to accomplish thier goals like searching for food, alerting the presence of an enemy, or collaborate to lift heavy objects, without having access to the global state or having a leader to guide them. They were only able to accomplish this by utilizing local interactions and communication, which spread to other members and and prompted group-wide cooperation.\cite{navarro2013introduction} 
 
 
 
+\subsection{Swarm robotics and multi robot systems}
+The early 1980s are when multi robots systems first gained popularity.
+As the name suggests, multi robot systems introduce the idea of teamwork in order to complete tasks that are challenging or impossible to complete alone by the robots.
+Seven topics of study have been identified in this feild which includes:
+\begin{itemize}
+  \item  Biological Inspirations; 
+  \item Communication
+  \item Localization, mapping, and exploration;
+  \item Object transport and manipulation;
+  \item Motion coordination; 
+  \item Reconfigurable robots.
+\end{itemize}
+Swarm robotics is a subfield of multi-robot systems that differs from other multi-robot systems in some ways.\cite{arai2002advances}
+   
 
-Swarm robotics systems have taken inspiration from how social animals  like (ants, bees, and birds...) behave in groups and that they exhibit some sort of swarm intelligence that researchers identified to be characterized by three properties:\\
+
+ 
+
+\subsection{Swarm robotics}
+Swarm robotics has no one definition because it is a rapidly developing area and new research is constantly being done in it. But we can take this defintion from a cited paper.
+"swarm robotics is the study of how large number of relatively simple physically embodied agents can be
+designed such that a desired collective behavior emerges from the local interactions among agents
+and between the agents and the environment."\cite{csahin2005swarm}.\\
+
+The main characters of swarm robotis are:
+\begin{itemize}
+  \item  The robots in the swarm must be autonomous. 
+  \item The number of robots in the swarm is large.
+  \item Homogeneity is required in robots. A small number is acceptable if not.
+  \item Robots must be incompetent  with regard to the primary task they must complete, otherwise, they will fail or perform poorly.
+  \item Robots are limited to local communication and sensing. It makes sure that coordination is spread, making scalability one of the system's characteristics.\cite{navarro2013introduction}
+\end{itemize}
+
+
+\subsection{Swarm robotics properties}
+Swarm robotics have some properties that describe the system's current condition. Bellow are some of these properties:
 
 \textbf{Robustness}: the ability of the swarm to  still function even with the loss of some members of the group or the faillure of some parts of the system.\\
 \textbf{Scalability}: The ability of the system to perform well on smaller or larger group sizes without impacting the performance of the swarm.
 
-\textbf{Flexibility} It is the capability of the swarm to adapt and manage the new changes that occur in the environment \cite{brambilla2013swarm}
+\textbf{Flexibility} It is the capability of the swarm to adapt and manage the new changes that occur in the environment 
+
+\textbf{Autonomus}: Implys that there is no central authority controlling the behavior of the swarm and each individual is independent of the others.
+
+\textbf{Local communication} The communication among swarm members is local since they don't have access to  the swarm's overall state.
+\cite{brambilla2013swarm}\cite{olaronke2020systematic} 
+
   
-  
-  
 
+\subsection{Domain of application}
+In this section, we will list some of the significant fields domains where swarm robotics fits in, and can impact in solving the domain problem.\newpage
+\subsubsection{Tasks that cover a region}:
 
- 
+Because of the widespread sensing capabilities that the swarm has, swarm robotics is most suited for tackling problems that cover an area of the space, such monitoring the environment of a lake or  surveillance of a specific area.\cite{csahin2005swarm}\cite{olaronke2020systematic}
 
+\subsubsection{Search and rescue missions}
+In different types of accident or disasters that happen like earthquakes where the human intervention is difficult, swarm robots can be deployed for these type of missions. examples of such robots are: polyobot, swarm bot and M-TRAN.
 
+\subsubsection{Cleaning of oil speals}
+A swarm of robots can reduce the cost and time in such incidents. an exemple of robots that were deployed to such tasks is: Seaswarm, which was developed by the senseable group at MIT.
 
+\subsubsection{Exploration}
+To investigate Mars, swarm robots like Marsbees have been created. the same holds true for the CoCoRo swarm, which was employed for in-depth underwater investigation.
+\subsubsection{Agriculture}
+As they can be used to improve the agriculture and monitor the status if crops. 
 
+\subsection{Swarm robotics basic tasks and problems}
+SR problems can be broken down into fundamental tasks that the swarm frequently carries out in an effort to accomplish its objective.
+this tasks are:aggregation,chain formation,self-assembly,coordinated
+movement,hole avoidance, foraging and self\\-deployment\cite{bayindir2007review}\cite{navarro2013introduction}.
+\newpage
+\subsubsection{Aggregation}
+Aggregation of the robots is performed in order to accomplish some form or to exchange information. This problem can be easy in a centralized system, but  difficult in a decentralized one.
+\subsubsection{Dispersion}
+For exploration purposes, sometimes, the swarm must cover a wide range of area without losing the connection between the members, in order to expand the group sensing capabilities. 
+
+\subsubsection{Pattern formation}
+Sometimes, the swarm must form some specific patterns like circles,squares or  lines in order to lift some objects or traverse some ways corridors.
+\subsubsection{Cordinated movement}
+It is trying to 
+
+\newpage
 \bibliography{bib}
 \bibliographystyle{ieeetr}
 

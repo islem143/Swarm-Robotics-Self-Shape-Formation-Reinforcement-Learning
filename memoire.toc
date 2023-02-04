@@ -1,0 +1,18 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Introduction}{3}{subsection.1.1}%
+\contentsline {section}{\numberline {2}Swarm Robotics}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Swarm Intelligence and Social animal inspiration}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Swarm robotics and multi robot systems}{5}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Swarm robotics}{5}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Swarm robotics properties}{6}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Domain of application}{6}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Tasks that cover a region}{7}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {2.5.2}Search and rescue missions}{7}{subsubsection.2.5.2}%
+\contentsline {subsubsection}{\numberline {2.5.3}Cleaning of oil speals}{7}{subsubsection.2.5.3}%
+\contentsline {subsubsection}{\numberline {2.5.4}Exploration}{7}{subsubsection.2.5.4}%
+\contentsline {subsubsection}{\numberline {2.5.5}Agriculture}{7}{subsubsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.6}Swarm robotics basic tasks and problems}{7}{subsection.2.6}%
+\contentsline {subsubsection}{\numberline {2.6.1}Aggregation}{8}{subsubsection.2.6.1}%
+\contentsline {subsubsection}{\numberline {2.6.2}Dispersion}{8}{subsubsection.2.6.2}%
+\contentsline {subsubsection}{\numberline {2.6.3}Pattern formation}{8}{subsubsection.2.6.3}%
