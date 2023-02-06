@@ -39,4 +39,9 @@ M.~Brambilla, E.~Ferrante, M.~Birattari, and M.~Dorigo, ``Swarm robotics: a
 I.~Olaronke, I.~Rhoda, I.~Gambo, O.~Ojerinde, and O.~Janet, ``A systematic
   review of swarm robots,'' 2020.
 
+\bibitem{arulkumaran2017brief}
+K.~Arulkumaran, M.~P. Deisenroth, M.~Brundage, and A.~A. Bharath, ``A brief
+  survey of deep reinforcement learning,'' {\em arXiv preprint
+  arXiv:1708.05866}, 2017.
+
 \end{thebibliography}

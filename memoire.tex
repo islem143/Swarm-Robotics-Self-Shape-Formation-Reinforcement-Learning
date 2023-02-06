@@ -164,6 +164,53 @@ As suggested by the name, the group makes an effort to avoid stepping into holes
 The swarm aims to locate objects, pick them up, and position them where needed.
 
 \newpage
+\pagebreak
+\hspace{0pt}
+\vfill
+\begin{center}
+\section{Deep reinforcement learning}
+\end{center}
+\vfill
+\hspace{0pt}
+
+\pagebreak
+
+\subsection{Introduction}
+In this chapter we will provide an overview about the feild of reinforcement learning, including its applications, various techniques, and how it relates to swarm robots.\\
+Before that,we will briefly discuss machine learning since it is the foundation of RL before we move on.
+\subsection{Machine learning}
+Machine learning is a sub field of artificial intelligence, which
+focuses on developing algorithms and models that make prediction and take decisions without being explicitly programmed to do so
+based on the input data they receive.
+Generally speaking, there are three types of machine learning algorithms,
+suppervised algorithms which obtain labeled data and attempt to categorize or anticipate the unknown one. Unsupervised learning algorithms, where the  data is unlabeled and it is the job of the ml algorithms  to extract  hidden patterns in it. And finally, reinforcement learning algorithms  where the algorithm learns to make decisions based on trial and error and rewards, by interacting with an environment.
+  
+\subsection{Reinforcement learning}
+Reinforcement learning algorithms are based on a agent that interact and observe  an environment in order to take actions that maximize the reward for a given task.
+
+The goal of the agent is to learn an optimal policy ($\Pi$) which maps state to actions in order to get the best possible action to take in a given situation. This can be achieved  by maximizing the expected  reward that the agent receive from the environment on each step he takes.\cite{arulkumaran2017brief}
+
+Formally, RL can be described as a Markov Decision Process (MPD) where the future state depends only on the current one. An MPD  consists of:
+
+\begin{itemize}
+  \item  A set of states $S$
+  \item  A set of actions $A$
+  \item  A transition dynamics $\rho(S_{t+1}|a,S)$. which give the probability of being in state $S_{t+1}$ based on the current state $S$ and the performed action $A$.
+  \item A reward function $R(S_{t},A_{t},S_{t+1})$ which outputs a scalar reward $r_{t} \subset R$. 
+   \item A discount factor $\gamma \in [0,1]$ which  emphasis either  immediate or future rewards.
+\end{itemize}
+
+
+
+
+
+
+
+
+ 
+
+
+\newpage
 \bibliography{bib}
 \bibliographystyle{ieeetr}
 
