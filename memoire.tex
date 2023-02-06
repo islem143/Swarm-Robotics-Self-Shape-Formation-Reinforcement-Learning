@@ -142,7 +142,7 @@ A swarm of robots can reduce the cost and time in such incidents. an exemple of 
 \subsubsection{Exploration}
 To investigate Mars, swarm robots like Marsbees have been created. the same holds true for the CoCoRo swarm, which was employed for in-depth underwater investigation.
 \subsubsection{Agriculture}
-As they can be used to improve the agriculture and monitor the status if crops. 
+As they can be used to improve the agriculture and monitor the status of crops. 
 
 \subsection{Swarm robotics basic tasks and problems}
 SR problems can be broken down into fundamental tasks that the swarm frequently carries out in an effort to accomplish its objective.
@@ -199,6 +199,20 @@ Formally, RL can be described as a Markov Decision Process (MPD) where the futur
   \item A reward function $R(S_{t},A_{t},S_{t+1})$ which outputs a scalar reward $r_{t} \subset R$. 
    \item A discount factor $\gamma \in [0,1]$ which  emphasis either  immediate or future rewards.
 \end{itemize}
+
+\newpage
+From the above definition, the policy function $\Pi$ will  a map a given state to a probabilty distribution over actions: $\Pi: S \longrightarrow \rho(A=a|S)$.
+The goal of the agent to find the optimal policy $\Pi$ which maximize the expected return :\\
+\[ \Pi^{*} = argmax_{\Pi}  E[R|\pi] \]
+
+If the MPD is episodic, then the agent will accumulates a set of reward at the end of each episode which is called a return:
+
+\[ R= \sum_{t=0}^{T-1} \gamma^{t}r_{t+1} \]
+
+Setting $\gamma<1$ will ensure the convergence of the return in case of non episodic MPDS.\cite{arulkumaran2017brief}.
+
+
+
 
 
 
