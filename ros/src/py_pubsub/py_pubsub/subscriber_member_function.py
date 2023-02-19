@@ -13,8 +13,9 @@
 # limitations under the License.
 
 import rclpy
-from rclpy.node import Node
 
+from rclpy.node import Node
+from nav_msgs.msg import Odometry
 from std_msgs.msg import String
 from sensor_msgs.msg import Image,CameraInfo
 import cv2
@@ -26,21 +27,49 @@ class MinimalSubscriber(Node):
     def __init__(self):
         super().__init__('minimal_subscriber')
         self.subscription = self.create_subscription(
-            Image,
-            '/my_camera/image_raw',
+             Odometry,
+            't2/odom',
             self.listener_callback,
             10)
         self.br = CvBridge()
         self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):
-        #self.get_logger().info('I heard: "%s"' % len(msg.data))
-        current_frame = self.br.imgmsg_to_cv2(msg)
+
+        self.get_logger().info(f"{self.euler_from_quaternion(msg.pose.pose.orientation)}")
+        # path_theta = math.atan2(
+        #     self.goal_pose_y-self.last_pose_y,
+        #     self.goal_pose_x-self.last_pose_x)
+        #current_frame = self.br.imgmsg_to_cv2(msg)
     
         # Display image
-        cv2.imshow("camera", current_frame)
+        #cv2.imshow("camera", current_frame)
     
-        cv2.waitKey(1)
+        #cv2.waitKey(1)
+
+        
+    def euler_from_quaternion(self, quat):
+        """
+        Converts quaternion (w in last place) to euler roll, pitch, yaw
+        quat = [x, y, z, w]
+        """
+        x = quat.x
+        y = quat.y
+        z = quat.z
+        w = quat.w
+
+        sinr_cosp = 2 * (w*x + y*z)
+        cosr_cosp = 1 - 2*(x*x + y*y)
+        roll = np.arctan2(sinr_cosp, cosr_cosp)
+
+        sinp = 2 * (w*y - z*x)
+        pitch = np.arcsin(sinp)
+
+        siny_cosp = 2 * (w*z + x*y)
+        cosy_cosp = 1 - 2 * (y*y + z*z)
+        yaw = np.arctan2(siny_cosp, cosy_cosp)
+
+        return roll, pitch, yaw    
         
 
 

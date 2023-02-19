@@ -1,1 +1,8 @@
 papers/
+ros/log/
+ros/build/
+ros/install/
+ros2/log/
+ros2/build/
+ros2/install/
+ros2/venv/

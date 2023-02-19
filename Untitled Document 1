@@ -1,0 +1,36 @@
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Range
+import numpy as np
+
+class DistanceController(Node):
+    def __init__(self):
+        super().__init__('distance_controller')
+        self.sub = self.create_subscription(Range, '/distance_sensor', self.distance_callback, 10)
+        self.distance = None
+        self.desired_distance = 1.0
+
+    def distance_callback(self, msg):
+        self.distance = msg.range
+
+    def control_loop(self):
+        while not self.is_destroyed():
+            error = self.desired_distance - self.distance
+            control_input = kp * error
+            self.move_robot(control_input)
+
+    def move_robot(self, control_input):
+        # TODO: Implement the logic to move the robot based on the control input
+        pass
+
+def main(args=None):
+    rclpy.init(args=args)
+    distance_controller = DistanceController()
+    distance_controller.control_loop()
+    rclpy.spin(distance_controller)
+    distance_controller.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+

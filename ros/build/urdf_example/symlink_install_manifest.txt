@@ -1,8 +1,11 @@
 /home/islem/Documents/PFE/ros/install/urdf_example/share/urdf_example/description/example_gazebo.xacro
 /home/islem/Documents/PFE/ros/install/urdf_example/share/urdf_example/description/example_include.xacro
 /home/islem/Documents/PFE/ros/install/urdf_example/share/urdf_example/description/example_robot.urdf.xacro
+/home/islem/Documents/PFE/ros/install/urdf_example/share/urdf_example/description/turtlebot3_burger.urdf
 /home/islem/Documents/PFE/ros/install/urdf_example/share/urdf_example/launch/rsp.launch.py
 /home/islem/Documents/PFE/ros/install/urdf_example/share/urdf_example/launch/rsp_sim.launch.py
+/home/islem/Documents/PFE/ros/install/urdf_example/share/urdf_example/launch/t.launch.py
+/home/islem/Documents/PFE/ros/install/urdf_example/share/urdf_example/worlds/t.world
 /home/islem/Documents/PFE/ros/install/urdf_example/share/urdf_example/worlds/test_world.world
 /home/islem/Documents/PFE/ros/install/urdf_example/share/ament_index/resource_index/package_run_dependencies/urdf_example
 /home/islem/Documents/PFE/ros/install/urdf_example/share/ament_index/resource_index/parent_prefix_path/urdf_example
