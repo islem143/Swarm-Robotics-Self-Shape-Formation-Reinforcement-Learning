@@ -32,15 +32,18 @@ class Gazebo(Node):
         self.angle=0
         self.min_lds_dist=0
         self.min_lds_angle=0
+        self.goal_entity_name="goal"
+        entity_path = '/home/islem/Documents/PFE/ros2/model.sdf'
+        self.goal_xml=open(entity_path, 'r').read()
+        self.reset_sim_service=self.create_service(Empty,"reset_sim",self.reset_simulation)
         self.init()
-
+       
 
 
     def init(self):
-        entity_path = '/home/islem/Documents/PFE/ros2/model.sdf'
-        entity = open(entity_path, 'r').read()
-        entity_name = 'goal'
-        self.spawn_entity(entity_name,entity)
+        
+    
+        self.spawn_entity(self.goal_entity_name,self.goal_xml)
         
 
 
@@ -50,6 +53,8 @@ class Gazebo(Node):
             self.get_logger().info('service not available, waiting again...')
 
         self.reset_simulation_client.call_async(req)
+        self.delete_entity(self.goal_entity_name)
+        self.spawn_entity(self.goal_entity_name,self.goal_xml)
         
 
     def generate_goal_pose(self):

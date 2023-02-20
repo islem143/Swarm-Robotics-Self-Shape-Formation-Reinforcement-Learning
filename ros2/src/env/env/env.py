@@ -5,55 +5,58 @@ from nav_msgs.msg import Odometry
 from std_msgs.msg import String
 from sensor_msgs.msg import LaserScan
 import numpy as np
-from gazebo_msgs.srv import DeleteEntity
-from gazebo_msgs.srv import SpawnEntity
-from geometry_msgs.msg import Pose
+
+
 from geometry_msgs.msg import Twist
 from rclpy.qos import QoSProfile
+from std_srvs.srv import Empty
 
-from dqn_msg.msg import State
-
+from dqn_msg.srv import Dqnn
+from dqn_msg.srv import Goal
+print(Goal)
 
 class Env(Node):
-     
 
     def __init__(self):
         super().__init__('env')
-        self.get_odom=self.create_subscription(Odometry, "/t1/odom", self.get_current_position,10)
-        self.get_laser=self.create_subscription(LaserScan, "/t1/scan", self.get_lds,10)
+        self.get_odom = self.create_subscription(
+            Odometry, "/t1/odom", self.get_current_position, 10)
+        self.get_laser = self.create_subscription(
+            LaserScan, "/t1/scan", self.get_lds, 10)
         self.cmd_vel_pub = self.create_publisher(Twist, '/t1/cmd_vel', 10)
-        self.publish_state=self.create_publisher(State, "/state", 10)
-        self.create_timer(3, self.step)
-        #self.stop_robot()
-    
+       # self.publish_state=self.create_publisher(State, "/state", 10)
+       # self.create_timer(3, self.step)
+        self.env_result_service = self.create_service(
+            Dqnn, "env_result", self.step)
+        self.env_result_service = self.create_service(
+            Goal, "goal_pose", self.generate_goal_pose)
+        self.reset_sim_client = self.create_client(Empty, "reset_sim")
+       # self.stop_robot()
 
+    def get_current_position(self, msg):
 
-    def get_current_position(self,msg):
-    
-        self.position_x=msg.pose.pose.position.x
-        self.position_y=msg.pose.pose.position.y
-        self.angle=self.euler_from_quaternion(msg.pose.pose.orientation)[2]
-       
-    def get_lds(self,msg):
-        self.min_lds_dist=np.min(msg.ranges)
-        self.min_lds_angle=np.argmin(msg.ranges)    
+        self.position_x = msg.pose.pose.position.x
+        self.position_y = msg.pose.pose.position.y
+        self.angle = self.euler_from_quaternion(msg.pose.pose.orientation)[2]
+
+    def get_lds(self, msg):
+        self.min_lds_dist = np.min(msg.ranges)
+        self.min_lds_angle = np.argmin(msg.ranges)
 
     def init_robot(self):
 
-         twist=Twist()
-         twist.linear.x=0.5
-         self.cmd_vel_pub.publish(twist) 
+        twist = Twist()
+        twist.linear.x = 0.5
+        self.cmd_vel_pub.publish(twist)
 
-    def move_robot(self,action):
-        twist=Twist()
-        twist.linear.x=0.5
-        twist.angular.z=action
-        self.cmd_vel_pub.publish(twist) 
-        
+    def move_robot(self, action):
+        twist = Twist()
+        twist.linear.x = 0.5
+        twist.angular.z = action
+        self.cmd_vel_pub.publish(twist)
 
-         
     def stop_robot(self):
-        self.cmd_vel_pub.publish(Twist()) 
+        self.cmd_vel_pub.publish(Twist())
 
     def euler_from_quaternion(self, quat):
         """
@@ -76,47 +79,81 @@ class Env(Node):
         cosy_cosp = 1 - 2 * (y*y + z*z)
         yaw = np.arctan2(siny_cosp, cosy_cosp)
 
-        return roll, pitch, yaw 
+        return roll, pitch, yaw
 
-   
-    def step(self):
-        state=State()
-        
-        actions_index=np.random.randint(0,4)
-            
-        actions=[-np.pi/2,-np.pi/4,0,np.pi/4,np.pi/2]
-        action=float(actions[actions_index])
-       
-        #self.move_robot(action)
-        state_s=self.get_state()
-        reward=self.get_reward()
-        done=False
-        state.state=state_s
-        state.reward=reward
-        state.done=done
-        self.publish_state.publish(state)    
+    def call_reset_sim(self):
+        req = Empty.Request()
+        while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('service not available, waiting again...')
 
+        self.reset_sim_client.call_async(req)
 
-    def action():
-        pass
+    def step(self, request, response):
+        if (request.init):
+            self.init_robot()
+
+        actions_index = request.action
+
+        actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
+        action = float(actions[actions_index])
+        done = False
+        self.move_robot(action)
+        if (self.crash()):
+            self.call_reset_sim()
+            done = True
+        if (self.goal_reached()):
+            self.call_reset_sim()
+            done = True
+        state_s = self.get_state()
+        reward = self.get_reward()
+
+        response.state = state_s
+        response.reward = reward
+        response.done = done
+        return response
+
+    def get_distance_to_goal(self):
+        return np.sqrt(np.square(self.position_y-0.0)+np.square(self.position_x-0.0))
+    
+    def generate_goal_pose(self):
+        x=float(np.random.randint(-4,4))
+        y=float(np.random.randint(-4,4))
+        self.goal_x=x
+        self.goal_y=y
+        return x,y
+    
+    def crash(self):
+        if (self.min_lds_dist < 0.05):
+            return True
+        return False
+
+    def goal_reached(self):
+        distance = self.get_distance_to_goal()
+        if (distance < 0.0001):
+            return True
+        return False
+
+  
+
     def get_reward(self):
-        distance=np.sqrt(np.square(self.position_y-0.0)+np.square(self.position_x-0.0))
-        reward=(-distance)**2
+
+        distance = np.sqrt(np.square(self.position_y-0.0) +
+                           np.square(self.position_x-0.0))
+        reward = (-distance)**2
+        if (self.crash()):
+            reward -= 10
+        if (self.goal_reached()):
+            reward += 200
+
         return reward
+
     def get_state(self):
-        l=list()
-        l.append(self.position_x)
-        l.append(self.position_y)
+        l = list()
+        l.append(self.get_distance_to_goal())
         l.append(float(self.min_lds_dist))
         l.append(float(self.min_lds_angle))
         return l
-       
-      
-    
 
-
-        
-           
 
 def main(args=None):
     rclpy.init(args=args)
@@ -134,7 +171,3 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-
-
-
-     
