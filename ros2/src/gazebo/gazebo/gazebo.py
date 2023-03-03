@@ -11,7 +11,7 @@ from geometry_msgs.msg import Pose
 from geometry_msgs.msg import Twist
 from rclpy.qos import QoSProfile
 from std_srvs.srv import Empty
-
+import time
 
 
 class Gazebo(Node):
@@ -20,8 +20,8 @@ class Gazebo(Node):
     def __init__(self):
         super().__init__('gazebo')
         qos = QoSProfile(depth=10)
-        self.goal_pose_x=3.0
-        self.goal_pose_y=3.0
+        self.goal_pose_x=1.5
+        self.goal_pose_y=1.5
         self.spawn_entity_client = self.create_client(SpawnEntity, 'spawn_entity')
         self.delete_entity_client = self.create_client(DeleteEntity, 'delete_entity')
         
@@ -29,14 +29,15 @@ class Gazebo(Node):
         #self.init_service = self.create_service(Dqn, 'init', self.dqn_com_callback)
         self.position_x=0.5
         self.position_y=0.5
-        self.angle=0
-        self.min_lds_dist=0
-        self.min_lds_angle=0
+        
         self.goal_entity_name="goal"
         entity_path = '/home/islem/Documents/PFE/ros2/model.sdf'
         self.goal_xml=open(entity_path, 'r').read()
-        self.reset_sim_service=self.create_service(Empty,"reset_sim",self.reset_simulation)
+        self.reset_sim_service=self.create_service(Empty,"reset_sim",self.reset_simulations)
+        
+        
         self.init()
+        
        
 
 
@@ -47,14 +48,18 @@ class Gazebo(Node):
         
 
 
-    def reset_simulation(self):
+    def reset_simulations(self,request,response):
+  
         req = Empty.Request()
         while not self.reset_simulation_client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('service not available, waiting again...')
 
         self.reset_simulation_client.call_async(req)
+        
         self.delete_entity(self.goal_entity_name)
+        time.sleep(1.0)
         self.spawn_entity(self.goal_entity_name,self.goal_xml)
+        return response
         
 
     def generate_goal_pose(self):
@@ -63,10 +68,11 @@ class Gazebo(Node):
         return x,y
 
     def spawn_entity(self,name,xml):
+        print("spawned")
         goal_pose = Pose()
         x,y=self.generate_goal_pose()
-        goal_pose.position.x = x
-        goal_pose.position.y = y
+        goal_pose.position.x = 1.5
+        goal_pose.position.y = 1.5
         req = SpawnEntity.Request()
         req.name = name
         req.xml = xml
@@ -77,11 +83,12 @@ class Gazebo(Node):
         self.spawn_entity_client.call_async(req)
 
     def delete_entity(self,name):
+        print("deleted")
         req = DeleteEntity.Request()
         req.name = name
         while not self.delete_entity_client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('service not available, waiting again...')
-
+      
         self.delete_entity_client.call_async(req)          
    
 
