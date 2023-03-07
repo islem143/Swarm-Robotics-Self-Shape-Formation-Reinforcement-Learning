@@ -1,7 +1,1 @@
-import os
-
-os.system("ros2 run gazebo gazebo")
-
-
-
-
+print(1.0-1.0)
