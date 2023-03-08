@@ -72,9 +72,12 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep = 350
-        self.agent = Network("robot-1", True, self.ep)
+        self.ep = 0
+        self.agent = Network("robot-1", False, self.ep)
+        self.agent2 = Network("robot-2", False, self.ep)
         self.epsilon = self.agent.get_epsilon()
+        self.epsilon = self.agent2.get_epsilon()
+        
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
         self.minbatch_size = 64
@@ -133,16 +136,16 @@ class Dqn(Node):
                     self.get_logger().info('service not available, waiting again...')
                 self.req = Dqnn.Request()
                 self.req.init = False
-                # if np.random.random() > self.epsilon:
-                #     action = np.argmax(
-                #         self.agent.get_action(self.current_state))
+                if np.random.random() > self.epsilon:
+                    action = np.argmax(
+                        self.agent.get_action(self.current_state))
 
-                # else:
+                else:
 
-                #     action = np.random.randint(0, self.actions_size)
-                action = np.argmax(
-                    self.agent.get_action(self.current_state))
-                
+                    action = np.random.randint(0, self.actions_size)
+                # action = np.argmax(
+                #     self.agent.get_action(self.current_state))
+
                 self.req.action = int(action)
                 future = self.env_result_client.call_async(self.req)
                 #rclpy.spin_until_future_complete(self, future)
@@ -162,29 +165,29 @@ class Dqn(Node):
                                 'Exception while calling service: {0}'.format(future.exception()))
                         break
 
-                # self.agent.update_replay_buffer(
-                #     (np.array(self.current_state), reward, action, np.array(next_state), np.array(done)))
+                self.agent.update_replay_buffer(
+                    (np.array(self.current_state), reward, action, np.array(next_state), np.array(done)))
                 self.current_state = next_state
 
-                #self.agent.train(done)
+                self.agent.train(done)
 
-                # if (i == self.steps_per_episode):
+                if (i == self.steps_per_episode):
 
-                #     done = True
-                #     req = Empty.Request()
-                #     while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-                #         self.get_logger().info('service not available, waiting again...')
+                    done = True
+                    req = Empty.Request()
+                    while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
+                        self.get_logger().info('service not available, waiting again...')
 
-                #     self.reset_sim_client.call_async(req)
-                #     time.sleep(0.5)
+                    self.reset_sim_client.call_async(req)
+                    time.sleep(0.5)
                 i += 1
                 time.sleep(0.01)
 
-            # if self.epsilon > self.MIN_EPSILON:
-            #     self.epsilon *= self.EPSILON_DECAY
-            #     self.epsilon = max(self.MIN_EPSILON, self.epsilon)
-            # if (self.ep % 10 == 0):
-            #     self.agent.save_data(self.ep, self.epsilon)
+            if self.epsilon > self.MIN_EPSILON:
+                self.epsilon *= self.EPSILON_DECAY
+                self.epsilon = max(self.MIN_EPSILON, self.epsilon)
+            if (self.ep % 2 == 0):
+                self.agent.save_data(self.ep, self.epsilon)
             # ep_rewards.append(ep_reward)
             # if not self.ep % AGGREGATE_STATS_EVERY or self.ep == 1:
             #      average_reward = sum(

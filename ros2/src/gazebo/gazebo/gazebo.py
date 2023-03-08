@@ -35,7 +35,7 @@ class Gazebo(Node):
         self.goal_xml=open(entity_path, 'r').read()
         self.reset_sim_service=self.create_service(Empty,"reset_sim",self.reset_simulations)
         
-        
+        #self.delete_entity(self.goal_entity_name)
         self.init()
         
        
@@ -43,7 +43,7 @@ class Gazebo(Node):
 
     def init(self):
         
-    
+        
         self.spawn_entity(self.goal_entity_name,self.goal_xml)
         
 
@@ -71,8 +71,8 @@ class Gazebo(Node):
         print("spawned")
         goal_pose = Pose()
         x,y=self.generate_goal_pose()
-        goal_pose.position.x = 1.5
-        goal_pose.position.y = 1.5
+        goal_pose.position.x = 0.1
+        goal_pose.position.y = 0.1
         req = SpawnEntity.Request()
         req.name = name
         req.xml = xml

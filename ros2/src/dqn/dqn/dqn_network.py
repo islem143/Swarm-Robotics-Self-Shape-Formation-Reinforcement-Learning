@@ -56,11 +56,11 @@ class Network:
         inputs = keras.layers.Input(shape=(3,))
 
         layer1 = keras.layers.Dense(
-            256, activation=keras.layers.LeakyReLU(), kernel_initializer=initializer1)(inputs)
+            1024, activation=keras.layers.LeakyReLU(), kernel_initializer=initializer1)(inputs)
 
         dropout = keras.layers.Dropout(0.2)(layer1)
         layer2 = keras.layers.Dense(
-            256,  activation=keras.layers.LeakyReLU(), kernel_initializer=initializer2)(dropout)
+            1024,  activation=keras.layers.LeakyReLU(), kernel_initializer=initializer2)(dropout)
         action = keras.layers.Dense(
             5, activation="linear")(layer2)
 
@@ -123,13 +123,15 @@ class Network:
         self.epsilon = Utils.load_json(path, "epsilon")
         path = os.path.join(self.dir_path, self.get_model_file_name("obj"))
         self.replay_memory = Utils.load_pickle(path)
+
     def get_epsilon(self):
-        return self.epsilon 
-    def save_data(self,ep,epsilon):
-        self.ep=ep
+        return self.epsilon
+
+    def save_data(self, ep, epsilon):
+        self.ep = ep
         path = os.path.join(self.dir_path, self.get_model_file_name("h5"))
-        to_save=copy(self.model)
-        to_save.compile(optimizer=optimizer,loss=loss_function)
+        to_save = copy(self.model)
+        to_save.compile(optimizer=optimizer, loss=loss_function)
         Utils.save_model(to_save, path)
         path = os.path.join(self.dir_path, self.get_model_file_name("json"))
         data = {"epsilon": epsilon}
@@ -138,4 +140,4 @@ class Network:
         Utils.save_pickle(path, self.replay_memory)
 
     def get_model_file_name(self, type):
-        return f"models/my-model-{self.ep}.{type}"
+        return f"models-{self.name}/my-model-{self.ep}.{type}"
