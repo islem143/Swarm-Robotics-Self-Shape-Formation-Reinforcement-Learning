@@ -39,8 +39,8 @@ class Env(Node):
         self.position_y = msg.pose.pose.position.y
         self.angle = self.euler_from_quaternion(msg.pose.pose.orientation)[2]
         self.goal_angle = np.abs(
-            self.angle-np.arctan2(np.abs(self.position_y-0.1), np.abs(self.position_x-0.1)))
-        print(self.goal_angle)
+            self.angle-(np.arctan2(np.abs(self.position_y-0.01), np.abs(self.position_x-0.01))))
+        print((self.goal_angle-np.pi)%np.pi)
     def get_lds(self, msg):
 
         self.min_lds_dist = np.min(msg.ranges)
@@ -143,13 +143,14 @@ class Env(Node):
             print("gooooooal")
             return True
         return False
-
+   # def angle_to_goal(self):
+        #if(self.position_x>0.01 and self.position_y>0.01 and )
     def get_reward(self):
 
         distance = self.get_distance_to_goal()
         reward = 10*(1/distance)
         #reward += 2*(1/self.goal_angle)
-        if(self. self.goal_angle<0.15 ):
+        if(self.self.goal_angle<0.15 ):
             reward+=10
             print("yessssssss")
         if (self.crash()):
