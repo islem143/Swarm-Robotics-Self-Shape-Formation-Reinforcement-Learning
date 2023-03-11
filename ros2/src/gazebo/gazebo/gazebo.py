@@ -71,8 +71,8 @@ class Gazebo(Node):
         print("spawned")
         goal_pose = Pose()
         x,y=self.generate_goal_pose()
-        goal_pose.position.x = 0.1
-        goal_pose.position.y = 0.1
+        goal_pose.position.x = 0.01 
+        goal_pose.position.y = -0.99
         req = SpawnEntity.Request()
         req.name = name
         req.xml = xml

@@ -1,3 +1,4 @@
-import numpy as np
+a=[0.01,0.01]
 
-print(np.arctan2(1.5,0.2))
+a=[a[i]+1 for i in range(len(a))]
+print(a)

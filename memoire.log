@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.3.4)  6 MAR 2023 08:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.3.4)  10 MAR 2023 20:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -668,15 +668,15 @@ Underfull \hbox (badness 10000) in paragraph at lines 204--206
 
  []
 
-[11] (./memoire.bbl) [12] (./memoire.aux)
+[11] [12] (./memoire.bbl) [13] (./memoire.aux)
 Package rerunfilecheck Info: File `memoire.out' has not changed.
-(rerunfilecheck)             Checksum: 3A5FBAE4F207FB38649A1F79A474B763;5927.
+(rerunfilecheck)             Checksum: B0379FE50EFCB02E39C795A16DF3614F;6067.
  ) 
 Here is how much of TeX's memory you used:
- 18486 strings out of 480204
- 319397 string characters out of 5895011
- 685111 words of memory out of 5000000
- 36098 multiletter control sequences out of 15000+600000
+ 18491 strings out of 480204
+ 319467 string characters out of 5895011
+ 686146 words of memory out of 5000000
+ 36100 multiletter control sequences out of 15000+600000
  474871 words of font info for 47 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
  91i,6n,91p,1145b,394s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -690,10 +690,10 @@ t/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/
 type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
 public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
 amsfonts/cm/cmti12.pfb>
-Output written on memoire.pdf (12 pages, 134975 bytes).
+Output written on memoire.pdf (13 pages, 137826 bytes).
 PDF statistics:
- 321 PDF objects out of 1000 (max. 8388607)
- 285 compressed objects within 3 object streams
- 58 named destinations out of 1000 (max. 500000)
- 273 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 334 PDF objects out of 1000 (max. 8388607)
+ 297 compressed objects within 3 object streams
+ 61 named destinations out of 1000 (max. 500000)
+ 281 words of extra memory for PDF output out of 10000 (max. 10000000)
 

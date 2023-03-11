@@ -213,6 +213,28 @@ Setting $\gamma<1$ will ensure the convergence of the return in case of non epis
 
 
 
+
+\subsection{Deep Q learning}
+Q-learning is a type of model free reinforcement learning algorithm  based on the dynamic programming technique, where the agent tries to maximize it rewards by finding the optimale policy $\Pi$ in an iterative manner. In order to  acheive this, the agent uses a type of equation called value function that gives it the value or the reward of being in a state $s$ and taking action according to it policy $\Pi$.
+
+
+\[ V^{\Pi}(S)=E[r(s,a)+\gamma V^{\Pi}(s') ] \] 
+
+In order to find the optimal value function, hence finding the optimal policy, the equation must satisty the bellman optimality condition which states that: 
+
+  
+\[ V^{*}(S)=max_{a}E[r(s,a)+\gamma V^{*}(s') ] \] 
+
+The same goes for the action-value function which gives the return if the agent chooses the action $a$ and follow the optimale policy thereafter.
+
+\[ Q^{*}(S,a)=E[r(s,a)+max_{a}\gamma Q^{*}(s',a) ] \]\cite{watkins1992q}.
+
+
+
+
+
+
+
 \subsection{State Of the art}
 \subsection{DQN}
 \subsection{DDPG}

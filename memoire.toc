@@ -23,13 +23,14 @@
 \contentsline {subsection}{\numberline {3.1}Introduction}{10}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Machine learning}{10}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}Reinforcement learning}{10}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}State Of the art}{11}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}DQN}{11}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}DDPG}{11}{subsection.3.6}%
-\contentsline {subsection}{\numberline {3.7}Thier usages in multi agent pros and cons}{11}{subsection.3.7}%
-\contentsline {subsection}{\numberline {3.8}problem formulation and solution}{11}{subsection.3.8}%
-\contentsline {subsection}{\numberline {3.9}we opt for maddpg decentrilzed excution }{11}{subsection.3.9}%
-\contentsline {subsection}{\numberline {3.10}we opt for maddpg for better perfomance and scalability }{11}{subsection.3.10}%
-\contentsline {subsection}{\numberline {3.11}ROS and gazebo}{11}{subsection.3.11}%
-\contentsline {subsection}{\numberline {3.12}Conception of the solution}{11}{subsection.3.12}%
-\contentsline {subsection}{\numberline {3.13}implemtation of the solution}{11}{subsection.3.13}%
+\contentsline {subsection}{\numberline {3.4}Deep Q learning}{11}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}State Of the art}{12}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}DQN}{12}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}DDPG}{12}{subsection.3.7}%
+\contentsline {subsection}{\numberline {3.8}Thier usages in multi agent pros and cons}{12}{subsection.3.8}%
+\contentsline {subsection}{\numberline {3.9}problem formulation and solution}{12}{subsection.3.9}%
+\contentsline {subsection}{\numberline {3.10}we opt for maddpg decentrilzed excution }{12}{subsection.3.10}%
+\contentsline {subsection}{\numberline {3.11}we opt for maddpg for better perfomance and scalability }{12}{subsection.3.11}%
+\contentsline {subsection}{\numberline {3.12}ROS and gazebo}{12}{subsection.3.12}%
+\contentsline {subsection}{\numberline {3.13}Conception of the solution}{12}{subsection.3.13}%
+\contentsline {subsection}{\numberline {3.14}implemtation of the solution}{12}{subsection.3.14}%

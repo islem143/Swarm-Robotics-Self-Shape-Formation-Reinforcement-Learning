@@ -19,7 +19,7 @@ try:
 except:
     # Invalid device or cannot modify virtual devices once initialized.
     pass
-optimizer = keras.optimizers.Adam(learning_rate=0.00025, clipnorm=1.0)
+
 
 loss_function = keras.losses.Huber()
 
@@ -32,13 +32,13 @@ class Network:
         if (model_load):
             self.ep = ep
             self.load_data()
-
+          
         else:
             self.model = self.create_model()
             self.epsilon = 1
             self.replay_memory = deque(maxlen=50_000)
             self.ep = ep
-
+        self.optimizer = keras.optimizers.Adam(learning_rate=0.00020) 
         # to note we are having the same target of if we load the model
         self.target_model = self.model
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
@@ -51,23 +51,25 @@ class Network:
         self.target_update_counter = 0
 
     def create_model(self) -> keras.Model:
-        initializer1 = tf.keras.initializers.HeNormal()
-        initializer2 = tf.keras.initializers.HeNormal()
+        initializer1 = tf.keras.initializers.GlorotNormal()
+
+        initializer2 = tf.keras.initializers.GlorotNormal()
+
         inputs = keras.layers.Input(shape=(3,))
 
         layer1 = keras.layers.Dense(
-            1024, activation=keras.layers.LeakyReLU(), kernel_initializer=initializer1)(inputs)
+            256, activation="relu", kernel_initializer='lecun_uniform')(inputs)
 
-        dropout = keras.layers.Dropout(0.2)(layer1)
+        dropout = keras.layers.Dropout(0.1)(layer1)
         layer2 = keras.layers.Dense(
-            1024,  activation=keras.layers.LeakyReLU(), kernel_initializer=initializer2)(dropout)
+            256,  activation="relu" ,kernel_initializer='lecun_uniform')(dropout)
         action = keras.layers.Dense(
-            5, activation="linear")(layer2)
+            5, activation="linear" ,kernel_initializer='lecun_uniform')(layer2)
 
         return keras.Model(inputs=inputs, outputs=action)
 
     def get_action(self, state):
-
+        print(f"predict from {self.name}")
         state = np.array(state, dtype=np.float64)
         state = tf.expand_dims(tf.convert_to_tensor(state), 0)
 
@@ -103,7 +105,7 @@ class Network:
 
             # Backpropagation
             grads = tape.gradient(loss, self.model.trainable_variables)
-            optimizer.apply_gradients(
+            self.optimizer.apply_gradients(
                 zip(grads, self.model.trainable_variables))
 
         if terminal_state:
@@ -131,7 +133,7 @@ class Network:
         self.ep = ep
         path = os.path.join(self.dir_path, self.get_model_file_name("h5"))
         to_save = copy(self.model)
-        to_save.compile(optimizer=optimizer, loss=loss_function)
+        to_save.compile(optimizer=self.optimizer, loss=loss_function)
         Utils.save_model(to_save, path)
         path = os.path.join(self.dir_path, self.get_model_file_name("json"))
         data = {"epsilon": epsilon}

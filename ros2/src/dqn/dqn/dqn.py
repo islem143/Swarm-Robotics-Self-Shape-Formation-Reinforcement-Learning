@@ -72,35 +72,37 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep = 0
-        self.agent = Network("robot-1", False, self.ep)
-        self.agent2 = Network("robot-2", False, self.ep)
-        self.epsilon = self.agent.get_epsilon()
-        self.epsilon = self.agent2.get_epsilon()
+        self.ep =590
+     
+        self.agents=[Network("robot-1", True, self.ep),Network("robot-2", True, self.ep)]
+        self.epsilon = self.agents[0].get_epsilon()
         
+         
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
         self.minbatch_size = 64
         self.episode_length = 10_000
-        self.steps_per_episode = 500
+        self.steps_per_episode = 700
 
         self.episode_size = 3000
-        self.target_update_counter = 0
+    
+        self.current_states=[0,0]
         #self.epsilon = 1
         #self.EPSILON_DECAY = 0.992
-        self.EPSILON_DECAY = 0.99
+        self.EPSILON_DECAY = 0.997
         self.MIN_EPSILON = 0.05
         self.MIN_REPLAY_MEMORY_SIZE = 1000
         self.env_result_client = self.create_client(Dqnn, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = False
-        self.tensorboard = ModifiedTensorBoard(
-            log_dir="logs/{}-{}".format(MODEL_NAME, int(time.time())))
+        # self.tensorboard = ModifiedTensorBoard(
+        #     log_dir="logs/{}-{}".format(MODEL_NAME, int(time.time())))
 
+        
         self.start()
 
     def start(self):
-
+         
         for _ in range(self.episode_length):
             if (psutil.virtual_memory().percent > 92):
                 self.stop = True
@@ -113,65 +115,96 @@ class Dqn(Node):
             i = 0
             # ep_reward=0
             self.ep += 1
-
-            self.req = Dqnn.Request()
-            self.req.init = True
-            self.req.action = np.random.randint(0, self.actions_size)
-            future = self.env_result_client.call_async(self.req)
-            while rclpy.ok():
-                rclpy.spin_once(self)
-                if future.done():
-                    if future.result() is not None:
-                        # Next state and reward
-                        self.current_state = future.result().state
-
-                    else:
-                        self.get_logger().error(
-                            'Exception while calling service: {0}'.format(future.exception()))
-                    break
-            done = False
-            while not done:
-
-                while not self.env_result_client.wait_for_service(timeout_sec=1.0):
-                    self.get_logger().info('service not available, waiting again...')
+            for index,agent in enumerate (self.agents):
+                
                 self.req = Dqnn.Request()
-                self.req.init = False
-                if np.random.random() > self.epsilon:
-                    action = np.argmax(
-                        self.agent.get_action(self.current_state))
-
-                else:
-
-                    action = np.random.randint(0, self.actions_size)
-                # action = np.argmax(
-                #     self.agent.get_action(self.current_state))
-
-                self.req.action = int(action)
+                self.req.init = True
+                self.req.id=index+1
+                self.req.action = np.random.randint(0, self.actions_size)
                 future = self.env_result_client.call_async(self.req)
-                #rclpy.spin_until_future_complete(self, future)
                 while rclpy.ok():
-
                     rclpy.spin_once(self)
                     if future.done():
                         if future.result() is not None:
                             # Next state and reward
-                            next_state = future.result().state
-                            reward = future.result().reward
-
-                            done = future.result().done
+                            self.current_states[index] = future.result().state
 
                         else:
                             self.get_logger().error(
                                 'Exception while calling service: {0}'.format(future.exception()))
                         break
+                done = False
+                time.sleep(0.01)
+            while not done:
+                
+                while not self.env_result_client.wait_for_service(timeout_sec=1.0):
+                    self.get_logger().info('service not available, waiting again...')
+                for index,agent in enumerate (self.agents):    
+                   
+                    self.req = Dqnn.Request()
+                    self.req.init = False
+                    self.req.id=index+1
+                    if np.random.random() > self.epsilon:
+                        action = np.argmax(
+                            agent.get_action(self.current_states[index]))
+                        
 
-                self.agent.update_replay_buffer(
-                    (np.array(self.current_state), reward, action, np.array(next_state), np.array(done)))
-                self.current_state = next_state
+                    else:
 
-                self.agent.train(done)
+                        action = np.random.randint(0, self.actions_size)
+                       
+                    # action = np.argmax(
+                    #     agent.get_action(self.current_states[index]))
+                    
+                    
+                    self.req.action = int(action)
+                    
+                    future = self.env_result_client.call_async(self.req)
+                    #rclpy.spin_until_future_complete(self, future)
+                    while rclpy.ok():
 
-                if (i == self.steps_per_episode):
+                        rclpy.spin_once(self)
+                        if future.done():
+                            if future.result() is not None:
+                                # Next state and reward
+                                next_state = future.result().state
+                                reward = future.result().reward
+
+                                done = future.result().done
+
+                            else:
+                                self.get_logger().error(
+                                    'Exception while calling service: {0}'.format(future.exception()))
+                            break
+ 
+                    agent.update_replay_buffer(
+                        (np.array(self.current_states[index]), reward, action, np.array(next_state), np.array(done)))
+                    self.current_states[index] = next_state
+
+                    agent.train(done)
+                   
+
+                    if (self.ep % 10 == 0):
+                        agent.save_data(self.ep, self.epsilon)
+                    if(done):
+                        print("yesssssss")
+                        req = Empty.Request()
+                        while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
+                            self.get_logger().info('service not available, waiting again...')
+
+                        self.reset_sim_client.call_async(req)
+                        time.sleep(0.5)
+                        #done=False
+                        break
+                        
+                           
+                    time.sleep(0.01)  
+                 
+                       
+                        
+                      
+                
+                if (i == self.steps_per_episode and not done):
 
                     done = True
                     req = Empty.Request()
@@ -181,13 +214,12 @@ class Dqn(Node):
                     self.reset_sim_client.call_async(req)
                     time.sleep(0.5)
                 i += 1
-                time.sleep(0.01)
-
+               
             if self.epsilon > self.MIN_EPSILON:
-                self.epsilon *= self.EPSILON_DECAY
-                self.epsilon = max(self.MIN_EPSILON, self.epsilon)
-            if (self.ep % 2 == 0):
-                self.agent.save_data(self.ep, self.epsilon)
+                    self.epsilon *= self.EPSILON_DECAY
+                    self.epsilon = max(self.MIN_EPSILON, self.epsilon)
+
+            
             # ep_rewards.append(ep_reward)
             # if not self.ep % AGGREGATE_STATS_EVERY or self.ep == 1:
             #      average_reward = sum(

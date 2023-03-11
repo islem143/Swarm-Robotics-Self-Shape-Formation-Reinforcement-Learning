@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
 \bibitem{rubio2019review}
 F.~Rubio, F.~Valero, and C.~Llopis-Albert, ``A review of mobile robots:
@@ -43,5 +43,9 @@ I.~Olaronke, I.~Rhoda, I.~Gambo, O.~Ojerinde, and O.~Janet, ``A systematic
 K.~Arulkumaran, M.~P. Deisenroth, M.~Brundage, and A.~A. Bharath, ``A brief
   survey of deep reinforcement learning,'' {\em arXiv preprint
   arXiv:1708.05866}, 2017.
+
+\bibitem{watkins1992q}
+C.~J. Watkins and P.~Dayan, ``Q-learning,'' {\em Machine learning}, vol.~8,
+  pp.~279--292, 1992.
 
 \end{thebibliography}
