@@ -48,4 +48,9 @@ K.~Arulkumaran, M.~P. Deisenroth, M.~Brundage, and A.~A. Bharath, ``A brief
 C.~J. Watkins and P.~Dayan, ``Q-learning,'' {\em Machine learning}, vol.~8,
   pp.~279--292, 1992.
 
+\bibitem{mnih2013playing}
+V.~Mnih, K.~Kavukcuoglu, D.~Silver, A.~Graves, I.~Antonoglou, D.~Wierstra, and
+  M.~Riedmiller, ``Playing atari with deep reinforcement learning,'' {\em arXiv
+  preprint arXiv:1312.5602}, 2013.
+
 \end{thebibliography}

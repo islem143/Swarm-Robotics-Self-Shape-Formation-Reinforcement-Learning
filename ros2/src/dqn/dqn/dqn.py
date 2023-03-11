@@ -72,7 +72,7 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep =590
+        self.ep =1090
      
         self.agents=[Network("robot-1", True, self.ep),Network("robot-2", True, self.ep)]
         self.epsilon = self.agents[0].get_epsilon()
@@ -144,17 +144,17 @@ class Dqn(Node):
                     self.req = Dqnn.Request()
                     self.req.init = False
                     self.req.id=index+1
-                    if np.random.random() > self.epsilon:
-                        action = np.argmax(
-                            agent.get_action(self.current_states[index]))
+                    # if np.random.random() > self.epsilon:
+                    #     action = np.argmax(
+                    #         agent.get_action(self.current_states[index]))
                         
 
-                    else:
+                    # else:
 
-                        action = np.random.randint(0, self.actions_size)
+                    #     action = np.random.randint(0, self.actions_size)
                        
-                    # action = np.argmax(
-                    #     agent.get_action(self.current_states[index]))
+                    action = np.argmax(
+                        agent.get_action(self.current_states[index]))
                     
                     
                     self.req.action = int(action)
@@ -177,15 +177,15 @@ class Dqn(Node):
                                     'Exception while calling service: {0}'.format(future.exception()))
                             break
  
-                    agent.update_replay_buffer(
-                        (np.array(self.current_states[index]), reward, action, np.array(next_state), np.array(done)))
+                    # agent.update_replay_buffer(
+                    #     (np.array(self.current_states[index]), reward, action, np.array(next_state), np.array(done)))
                     self.current_states[index] = next_state
 
-                    agent.train(done)
+                    #agent.train(done)
                    
 
-                    if (self.ep % 10 == 0):
-                        agent.save_data(self.ep, self.epsilon)
+                    # if (self.ep % 10 == 0):
+                    #     agent.save_data(self.ep, self.epsilon)
                     if(done):
                         print("yesssssss")
                         req = Empty.Request()
@@ -204,15 +204,15 @@ class Dqn(Node):
                         
                       
                 
-                if (i == self.steps_per_episode and not done):
+                # if (i == self.steps_per_episode and not done):
 
-                    done = True
-                    req = Empty.Request()
-                    while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-                        self.get_logger().info('service not available, waiting again...')
+                #     done = True
+                #     req = Empty.Request()
+                #     while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
+                #         self.get_logger().info('service not available, waiting again...')
 
-                    self.reset_sim_client.call_async(req)
-                    time.sleep(0.5)
+                #     self.reset_sim_client.call_async(req)
+                #     time.sleep(0.5)
                 i += 1
                
             if self.epsilon > self.MIN_EPSILON:

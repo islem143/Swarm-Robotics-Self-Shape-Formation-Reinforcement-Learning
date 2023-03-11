@@ -1,5 +1,7 @@
 \documentclass[12pt]{article}
-
+\usepackage{algorithm}
+\usepackage{amsmath}
+\usepackage{algpseudocode}
 \usepackage[%
     left=1.3in,%
     right=1.3in,%
@@ -19,7 +21,10 @@
 \usepackage{graphicx}
 \graphicspath{{images/}}
 \onehalfspacing
+
 \usepackage{pdfpages}
+
+
 \usepackage[acronym]{glossaries}
 \newacronym{ny}{NY}{New York}
 \begin{document}
@@ -211,10 +216,7 @@ If the MPD is episodic, then the agent will accumulates a set of reward at the e
 
 Setting $\gamma<1$ will ensure the convergence of the return in case of non episodic MPDS.\cite{arulkumaran2017brief}.
 
-
-
-
-\subsection{Deep Q learning}
+\subsection{Q learning}
 Q-learning is a type of model free reinforcement learning algorithm  based on the dynamic programming technique, where the agent tries to maximize it rewards by finding the optimale policy $\Pi$ in an iterative manner. In order to  acheive this, the agent uses a type of equation called value function that gives it the value or the reward of being in a state $s$ and taking action according to it policy $\Pi$.
 
 
@@ -228,6 +230,53 @@ In order to find the optimal value function, hence finding the optimal policy, t
 The same goes for the action-value function which gives the return if the agent chooses the action $a$ and follow the optimale policy thereafter.
 
 \[ Q^{*}(S,a)=E[r(s,a)+max_{a}\gamma Q^{*}(s',a) ] \]\cite{watkins1992q}.
+
+
+\pagebreak
+
+\subsection{Deep Q learning}
+The problem with traditional Q-learning or Rl algorithms in general, is the inability to work in  a high dimensional input states where discritization and hand-crafted features extraction    is performed in order to it to work. For this, deep learning was combined with traditional Q-learning in order to overcome these challenges.\cite{mnih2013playing}
+
+Deep Q learning was firstly introduced in an article by the deepmind group, where it was tested in atari games in which the agent was given raw input images of the emulator and it was the  goal of the agents to win the games by using the Q learning algorithm.
+
+Besides using the bellmen equation to converge and calculate the loss, an experience replay memory was used to store the the experiences of the agents during  the game and then sampled randomly to be  fed to the neural network to learn and in order to break the correlation that apears when fedding them sequential data.\cite{mnih2013playing}
+ 
+\begin{algorithm}
+\caption{Deep Q-learning with Experience Replay}\label{alg:cap}
+\begin{algorithmic}
+\State Initialize replay memory D to capacity N
+\State Initialize action-value function Q with random weights
+\For{\texttt{episode = 1, M}}
+        \State \texttt{Initialise sequence s1 = \{x1\} and preprocessed sequenced $\phi_{1}$ = $\phi(s_{1})$  }
+        \For{\texttt{t = 1, T}}
+         \State With probability $\epsilon$ select a random action $a_{t}$
+         \State otherwise select  $a_{t}$ = $max_{a} Q^{*}(\phi(s_{t},a;\theta) $ 
+         \State Execute action $a_{t}$ in emulator and observe reward ${r_{t}}$ and image $x_{t+1}$
+        \State Set $s_{t+1}$ = $s_{t}$ , $a_{t}$ , $x_{t+1}$ and preprocess  
+        $\phi_{t+1}=\phi(s_{t+1})$
+        \State Store transition $(\phi_{t} , a_{t} , r_{t} , \phi_{t+1} )$ in $D$
+        \State Sample random
+minibatch of transitions $(\phi_{t} , a_{t} , r_{t} , \phi_{t+1} )$ in $D$
+        \State set  \begin{equation}
+  y_{j}=\begin{cases}
+    r_{j}, & \text{for terminal $\phi_{j+1} $}.\\
+    r_{j}+\gamma max_{a}Q(\phi_{j+1},a';\theta) , & \text{for non-terminal $Q(\phi_{j+1})$}.
+  \end{cases}
+\end{equation}
+        \State Perform a gradient descent step on $(y_{j} - Q(\phi_{j} , a_{j} ; \theta))$ 
+        \EndFor 
+\EndFor 
+
+
+\end{algorithmic}
+\end{algorithm}
+ 
+
+ 
+
+ 
+
+ 
 
 
 
