@@ -4,11 +4,7 @@ from collections import deque
 from .utils import Utils
 import numpy as np
 import random
-from dqn_msg.srv import Dqnn
-from std_srvs.srv import Empty
-import psutil
-import time
-import rclpy
+
 import os
 from copy import copy
 
@@ -36,9 +32,11 @@ class Network:
         else:
             self.model = self.create_model()
             self.epsilon = 1
-            self.replay_memory = deque(maxlen=50_000)
+            self.replay_memory = deque(maxlen=100_000)
             self.ep = ep
-        self.optimizer = keras.optimizers.Adam(learning_rate=0.00020) 
+        ep_rewards=[]    
+        #learning_rate=0.00025
+        self.optimizer = keras.optimizers.Adam(learning_rate=0.001) 
         # to note we are having the same target of if we load the model
         self.target_model = self.model
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
@@ -51,25 +49,28 @@ class Network:
         self.target_update_counter = 0
 
     def create_model(self) -> keras.Model:
-        initializer1 = tf.keras.initializers.GlorotNormal()
+        # initializer1 = tf.keras.initializers.GlorotNormal()
 
-        initializer2 = tf.keras.initializers.GlorotNormal()
+        # initializer2 = tf.keras.initializers.GlorotNormal()
 
         inputs = keras.layers.Input(shape=(3,))
 
         layer1 = keras.layers.Dense(
-            256, activation="relu", kernel_initializer='lecun_uniform')(inputs)
+            64, activation="relu", kernel_initializer='lecun_uniform')(inputs)
 
-        dropout = keras.layers.Dropout(0.1)(layer1)
+        dropout = keras.layers.Dropout(0.2)(layer1)
         layer2 = keras.layers.Dense(
-            256,  activation="relu" ,kernel_initializer='lecun_uniform')(dropout)
+            64,  activation="relu" ,kernel_initializer='lecun_uniform')(dropout)
+        dropout = keras.layers.Dropout(0.2)(layer2)
+        layer3 = keras.layers.Dense(
+            64,  activation="relu" ,kernel_initializer='lecun_uniform')(dropout)
         action = keras.layers.Dense(
-            5, activation="linear" ,kernel_initializer='lecun_uniform')(layer2)
+            5, activation="linear" ,kernel_initializer='lecun_uniform')(layer3)
 
         return keras.Model(inputs=inputs, outputs=action)
 
     def get_action(self, state):
-        print(f"predict from {self.name}")
+    
         state = np.array(state, dtype=np.float64)
         state = tf.expand_dims(tf.convert_to_tensor(state), 0)
 
@@ -81,17 +82,17 @@ class Network:
     def train(self, terminal_state):
         if (self.MIN_REPLAY_MEMORY_SIZE > len(self.replay_memory)):
             return
-
+    
         minibatch = random.sample(self.replay_memory, self.minbatch_size)
 
         current_states = np.array([batch[0] for batch in minibatch])
         rewards = np.array([batch[1] for batch in minibatch])
         actions = np.array([batch[2] for batch in minibatch])
         next_states = np.array([batch[3] for batch in minibatch])
-        next_q_values = self.target_model.predict(next_states, verbose=0)
         dones = np.array([float(batch[4]) for batch in minibatch])
+        next_q_values = self.target_model.predict(next_states, verbose=0)
         updated_q_values = rewards+self.discout_factor * \
-            np.max(next_q_values, axis=1)*(1.0-dones)
+            tf.reduce_max(next_q_values, axis=1)*(1.0-dones)
         masks = tf.one_hot(actions, self.actions_size)
 
         with tf.GradientTape() as tape:
@@ -100,6 +101,7 @@ class Network:
 
             # Apply the masks to the Q-values to get the Q-value for action taken
             q_action = tf.reduce_sum(tf.multiply(q_values, masks), axis=1)
+            
             # Calculate loss between new Q-value and old Q-value
             loss = loss_function(updated_q_values, q_action)
 
@@ -129,14 +131,14 @@ class Network:
     def get_epsilon(self):
         return self.epsilon
 
-    def save_data(self, ep, epsilon):
+    def save_data(self, ep, epsilon,reward):
         self.ep = ep
         path = os.path.join(self.dir_path, self.get_model_file_name("h5"))
         to_save = copy(self.model)
         to_save.compile(optimizer=self.optimizer, loss=loss_function)
         Utils.save_model(to_save, path)
         path = os.path.join(self.dir_path, self.get_model_file_name("json"))
-        data = {"epsilon": epsilon}
+        data = {"epsilon": epsilon,"reward":reward}
         Utils.save_json(path, data)
         path = os.path.join(self.dir_path, self.get_model_file_name("obj"))
         Utils.save_pickle(path, self.replay_memory)

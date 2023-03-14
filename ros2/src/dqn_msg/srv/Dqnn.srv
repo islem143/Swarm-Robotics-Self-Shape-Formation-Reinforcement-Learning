@@ -1,4 +1,4 @@
-uint8 action
+float32 action
 uint8 id
 bool init
 ---

@@ -1,4 +1,5 @@
-a=[0.01,0.01]
+import tensorflow as tf
 
-a=[a[i]+1 for i in range(len(a))]
-print(a)
+actions=[1,2,0,3,5,0]
+masks = tf.one_hot(actions, 5)
+print(masks)

@@ -171,23 +171,16 @@ class Env(Node):
         self.reset_sim_client.call_async(req)
 
     def step(self, request, response):
-        if(request.id==250):
-            response.state=self.get_state(1)
-            return response
-        elif(request.id==251):
-            response.state=self.get_state(2)
-            return response
-
         if (request.init):
             if (request.id == 1):
                 self.init_robot()
             else:
                 self.init_robot2()
 
-      
+        actions_index = request.action
         self.done=False
-    
-        action = float(request.action)
+        actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
+        action = float(actions[actions_index])
 
         if (request.id == 1):
             self.move_robot(action)
@@ -199,7 +192,7 @@ class Env(Node):
             print("crash")
             self.done = True
 
-        if (self.goal_reached_local(self.goal_cord,1)):
+        if (self.goal_reached()):
             print("goal reached")
             self.done = True
 

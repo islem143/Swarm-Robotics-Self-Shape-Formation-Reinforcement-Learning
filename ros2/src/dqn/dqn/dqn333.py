@@ -19,8 +19,8 @@ from keras.callbacks import TensorBoard
 import random
 import time
 from std_srvs.srv import Empty
-from .ac_network import ACNetwork
-from .ouNoise import OUActionNoise
+from .dqn_network import Network
+
 AGGREGATE_STATS_EVERY = 5
 
 # class ClearMemory(Callback):
@@ -72,10 +72,11 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep =0
-        self.test=False
-        self.agents = [ACNetwork("robot-1",False, self.ep)]
-        
+        self.ep =730
+        self.test=True
+        self.agents = [Network("robot-1",True, self.ep),
+                       Network("robot-2",True, self.ep)]
+        self.epsilon = self.agents[0].get_epsilon()
 
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
@@ -94,35 +95,11 @@ class Dqn(Node):
         self.env_result_client = self.create_client(Dqnn, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = False
-        std_dev = 0.2
-        self.tau = 0.005
-
-        self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(std_dev) * np.ones(1))
         # self.tensorboard = ModifiedTensorBoard(
         #     log_dir="logs/{}-{}".format(MODEL_NAME, int(time.time())))
 
         self.start()
 
-    def get_init_state(self):
-     for index, agent in enumerate(self.agents):
-        self.req = Dqnn.Request()
-        self.req.init = True
-        self.req.id = 250+index
-       
-        future = self.env_result_client.call_async(self.req)
-        while rclpy.ok():
-            rclpy.spin_once(self)
-            if future.done():
-                    if future.result() is not None:
-                                # Next state and reward
-                        self.current_states[index] = future.result().state
-
-                    else:
-                        self.get_logger().error(
-                            'Exception while calling service: {0}'.format(future.exception()))
-                    break 
-        
-               
     def start(self):
 
         for _ in range(self.episode_length):
@@ -138,23 +115,52 @@ class Dqn(Node):
             # ep_reward=0
             self.ep += 1
             self.rewards = [0 for _ in range(len(self.agents))]
-            self.get_init_state()
+            for index, agent in enumerate(self.agents):
+                print(index)
+                self.req = Dqnn.Request()
+                self.req.init = True
+                self.req.id = index+1
+                self.req.action = np.random.randint(0, self.actions_size)
+                future = self.env_result_client.call_async(self.req)
+                while rclpy.ok():
+                    rclpy.spin_once(self)
+                    if future.done():
+                        if future.result() is not None:
+                            # Next state and reward
+                            self.current_states[index] = future.result().state
 
-            done=False
+                        else:
+                            self.get_logger().error(
+                                'Exception while calling service: {0}'.format(future.exception()))
+                        break
+                done = False
+                time.sleep(0.01)
+
             while not done:
 
-        
-   
+                # while not self.env_result_client.wait_for_service(timeout_sec=1.0):
+                #     self.get_logger().info('service not available, waiting again...')
+
                 for index, agent in enumerate(self.agents):
                     reward = 0
-                   
                     self.req = Dqnn.Request()
                     self.req.init = False
                     self.req.id = index+1
-                    state = tf.expand_dims(tf.convert_to_tensor(self.current_states[index]), 0)
-                    action = agent.policy(state, self.ou_noise)
-                  
-                    self.req.action = float(action[0])
+                    if (not self.test):
+                        if np.random.random() > self.epsilon:
+                            action = np.argmax(
+                                agent.get_action(self.current_states[index]))
+
+                        else:
+
+                            action = np.random.randint(0, self.actions_size)
+                    else:
+                        action = np.argmax(
+                            agent.get_action(self.current_states[index]))
+                    
+                            
+
+                    self.req.action = int(action)
                     
 
                     future = self.env_result_client.call_async(self.req)
@@ -181,9 +187,7 @@ class Dqn(Node):
                             (np.array(self.current_states[index]), reward, action, np.array(next_state), done))
                     self.current_states[index] = next_state
                     if (not self.test):
-                        agent.learn()
-                        agent.update_target(agent.target_actor.variables,agent.actor_model.variables, self.tau)
-                        agent.update_target(agent.target_critic.variables,agent.critic_model.variables, self.tau)
+                        agent.train(done)
 
                     if (done):
 
@@ -209,11 +213,13 @@ class Dqn(Node):
                     time.sleep(0.5)
                 i += 1
 
-            
+            if (self.epsilon > self.MIN_EPSILON) and not self.test:
+                self.epsilon *= self.EPSILON_DECAY
+                self.epsilon = max(self.MIN_EPSILON, self.epsilon)
             for index, agent in enumerate(self.agents):
                 print(f"robot -{index+1} rewards", self.rewards[index])
                 if (self.ep % 10 == 0) and not self.test:
-                    agent.save_data(self.ep,self.rewards[index])
+                    agent.save_data(self.ep, self.epsilon, self.rewards[index])
 
             # if not self.ep % AGGREGATE_STATS_EVERY or self.ep == 1:
             #      average_reward = sum(
