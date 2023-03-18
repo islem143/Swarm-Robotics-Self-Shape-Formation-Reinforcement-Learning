@@ -29,11 +29,11 @@ class ACNetwork():
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         self.upper_bound=1.5  
         self.lower_bound=-1.5 
-        self.critic_lr = 0.002
-        self.actor_lr = 0.001
-        self.critic_optimizer = tf.keras.optimizers.Adam(self.critic_lr)
-        self.actor_optimizer = tf.keras.optimizers.Adam(self.actor_lr)
-        self.optimizer = keras.optimizers.Adam(learning_rate=0.001)
+        self.critic_lr = 0.0002
+        self.actor_lr = 0.0001
+        self.critic_optimizer = tf.keras.optimizers.Adam(learning_rate=self.critic_lr)
+        self.actor_optimizer = tf.keras.optimizers.Adam(learning_rate=self.actor_lr)
+       
         if (model_load):
             self.ep = ep
             self.load_data()
@@ -46,7 +46,7 @@ class ACNetwork():
             self.target_actor = self.create_actor_model()
             self.target_critic = self.create_critic_model()
 
-            self.epsilon = 1
+  
             self.replay_memory = deque(maxlen=100_000)
             self.ep = ep
             
@@ -56,12 +56,12 @@ class ACNetwork():
         
         # to note we are having the same target of if we load the model
       
-        self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
-        self.actions_size = 5
+      
+
         self.state_size = 3
         self.discout_factor = 0.99
         self.minbatch_size = 64
-        self.MIN_REPLAY_MEMORY_SIZE = 64
+        self.MIN_REPLAY_MEMORY_SIZE =500
       
 
        
@@ -70,35 +70,57 @@ class ACNetwork():
 
     def create_actor_model(self):
         # Initialize weights between -3e-3 and 3-e3
-        last_init = tf.random_uniform_initializer(minval=-0.003, maxval=0.003)
+        last_init = tf.random_uniform_initializer(minval=-0.025, maxval=0.025)
+
 
         inputs = keras.layers.Input(shape=(3,))
-        out = keras.layers.Dense(256, activation="relu",kernel_initializer='lecun_uniform')(inputs)
-        dropout=keras.layers.Dropout(0.5)(out)
-        out = keras.layers.Dense(256, activation="relu",kernel_initializer='lecun_uniform')(dropout)
-        outputs = keras.layers.Dense(1, activation="tanh",kernel_initializer= last_init)(out)
+        out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(inputs)
+        out=keras.layers.Dropout(0.3)(out)
+        out = keras.layers.BatchNormalization()(out)
+        out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
+        out=keras.layers.Dropout(0.3)(out)
+        out = keras.layers.BatchNormalization()(out)
+        # out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
+        # out=keras.layers.Dropout(0.5)(out)
+        # out = keras.layers.BatchNormalization()(out)
+        # out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
+        # out=keras.layers.Dropout(0.5)(out)
+        # out = keras.layers.BatchNormalization()(out)
+        outputs = keras.layers.Dense(1, activation="tanh",kernel_initializer=last_init)(out)
 
-        # Our upper bound is 2.0 for Pendulum.
+        
         outputs = outputs * self.upper_bound
         model = tf.keras.Model(inputs, outputs)
         return model
     
     def create_critic_model(self):
-        last_init = tf.random_uniform_initializer(minval=-0.003, maxval=0.003)
-        state_input = keras.layers.Input(shape=(3,))
-        state_out = keras.layers.Dense(256, activation="relu",kernel_initializer='lecun_uniform')(state_input)
-        state_out = keras.layers.Dense(256, activation="relu",kernel_initializer='lecun_uniform')(state_out)
+        last_init = tf.random_uniform_initializer(minval=-0.0003, maxval=0.003)
+        state_input = keras.layers.Input(shape=(3))
+        state_out = keras.layers.Dense(16, activation="relu",kernel_initializer="he_normal")(state_input)
+        state_out = keras.layers.BatchNormalization()(state_out)
+        state_out = keras.layers.Dense(32, activation="relu",kernel_initializer="he_normal")(state_out)
+        state_out = keras.layers.BatchNormalization()(state_out)
 
             # Action as input
-        action_input = keras.layers.Input(shape=(1,))
-        action_out = keras.layers.Dense(256, activation="relu",kernel_initializer='lecun_uniform')(action_input)
-
+        action_input = keras.layers.Input(shape=(1))
+        action_out = keras.layers.Dense(32, activation="relu",kernel_initializer="he_normal")(action_input)
+        action_out =  keras.layers.BatchNormalization()(action_out)
             # Both are passed through seperate layer before concatenating
         concat = keras.layers.Concatenate()([state_out, action_out])
 
-        out = keras.layers.Dense(256, activation="relu",kernel_initializer='lecun_uniform')(concat)
-        out = keras.layers.Dense(256, activation="relu",kernel_initializer='lecun_uniform')(out)
-        outputs = keras.layers.Dense(1,kernel_initializer='lecun_uniform')(out)
+        out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(concat)
+        out=keras.layers.Dropout(0.3)(out)
+        out = keras.layers.BatchNormalization()(out)
+        out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
+        out=keras.layers.Dropout(0.3)(out)
+        out = keras.layers.BatchNormalization()(out)
+        # out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
+        # out=keras.layers.Dropout(0.5)(out)
+        # out = keras.layers.BatchNormalization()(out)
+        # out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
+        # out=keras.layers.Dropout(0.5)(out)
+        # out = keras.layers.BatchNormalization()(out)
+        outputs = keras.layers.Dense(1,kernel_initializer="he_normal")(out)
 
         # Outputs single value for give state-action
         model = tf.keras.Model([state_input, action_input], outputs)
@@ -106,30 +128,36 @@ class ACNetwork():
         return model
 
     def policy(self,state, noise_object):
+        
         sampled_actions = tf.squeeze(self.actor_model(state))
+        
         noise = noise_object()
+        
         # Adding noise to action
         sampled_actions = sampled_actions.numpy() + noise
          
         # We make sure action is within bounds
         legal_action = np.clip(sampled_actions, self.lower_bound, self.upper_bound)
-        print("state",state)
-        print("action",legal_action)
+        print(legal_action)
+
         return [np.squeeze(legal_action)]
     @tf.function
     def update(
-        self, state_batch, action_batch, reward_batch, next_state_batch,
+        self, state_batch, action_batch, reward_batch, next_state_batch,dones
     ):
             # Training and updating Actor & Critic networks.
             # See Pseudo Code.
+            
             with tf.GradientTape() as tape:
                 target_actions = self.target_actor(next_state_batch, training=True)
-                
+               
                 y = reward_batch + self.discout_factor * self.target_critic(
                     [next_state_batch, target_actions], training=True
-                )
+                )*(1-dones)
+            
                 critic_value = self.critic_model([state_batch, action_batch], training=True)
                 critic_loss = tf.math.reduce_mean(tf.math.square(y - critic_value))
+                
 
             critic_grad = tape.gradient(critic_loss, self.critic_model.trainable_variables)
             self.critic_optimizer.apply_gradients(
@@ -142,6 +170,7 @@ class ACNetwork():
                 # Used `-value` as we want to maximize the value given
                 # by the critic for our actions
                 actor_loss = -tf.math.reduce_mean(critic_value)
+         
 
             actor_grad = tape.gradient(actor_loss, self.actor_model.trainable_variables)
             self.actor_optimizer.apply_gradients(
@@ -150,6 +179,7 @@ class ACNetwork():
 
     @tf.function
     def update_target(self,target_weights, weights, tau):
+  
      for (a, b) in zip(target_weights, weights):
         a.assign(b * tau + a * (1 - tau))
 
@@ -159,17 +189,21 @@ class ACNetwork():
     def learn(self):
         if (self.MIN_REPLAY_MEMORY_SIZE > len(self.replay_memory)):
             return
-    
+        # mean=np.mean(np.array(self.replay_memory,dtype=np.float32),axis=1)
+        # std = np.std(np.array(self.replay_memory,dtype=np.float32), axis=1)
+        # print("mean",std)  
+     
         minibatch = random.sample(self.replay_memory, self.minbatch_size)
 
-        state_batch = tf.convert_to_tensor([batch[0] for batch in minibatch])
-        reward_batch = tf.convert_to_tensor([batch[1] for batch in minibatch])
-        action_batch = tf.convert_to_tensor([batch[2] for batch in minibatch])
-        next_state_batch = tf.convert_to_tensor([batch[3] for batch in minibatch])
-        
+        state_batch = tf.convert_to_tensor([np.array(batch[0],dtype=np.float32) for batch in minibatch])
+        reward_batch = tf.convert_to_tensor([np.array(batch[1],dtype=np.float32) for batch in minibatch])
+        reward_batch = tf.cast(reward_batch, dtype=tf.float32)
+        action_batch = tf.convert_to_tensor([np.array(batch[2],dtype=np.float32) for batch in minibatch])
+        next_state_batch = tf.convert_to_tensor([np.array(batch[3],dtype=np.float32) for batch in minibatch])
+        dones = tf.convert_to_tensor([np.array(batch[4],dtype=np.float32) for batch in minibatch])
        
 
-        self.update(state_batch, action_batch, reward_batch, next_state_batch)
+        self.update(state_batch, action_batch, reward_batch, next_state_batch,dones)
 
     def load_data(self):
         self.actor_model = self.create_actor_model()
@@ -186,7 +220,7 @@ class ACNetwork():
         self.target_critic = Utils.load_model(self.target_critic, path4)
 
     
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj"))
+        path = os.path.join(self.dir_path, self.get_model_file_name("obj","None"))
         self.replay_memory = Utils.load_pickle(path)
 
     def get_epsilon(self):

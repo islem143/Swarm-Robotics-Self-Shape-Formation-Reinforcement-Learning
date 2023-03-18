@@ -180,6 +180,7 @@ class Dqn(Node):
                         agent.update_replay_buffer(
                             (np.array(self.current_states[index]), reward, action, np.array(next_state), done))
                     self.current_states[index] = next_state
+                    
                     if (not self.test):
                         agent.learn()
                         agent.update_target(agent.target_actor.variables,agent.actor_model.variables, self.tau)
@@ -196,10 +197,10 @@ class Dqn(Node):
                         # done=False
                         break
 
-                    time.sleep(0.02)
-
+                    time.sleep(0.01)
+               
                 if (i == self.steps_per_episode  and not self.test):
-
+                   
                     done = True
                     req = Empty.Request()
                     while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
@@ -212,7 +213,7 @@ class Dqn(Node):
             
             for index, agent in enumerate(self.agents):
                 print(f"robot -{index+1} rewards", self.rewards[index])
-                if (self.ep % 10 == 0) and not self.test:
+                if (self.ep % 100 == 0) and not self.test:
                     agent.save_data(self.ep,self.rewards[index])
 
             # if not self.ep % AGGREGATE_STATS_EVERY or self.ep == 1:

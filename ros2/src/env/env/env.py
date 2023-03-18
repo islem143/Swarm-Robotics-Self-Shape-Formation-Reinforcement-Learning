@@ -5,7 +5,7 @@ from nav_msgs.msg import Odometry
 from std_msgs.msg import String
 from sensor_msgs.msg import LaserScan
 import numpy as np
-
+import math
 
 from geometry_msgs.msg import Twist
 from rclpy.qos import QoSProfile
@@ -262,15 +262,20 @@ class Env(Node):
         if (id == 1):
             distance = self.get_distance_to_goal(self.goal_cord,1)
             
-            reward = 1/(distance*self.goal_angle)
+            #reward = 1/(distance*self.goal_angle)
+            if(distance<0.5):
+                reward+=10
+            else:
+                reward-=1    
             #reward += 2*(1/self.goal_angle)
                
-            # if (self.goal_angle < 0.25):
-            #     reward += 10
-                
+            if (self.goal_angle < 0.25):
+                reward += 10
+            else:
+                reward-=1    
             if (self.crash()):
-                print(f"get reward of -100 {id}")
-                reward -= -100
+                print(f"get reward of -10 {id}")
+                reward -= 100
             if (self.goal_reached_local(self.goal_cord,1)):
                 reward += 100
                 self.stop_robot()
@@ -310,9 +315,9 @@ class Env(Node):
         l = list()
         if (id == 1):
 
-            l.append(self.get_distance_to_goal(self.goal_cord,1))
-            l.append(float(self.min_lds_dist))
-            l.append(float(self.goal_angle))
+            l.append(float(round(self.get_distance_to_goal(self.goal_cord,1),5)))
+            l.append(float(round(self.min_lds_dist,5)))
+            l.append(float(round(self.goal_angle,5)))
             return l
         else:
             l.append(self.get_distance_to_goal(self.goal_cord2,2))
