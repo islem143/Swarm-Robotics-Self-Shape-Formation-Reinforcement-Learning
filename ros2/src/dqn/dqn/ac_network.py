@@ -74,11 +74,11 @@ class ACNetwork():
 
 
         inputs = keras.layers.Input(shape=(3,))
-        out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(inputs)
-        out=keras.layers.Dropout(0.3)(out)
+        out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(inputs)
+        out=keras.layers.Dropout(0.5)(out)
         out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
-        out=keras.layers.Dropout(0.3)(out)
+        out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(out)
+        out=keras.layers.Dropout(0.5)(out)
         out = keras.layers.BatchNormalization()(out)
         # out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
         # out=keras.layers.Dropout(0.5)(out)
@@ -108,11 +108,11 @@ class ACNetwork():
             # Both are passed through seperate layer before concatenating
         concat = keras.layers.Concatenate()([state_out, action_out])
 
-        out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(concat)
-        out=keras.layers.Dropout(0.3)(out)
+        out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(concat)
+        out=keras.layers.Dropout(0.5)(out)
         out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
-        out=keras.layers.Dropout(0.3)(out)
+        out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(out)
+        out=keras.layers.Dropout(0.5)(out)
         out = keras.layers.BatchNormalization()(out)
         # out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
         # out=keras.layers.Dropout(0.5)(out)
