@@ -29,8 +29,8 @@ class ACNetwork():
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         self.upper_bound=1.5  
         self.lower_bound=-1.5 
-        self.critic_lr = 0.0002
-        self.actor_lr = 0.0001
+        self.critic_lr = 0.00025
+        self.actor_lr = 0.00015
         self.critic_optimizer = tf.keras.optimizers.Adam(learning_rate=self.critic_lr)
         self.actor_optimizer = tf.keras.optimizers.Adam(learning_rate=self.actor_lr)
        
@@ -47,7 +47,16 @@ class ACNetwork():
             self.target_critic = self.create_critic_model()
 
   
-            self.replay_memory = deque(maxlen=100_000)
+            #self.replay_memory = deque(maxlen=100_000)
+            self.buffer_counter = 0
+            self.buffer_capacity=100_000
+            # Instead of list of tuples as the exp.replay concept go
+            # We use different np.arrays for each tuple element
+            self.state_buffer = np.zeros((self.buffer_capacity, 3))
+            self.action_buffer = np.zeros((self.buffer_capacity,1))
+            self.reward_buffer = np.zeros((self.buffer_capacity, 1))
+            self.next_state_buffer = np.zeros((self.buffer_capacity,3))
+            self.dones = np.zeros((self.buffer_capacity,1))
             self.ep = ep
             
         ep_rewards=[]  
@@ -60,8 +69,8 @@ class ACNetwork():
 
         self.state_size = 3
         self.discout_factor = 0.99
-        self.minbatch_size = 64
-        self.MIN_REPLAY_MEMORY_SIZE =500
+        self.minbatch_size = 500
+        self.MIN_REPLAY_MEMORY_SIZE =64
       
 
        
@@ -70,7 +79,7 @@ class ACNetwork():
 
     def create_actor_model(self):
         # Initialize weights between -3e-3 and 3-e3
-        last_init = tf.random_uniform_initializer(minval=-0.025, maxval=0.025)
+        last_init = tf.random_uniform_initializer(minval=-0.0003, maxval=0.0003)
 
 
         inputs = keras.layers.Input(shape=(3,))
@@ -80,12 +89,12 @@ class ACNetwork():
         out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(out)
         out=keras.layers.Dropout(0.5)(out)
         out = keras.layers.BatchNormalization()(out)
-        # out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
-        # out=keras.layers.Dropout(0.5)(out)
-        # out = keras.layers.BatchNormalization()(out)
-        # out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
-        # out=keras.layers.Dropout(0.5)(out)
-        # out = keras.layers.BatchNormalization()(out)
+        out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(out)
+        out=keras.layers.Dropout(0.5)(out)
+        out = keras.layers.BatchNormalization()(out)
+        out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(out)
+        out=keras.layers.Dropout(0.5)(out)
+        out = keras.layers.BatchNormalization()(out)
         outputs = keras.layers.Dense(1, activation="tanh",kernel_initializer=last_init)(out)
 
         
@@ -114,12 +123,12 @@ class ACNetwork():
         out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(out)
         out=keras.layers.Dropout(0.5)(out)
         out = keras.layers.BatchNormalization()(out)
-        # out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
-        # out=keras.layers.Dropout(0.5)(out)
-        # out = keras.layers.BatchNormalization()(out)
-        # out = keras.layers.Dense(256, activation="relu",kernel_initializer="he_normal")(out)
-        # out=keras.layers.Dropout(0.5)(out)
-        # out = keras.layers.BatchNormalization()(out)
+        out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(out)
+        out=keras.layers.Dropout(0.5)(out)
+        out = keras.layers.BatchNormalization()(out)
+        out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(out)
+        out=keras.layers.Dropout(0.5)(out)
+        out = keras.layers.BatchNormalization()(out)
         outputs = keras.layers.Dense(1,kernel_initializer="he_normal")(out)
 
         # Outputs single value for give state-action
@@ -128,13 +137,13 @@ class ACNetwork():
         return model
 
     def policy(self,state, noise_object):
-        
+        print(state)
         sampled_actions = tf.squeeze(self.actor_model(state))
-        
+        print("samlple",sampled_actions)
         noise = noise_object()
         
         # Adding noise to action
-        sampled_actions = sampled_actions.numpy() + noise
+        sampled_actions = sampled_actions.numpy() + 0
          
         # We make sure action is within bounds
         legal_action = np.clip(sampled_actions, self.lower_bound, self.upper_bound)
@@ -153,11 +162,13 @@ class ACNetwork():
                
                 y = reward_batch + self.discout_factor * self.target_critic(
                     [next_state_batch, target_actions], training=True
-                )*(1-dones)
-            
+                )
+                
+                
                 critic_value = self.critic_model([state_batch, action_batch], training=True)
                 critic_loss = tf.math.reduce_mean(tf.math.square(y - critic_value))
-                
+
+               
 
             critic_grad = tape.gradient(critic_loss, self.critic_model.trainable_variables)
             self.critic_optimizer.apply_gradients(
@@ -184,25 +195,36 @@ class ACNetwork():
         a.assign(b * tau + a * (1 - tau))
 
     def update_replay_buffer(self, sample):
-        self.replay_memory.append(sample)
+        self.buffer_counter+=1
+
+        index = self.buffer_counter % self.buffer_capacity
+
+        self.state_buffer[index] = sample[0]
+        self.reward_buffer[index] = sample[1]
+        self.action_buffer[index] = sample[2]
+        self.next_state_buffer[index] = sample[3]
+        self.dones[index]=sample[4]
 
     def learn(self):
-        if (self.MIN_REPLAY_MEMORY_SIZE > len(self.replay_memory)):
+        if (self.MIN_REPLAY_MEMORY_SIZE > self.buffer_counter):
             return
+        
         # mean=np.mean(np.array(self.replay_memory,dtype=np.float32),axis=1)
         # std = np.std(np.array(self.replay_memory,dtype=np.float32), axis=1)
         # print("mean",std)  
      
-        minibatch = random.sample(self.replay_memory, self.minbatch_size)
-
-        state_batch = tf.convert_to_tensor([np.array(batch[0],dtype=np.float32) for batch in minibatch])
-        reward_batch = tf.convert_to_tensor([np.array(batch[1],dtype=np.float32) for batch in minibatch])
+        record_range = min(self.buffer_counter, self.buffer_capacity)
+        # Randomly sample indices
+        batch_indices = np.random.choice(record_range, self.minbatch_size)
+   
+        # Convert to tensors
+        state_batch = tf.convert_to_tensor(self.state_buffer[batch_indices])
+        action_batch = tf.convert_to_tensor(self.action_buffer[batch_indices])
+        reward_batch = tf.convert_to_tensor(self.reward_buffer[batch_indices])
         reward_batch = tf.cast(reward_batch, dtype=tf.float32)
-        action_batch = tf.convert_to_tensor([np.array(batch[2],dtype=np.float32) for batch in minibatch])
-        next_state_batch = tf.convert_to_tensor([np.array(batch[3],dtype=np.float32) for batch in minibatch])
-        dones = tf.convert_to_tensor([np.array(batch[4],dtype=np.float32) for batch in minibatch])
-       
-
+        next_state_batch = tf.convert_to_tensor(self.next_state_buffer[batch_indices])
+        dones = tf.convert_to_tensor(self.dones[batch_indices])
+        
         self.update(state_batch, action_batch, reward_batch, next_state_batch,dones)
 
     def load_data(self):
@@ -220,8 +242,8 @@ class ACNetwork():
         self.target_critic = Utils.load_model(self.target_critic, path4)
 
     
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","None"))
-        self.replay_memory = Utils.load_pickle(path)
+        # path = os.path.join(self.dir_path, self.get_model_file_name("obj","None"))
+        # self.replay_memory = Utils.load_pickle(path)
 
     def get_epsilon(self):
         return self.epsilon
@@ -236,6 +258,7 @@ class ACNetwork():
         target_actor = copy(self.target_actor)
         critic = copy(self.critic_model)
         target_critic = copy(self.target_critic)
+        #fix this the loss function
         actor.compile(optimizer=self.actor_optimizer, loss=loss_function)
         target_actor.compile(optimizer=self.actor_optimizer, loss=loss_function)
         critic.compile(optimizer=self.critic_optimizer, loss=loss_function)
@@ -248,8 +271,8 @@ class ACNetwork():
         data = {"reward":reward}
         Utils.save_json(path, data)
        
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj"))
-        Utils.save_pickle(path, self.replay_memory)
+        # path = os.path.join(self.dir_path, self.get_model_file_name("obj"))
+        # Utils.save_pickle(path, self.replay_memory)
 
     def get_model_file_name(self, type,ext=None):
         return f"models-{self.name}/my-model-{self.ep}-{ext}.{type}"

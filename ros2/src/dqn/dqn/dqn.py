@@ -72,9 +72,9 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep =0
-        self.test=False
-        self.agents = [ACNetwork("robot-1",False, self.ep)]
+        self.ep =150
+        self.test=True
+        self.agents = [ACNetwork("robot-1",True, self.ep)]
         
 
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
@@ -178,7 +178,7 @@ class Dqn(Node):
 
                         self.rewards[index] += reward
                         agent.update_replay_buffer(
-                            (np.array(self.current_states[index]), reward, action, np.array(next_state), done))
+                            (self.current_states[index], reward, action, next_state, done))
                     self.current_states[index] = next_state
                     
                     if (not self.test):
@@ -213,7 +213,7 @@ class Dqn(Node):
             
             for index, agent in enumerate(self.agents):
                 print(f"robot -{index+1} rewards", self.rewards[index])
-                if (self.ep % 100 == 0) and not self.test:
+                if (self.ep % 50 == 0) and not self.test:
                     agent.save_data(self.ep,self.rewards[index])
 
             # if not self.ep % AGGREGATE_STATS_EVERY or self.ep == 1:

@@ -262,22 +262,22 @@ class Env(Node):
         if (id == 1):
             distance = self.get_distance_to_goal(self.goal_cord,1)
             
-            #reward = 1/(distance*self.goal_angle)
+            #reward = (1/(distance*self.goal_angle))
             if(distance<0.5):
                 reward+=10
             else:
-                reward-=1    
-            #reward += 2*(1/self.goal_angle)
+                reward-=0.5    
+          
                
-            if (self.goal_angle < 0.25):
+            if (self.goal_angle < 0.20):
                 reward += 10
             else:
-                reward-=1    
+                reward-=0.5    
             if (self.crash()):
-                print(f"get reward of -10 {id}")
-                reward -= 100
+                print(f"get reward of -200 {id}")
+                reward -= 200
             if (self.goal_reached_local(self.goal_cord,1)):
-                reward += 100
+                reward += 200
                 self.stop_robot()
                
 
@@ -315,9 +315,9 @@ class Env(Node):
         l = list()
         if (id == 1):
 
-            l.append(float(round(self.get_distance_to_goal(self.goal_cord,1),5)))
-            l.append(float(round(self.min_lds_dist,5)))
-            l.append(float(round(self.goal_angle,5)))
+            l.append(float(self.get_distance_to_goal(self.goal_cord,1)))
+            l.append(float(self.min_lds_dist))
+            l.append(float(self.goal_angle))
             return l
         else:
             l.append(self.get_distance_to_goal(self.goal_cord2,2))
