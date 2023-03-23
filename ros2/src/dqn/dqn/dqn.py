@@ -72,7 +72,7 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep =200
+        self.ep =300
         self.test=True
         self.agents = [Network("robot-1",True, self.ep),
                      ]

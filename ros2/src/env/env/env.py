@@ -66,8 +66,6 @@ class Env(Node):
         self.position_y = msg.pose.pose.position.y
         self.angle = self.euler_from_quaternion(msg.pose.pose.orientation)[2]
         self.goal_angle = self.get_goal_angle(self.goal_cord)
-        
-     
        
 
     def get_current_position2(self, msg):
@@ -327,11 +325,11 @@ class Env(Node):
                 self.reset_sim_client.call_async(req)
             self.steps += 1
             return l
-        else:
-            l.append(self.get_distance_to_goal(self.goal_cord2,2))
-            l.append(float(self.min_lds_dist2))
-            l.append(float(self.goal_angle2))
-            return l
+        # else:
+        #     l.append(self.get_distance_to_goal(self.goal_cord2,2))
+        #     l.append(float(self.min_lds_dist2))
+        #     l.append(float(self.goal_angle2))
+        #     return l
 
 
 def main(args=None):
