@@ -19,8 +19,8 @@ from keras.callbacks import TensorBoard
 import random
 import time
 from std_srvs.srv import Empty
-from .dqn_network import Network
-
+from .ac_network import ACNetwork
+from .ouNoise import OUActionNoise
 AGGREGATE_STATS_EVERY = 5
 
 # class ClearMemory(Callback):
@@ -72,11 +72,10 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep =200
-        self.test=True
-        self.agents = [Network("robot-1",True, self.ep),
-                     ]
-        self.epsilon = self.agents[0].get_epsilon()
+        self.ep =0
+        self.test=False
+        self.agents = [ACNetwork("robot-1",False, self.ep)]
+        
 
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
@@ -89,16 +88,22 @@ class Dqn(Node):
         self.current_states = [0, 0]
         #self.epsilon = 1
         #self.EPSILON_DECAY = 0.992
-        self.EPSILON_DECAY = 0.99
-        self.MIN_EPSILON = 0.1
+        self.EPSILON_DECAY = 0.992
+        self.MIN_EPSILON = 0.2
         self.MIN_REPLAY_MEMORY_SIZE = 1000
         self.env_result_client = self.create_client(Dqnn, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = False
+        std_dev = 0.2
+ 
+        self.tau=0.001
+
+        self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(std_dev) * np.ones(1))
         # self.tensorboard = ModifiedTensorBoard(
         #     log_dir="logs/{}-{}".format(MODEL_NAME, int(time.time())))
 
         self.start()
+
     def get_init_state(self):
      for index, agent in enumerate(self.agents):
         self.req = Dqnn.Request()
@@ -117,55 +122,40 @@ class Dqn(Node):
                         self.get_logger().error(
                             'Exception while calling service: {0}'.format(future.exception()))
                     break 
+        
+               
     def start(self):
 
         for _ in range(self.episode_length):
-            time.sleep(1)
             if (psutil.virtual_memory().percent > 92):
                 self.stop = True
                 print("finished")
                 sys.exit()
 
                 break
-            self.get_init_state()
-            self.ep += 1
             print("ep=", self.ep)
+            time.sleep(1)
+            i = 0
+            # ep_reward=0
+            self.ep += 1
             self.rewards = [0 for _ in range(len(self.agents))]
-            done=False
+            self.get_init_state()
 
+            done=False
             while not done:
 
-                # while not self.env_result_client.wait_for_service(timeout_sec=1.0):
-                #     self.get_logger().info('service not available, waiting again...')
-
+        
+   
                 for index, agent in enumerate(self.agents):
                     reward = 0
+                   
                     self.req = Dqnn.Request()
                     self.req.init = False
                     self.req.id = index+1
+                    state = tf.expand_dims(tf.convert_to_tensor(self.current_states[index]), 0)
+                    action = agent.policy(state, self.ou_noise)
                   
-                    if (not self.test):
-                        if np.random.random() > self.epsilon:
-                            action = np.argmax(
-                                agent.get_action(self.current_states[index]))
-                            print(action)
-                            
-                            
-
-                        else:
-
-                            action = np.random.randint(0, self.actions_size)
-                           
-                            
-                    else:
-                        action = np.argmax(
-                            agent.get_action(self.current_states[index]))
-                    
-                   
-                  
-                            
-
-                    self.req.action = float(action)
+                    self.req.action = float(action[0])
                     
 
                     future = self.env_result_client.call_async(self.req)
@@ -191,25 +181,41 @@ class Dqn(Node):
                         agent.update_replay_buffer(
                             (self.current_states[index], reward, action, next_state, done))
                     self.current_states[index] = next_state
-                    if (not self.test):
-                        agent.train(done)
-
                     
+                    if (not self.test):
+                        agent.learn()
+                        agent.update_target(agent.target_actor.variables,agent.actor_model.variables, self.tau)
+                        agent.update_target(agent.target_critic.variables,agent.critic_model.variables, self.tau)
 
-                    time.sleep(0.02)
+                    if (done):
 
-                
-                
+                        req = Empty.Request()
+                        while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
+                            self.get_logger().info('service not available, waiting again...')
 
-            if (self.epsilon > self.MIN_EPSILON) and not self.test:
-                self.epsilon *= self.EPSILON_DECAY
-                self.epsilon = max(self.MIN_EPSILON, self.epsilon)
-                 
+                        self.reset_sim_client.call_async(req)
+                        time.sleep(0.5)
+                        # done=False
+                        break
+
+                    time.sleep(0.01)
+               
+                if (i == self.steps_per_episode  and not self.test):
+                   
+                    done = True
+                    req = Empty.Request()
+                    while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
+                        self.get_logger().info('service not available, waiting again...')
+
+                    self.reset_sim_client.call_async(req)
+                    time.sleep(0.5)
+                i += 1
+
+            
             for index, agent in enumerate(self.agents):
                 print(f"robot -{index+1} rewards", self.rewards[index])
-                if (self.ep % 10 == 0 and self.ep!=0) and not self.test:
-                    agent.save_data(self.ep, self.epsilon, self.rewards[index])
-                   
+                if (self.ep % 50 == 0) and not self.test:
+                    agent.save_data(self.ep,self.rewards[index])
 
             # if not self.ep % AGGREGATE_STATS_EVERY or self.ep == 1:
             #      average_reward = sum(

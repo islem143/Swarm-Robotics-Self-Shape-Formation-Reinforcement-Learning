@@ -9,6 +9,12 @@ import os
 from copy import copy
 
 from rclpy.node import Node
+physical_devices = tf.config.list_physical_devices('GPU')
+try:
+    tf.config.experimental.set_memory_growth(physical_devices[0], True)
+except:
+    # Invalid device or cannot modify virtual devices once initialized.
+    pass
 
 
 loss_function = keras.losses.Huber()
@@ -30,7 +36,7 @@ class Network:
             self.ep = ep
         ep_rewards=[]    
         #learning_rate=0.00025
-        self.optimizer = keras.optimizers.Adam(learning_rate=0.0001) 
+        self.optimizer = keras.optimizers.Adam(learning_rate=0.001) 
         # to note we are having the same target of if we load the model
         self.target_model = self.model
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
@@ -49,26 +55,26 @@ class Network:
 
         inputs = keras.layers.Input(shape=(3,))
 
-        out = keras.layers.Dense(
-            128, activation="relu", kernel_initializer='glorot_normal')(inputs)
+        layer1 = keras.layers.Dense(
+            64, activation="relu", kernel_initializer='lecun_uniform')(inputs)
 
-        out = keras.layers.Dropout(0.2)(out)
-        out = keras.layers.Dense(
-            128,  activation="relu" ,kernel_initializer='glorot_normal')(out)
-        out = keras.layers.Dropout(0.2)(out)
-        
+        dropout = keras.layers.Dropout(0.2)(layer1)
+        layer2 = keras.layers.Dense(
+            64,  activation="relu" ,kernel_initializer='lecun_uniform')(dropout)
+        dropout = keras.layers.Dropout(0.2)(layer2)
+        layer3 = keras.layers.Dense(
+            64,  activation="relu" ,kernel_initializer='lecun_uniform')(dropout)
         action = keras.layers.Dense(
-            5, activation="linear")(out)
+            5, activation="linear" ,kernel_initializer='lecun_uniform')(layer3)
 
         return keras.Model(inputs=inputs, outputs=action)
 
     def get_action(self, state):
     
-        state = np.array(state, dtype=np.float32)
+        state = np.array(state, dtype=np.float64)
         state = tf.expand_dims(tf.convert_to_tensor(state), 0)
-        action=self.model(state)
-       
-        return action
+
+        return self.model.predict(state, verbose=0)
 
     def update_replay_buffer(self, sample):
         self.replay_memory.append(sample)
@@ -79,29 +85,25 @@ class Network:
     
         minibatch = random.sample(self.replay_memory, self.minbatch_size)
 
-        current_states = tf.convert_to_tensor(np.array([batch[0] for batch in minibatch]))
-        rewards = tf.convert_to_tensor(np.array([batch[1] for batch in minibatch]))
-        rewards = tf.cast(rewards, dtype=tf.float32)
-        actions = tf.convert_to_tensor(np.array([batch[2] for batch in minibatch]))
-        next_states = tf.convert_to_tensor(np.array([batch[3] for batch in minibatch]))
-        dones =tf.convert_to_tensor( np.array([float(batch[4]) for batch in minibatch]))
-        dones = tf.cast(dones, dtype=tf.float32)
-        next_q_values = self.target_model(next_states,training=True)
-        
+        current_states = np.array([batch[0] for batch in minibatch])
+        rewards = np.array([batch[1] for batch in minibatch])
+        actions = np.array([batch[2] for batch in minibatch])
+        next_states = np.array([batch[3] for batch in minibatch])
+        dones = np.array([float(batch[4]) for batch in minibatch])
+        next_q_values = self.target_model.predict(next_states, verbose=0)
         updated_q_values = rewards+self.discout_factor * \
             tf.reduce_max(next_q_values, axis=1)*(1.0-dones)
         masks = tf.one_hot(actions, self.actions_size)
-       
+
         with tf.GradientTape() as tape:
             # Train the model on the states and updated Q-values
-            q_values = self.model(current_states,training=True)
+            q_values = self.model(current_states)
 
             # Apply the masks to the Q-values to get the Q-value for action taken
             q_action = tf.reduce_sum(tf.multiply(q_values, masks), axis=1)
             
             # Calculate loss between new Q-value and old Q-value
             loss = loss_function(updated_q_values, q_action)
-            
 
             # Backpropagation
             grads = tape.gradient(loss, self.model.trainable_variables)
@@ -142,4 +144,4 @@ class Network:
         Utils.save_pickle(path, self.replay_memory)
 
     def get_model_file_name(self, type):
-        return f"models-{self.name}/my-model-{self.ep}.{type}"
+        return f"models-{self.name}/my-model-{self.ep}.{type}

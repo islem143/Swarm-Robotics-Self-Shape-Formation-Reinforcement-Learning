@@ -1,5 +1,4 @@
 import tensorflow as tf
+import numpy as np
 
-actions=[1,2,0,3,5,0]
-masks = tf.one_hot(actions, 5)
-print(masks)
+print(1e-3)
