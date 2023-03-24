@@ -36,7 +36,7 @@ class Network:
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
         self.state_size = 3
-        self.discout_factor = 0.99
+        self.discout_factor = 0.993
         self.minbatch_size = 64
         self.MIN_REPLAY_MEMORY_SIZE = 1000
 
