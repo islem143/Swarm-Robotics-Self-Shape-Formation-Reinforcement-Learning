@@ -17,6 +17,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Goal.msg"
   "srv/Dqnn.srv"
   "srv/Goal.srv"
+  "srv/Mdqn.srv"
+
 
 )
 if(BUILD_TESTING)

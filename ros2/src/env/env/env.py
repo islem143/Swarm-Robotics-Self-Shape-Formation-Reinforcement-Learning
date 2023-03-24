@@ -12,7 +12,9 @@ from rclpy.qos import QoSProfile
 from std_srvs.srv import Empty
 
 from dqn_msg.srv import Dqnn
-from dqn_msg.msg import Goal
+
+from dqn_msg.srv import Mdqn
+from dqn_msg.srv import Goal
 import time
 
 
@@ -20,131 +22,100 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.get_odom = self.create_subscription(
-            Odometry, "/t1/odom", self.get_current_position, 10)
-        self.get_laser = self.create_subscription(
-            LaserScan, "/t1/scan", self.get_lds, 10)
-        self.cmd_vel_pub = self.create_publisher(Twist, '/t1/cmd_vel', 10)
-        self.get_odom2 = self.create_subscription(
-            Odometry, "/t2/odom", self.get_current_position2, 10)
-        self.get_laser2 = self.create_subscription(
-            LaserScan, "/t2/scan", self.get_lds2, 10)
-        self.cmd_vel_pub2 = self.create_publisher(Twist, '/t2/cmd_vel', 10)
+        self.num_agents = 2
+     
+        self.cmd_vel_pub = {}
+
+        self.create_subscription(
+                Odometry, f"/t1/odom", self.get_current_position, 10)
+        self.create_subscription(
+                Odometry, f"/t2/odom", self.get_current_position2, 10)
+             
+        self.create_subscription(
+                LaserScan, f"/t1/scan", self.get_lds, 10)
+        self.create_subscription(
+                LaserScan, f"/t2/scan", self.get_lds2, 10)
+        for i in range(self.num_agents):
+            self.cmd_vel_pub[i] = self.create_publisher(
+                    Twist, f'/t{i+1}/cmd_vel', 10)
 
         self.env_result_service = self.create_service(
-            Dqnn, "env_result", self.step)
-        # self.env_goal_service = self.create_service(
-        #     Goal, "goal_pose", self.generate_goal_pose)
+            Mdqn, "env_result", self.step)
+        self.env_goal_service = self.create_service(
+            Goal, "goal_pose", self.generate_goal_pose)
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
-        self.goal_cord = [0.0, 0.0]
-        self.goal_cord2 = [0.01, 0.01-1]
-        self.done = False
-        self.goal_publisher=self.create_publisher(Goal,"generate_goal",10)
+
+        self.goal_cords = [[0.0, 0.0], [0.0, -1.0]]
+        self.dones = [False for _ in range(self.num_agents)]
+
         self.steps = 0
-        self.position_x = 0
-
-        self.position_y = 0
-        self.position_x2 = 0
-        self.position_y2 = 0
-        self.angle = 0
-        self.angle2 = 0
-        self.goal_angle = 0
-        self.goal_angle2 = 0
-        self.init_position = [-1.5, 1.2]
-        
-       # self.stop_robot()
-
-    # def check(self):
-    #     if (self.done):
-    #         time.sleep(2)
-    #         self.call_reset_sim()
-    #         self.done = False
-
-    def get_current_position(self, msg):
-
-        self.position_x = msg.pose.pose.position.x
-        self.position_y = msg.pose.pose.position.y
-        self.angle = self.euler_from_quaternion(msg.pose.pose.orientation)[2]
-        self.goal_angle = self.get_goal_angle(self.goal_cord)
-        
-        
+        self.fails = [False for _ in range(self.num_agents)]
+     
+        self.succeses =  [False for _ in range(self.num_agents)]
+        self.positions = [[0,0] for _ in range(self.num_agents)]
+        self.min_ldss_dist=[0.0 for _ in range(self.num_agents)]
+        self.min_ldss_angle=[0.0 for _ in range(self.num_agents)]
+        self.angles = [0.0 for _ in range(self.num_agents)]
+        self.goal_angles = [0.0 for _ in range(self.num_agents)]
+        self.init_positions = [[0,0] for _ in range(self.num_agents)]
        
 
+    def get_current_position(self, msg):
+        self.positions[0]=[msg.pose.pose.position.x,msg.pose.pose.position.y]
+        self.angles[0]=self.euler_from_quaternion(msg.pose.pose.orientation)[2]
+        self.goal_angles[0]=self.get_goal_angle(0)
+       
+   
     def get_current_position2(self, msg):
-        self.position_x2 = msg.pose.pose.position.x
-        self.position_y2 = msg.pose.pose.position.y
-        self.angle2 = self.euler_from_quaternion(msg.pose.pose.orientation)[2]
-        self.goal_angle2 = self.get_goal_angle2(
-            self.goal_cord2)
+        self.positions[1]=[msg.pose.pose.position.x,msg.pose.pose.position.y]
+        self.angles[1]=self.euler_from_quaternion(msg.pose.pose.orientation)[2]
+        self.goal_angles[1]=self.get_goal_angle(1)
 
     def get_lds(self, msg):
 
-        self.min_lds_dist = np.min(msg.ranges)
-
-        if (self.min_lds_dist == np.Inf):
-            self.min_lds_dist = float(4)
-       #self.min_lds_angle = np.argmin(msg.ranges)
+      
+        self.min_ldss_dist[0]=np.min(msg.ranges)
+        if (self.min_ldss_dist[0] == np.Inf):
+            self.min_ldss_dist[0] = float(4)
+        self.min_ldss_angle[0] = np.argmin(msg.ranges)
 
     def get_lds2(self, msg):
 
-        self.min_lds_dist2 = np.min(msg.ranges)
-        if (self.min_lds_dist2 == np.Inf):
-            self.min_lds_dist2 = float(4)
+      
+        self.min_ldss_dist[1]=np.min(msg.ranges)
+        if (self.min_ldss_dist[0] == np.Inf):
+            self.min_ldss_dist[1] = float(4)
+        self.min_ldss_angle[1] = np.argmin(msg.ranges)
 
-    def get_goal_angle(self, goal):
-        if (self.position_x > goal[0] and self.position_y > goal[1]):
+    def get_goal_angle(self,index):
+        if (self.positions[index][0] > self.goal_cords[index][0] and self.positions[index][1] > self.goal_cords[index][1]):
 
-            return np.abs(self.angle-(np.arctan2(np.abs(self.position_y-goal[1]), np.abs(self.position_x-goal[0]))-np.pi))
-        elif (self.position_x < goal[0] and self.position_y < goal[1]):
-            return np.abs(self.angle-(np.arctan2(np.abs(self.position_y-goal[1]), np.abs(self.position_x-goal[0]))))
-        elif (self.position_x > goal[0] and self.position_y < goal[1]):
-            return np.abs(self.angle-(np.arctan2(np.abs(self.position_x-goal[0]), np.abs(self.position_y-goal[1]))+np.pi/2))
+            return np.abs(self.angles[index]-(np.arctan2(np.abs(self.positions[index][1]-self.goal_cords[index][1]), np.abs(self.positions[index][0]-self.goal_cords[index][0]))-np.pi))
+        elif (self.positions[index][0] < self.goal_cords[index][0] and self.positions[index][1] < self.goal_cords[index][1]):
+            return np.abs(self.angles[index]-(np.arctan2(np.abs(self.positions[index][1]-self.goal_cords[index][1]), np.abs(self.positions[index][0]-self.goal_cords[index][0]))))
+        elif (self.positions[index][0] > self.goal_cords[index][0] and self.positions[index][1] < self.goal_cords[index][1]):
+            return np.abs(self.angles[index]-(np.arctan2(np.abs(self.positions[index][0]-self.goal_cords[index][0]), np.abs(self.positions[index][1]-self.goal_cords[index][1]))+np.pi/2))
         else:
-            return np.abs(self.angle-(np.arctan2(np.abs(self.position_x-goal[0]), np.abs(self.position_y-goal[1]))-np.pi/2))
-
-    def get_goal_angle2(self, goal):
-        if (self.position_x2 > goal[0] and self.position_y2 > goal[1]):
-
-            return np.abs(self.angle2-(np.arctan2(np.abs(self.position_y2-goal[1]), np.abs(self.position_x2-goal[0]))-np.pi))
-        elif (self.position_x2 < goal[0] and self.position_y2 < goal[1]):
-            return np.abs(self.angle2-(np.arctan2(np.abs(self.position_y2-goal[1]), np.abs(self.position_x2-goal[0]))))
-        elif (self.position_x2 > goal[0] and self.position_y2 < goal[1]):
-            return np.abs(self.angle2-(np.arctan2(np.abs(self.position_x2-goal[0]), np.abs(self.position_y2-goal[1]))+np.pi/2))
-        else:
-            return np.abs(self.angle2-(np.arctan2(np.abs(self.position_x2-goal[0]), np.abs(self.position_y2-goal[1]))-np.pi/2))
-
-    def init_robot(self):
+            return np.abs(self.angles[index]-(np.arctan2(np.abs(self.positions[index][0]-self.goal_cords[index][0]), np.abs(self.positions[index][1]-self.goal_cords[index][1]))-np.pi/2))
+   
+    def init_robots(self,index):
 
         twist = Twist()
         twist.linear.x = 0.3
-
-        self.cmd_vel_pub.publish(twist)
-
-    def init_robot2(self):
-
-        twist = Twist()
-        twist.linear.x = 0.3
-        self.cmd_vel_pub2.publish(twist)
-
-    def move_robot(self, action):
+        self.cmd_vel_pub[index].publish(twist)
+     
+    def move_robots(self, action,index):
         twist = Twist()
         twist.linear.x = 0.3
         twist.angular.z = action
-        self.cmd_vel_pub.publish(twist)
+        self.cmd_vel_pub[index].publish(twist)
+  
+    def stop_robots(self,index):
+        self.cmd_vel_pub[index].publish(Twist())
+   
 
-    def move_robot2(self, action):
-        twist = Twist()
-        twist.linear.x = 0.3
-        twist.angular.z = action
-        self.cmd_vel_pub2.publish(twist)
 
-    def stop_robot(self):
-        self.cmd_vel_pub.publish(Twist())
-        self.stop = True
-
-    def stop_robot2(self):
-        self.stop2 = True
-        self.cmd_vel_pub2.publish(Twist())
+    
 
     def euler_from_quaternion(self, quat):
         """
@@ -170,182 +141,134 @@ class Env(Node):
         return roll, pitch, yaw
 
     def call_reset_sim(self):
-        self.stop_robot()
-        self.stop_robot2()
-       
+        for i in range(self.num_agents):
+            self.stop_robots(i)
+        self.dones=[False,False]    
+        
         req = Empty.Request()
         while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('service not available, waiting again...')
 
         self.reset_sim_client.call_async(req)
 
-    def get_abs_distance_to_goal(self):
-        return float(np.sqrt(np.square(self.init_position[1]-self.goal_cord[1])+np.square(self.init_position[0]-self.goal_cord[0])))
+    def get_abs_distance_to_goal(self,index):
+        return float(np.sqrt(np.square(self.init_positions[index][1]-self.goal_cords[index][1])+np.square(self.init_positions[index][0]-self.goal_cords[index][0])))
 
     def step(self, request, response):
+        
         if (request.init):
-            response.state = self.get_state(1)
-            self.init_position = [self.position_x, self.position_y]
+            for index in range(self.num_agents):
+                self.init_positions[index] =self.positions[index]
+                print("yes",index)
+                self.init_robots(index) 
+            response.states= self.get_state()
 
             return response
 
-        actions_index = int(request.action)
-        self.done = False
+        actions_index = request.actions
+        #self.dones = [False for _ in range(self.num_agents)]
         actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
-        action = float(actions[actions_index])
+        
 
-        if (request.id == 1):
-            self.move_robot(action)
+        for index in range(self.num_agents):
+            action = float(actions[actions_index[index]])
+            self.move_robots(action,index)       
 
-        else:
-            self.move_robot2(action)
+        state_s = self.get_state()
+        rewards = self.get_reward()
 
-        state_s = self.get_state(request.id)
-        reward = self.get_reward(request.id)
-
-        response.state = state_s
-        response.reward = reward
-        response.done = self.done
+        response.states = state_s
+        response.rewards = rewards
+        response.dones = self.dones
         return response
 
-    def get_distance_to_goal(self, goal, id):
-        if (id == 1):
-            return float(np.sqrt(np.square(self.position_y-goal[1])+np.square(self.position_x-goal[0])))
-        else:
-            return float(np.sqrt(np.square(self.position_y2-goal[1])+np.square(self.position_x2-goal[0])))
+    def get_distance_to_goal(self, index):
+        return float(np.sqrt(np.square(self.positions[index][1]-self.goal_cords[index][1])+np.square(self.positions[index][0]-self.goal_cords[index][0])))
+      
 
     def generate_goal_pose(self):
-        x = float(np.random.randint(-2.5, 2.5))
-        y = float(np.random.randint(-2.5, 2.5))
-        self.goal_cord[0]=x
-        self.goal_cord[1]=y
-        x = float(np.random.randint(-2.5, 2.5))
-        y = float(np.random.randint(-2.5, 2.5))
-        self.goal_cord2[0]=x
-        self.goal_cord2[1]=y
-        msg = Goal()                                               
-        msg.goal = [x,y]                                          
-        self.goal_publisher.publish(msg)
-        
-        
-
-    def crash(self):
-        if (self.min_lds_dist < 0.13):
+        x = float(np.random.randint(-4, 4))
+        y = float(np.random.randint(-4, 4))
+        self.goal_x = x
+        self.goal_y = y
+        return x, y
+    
+    def crashs(self,index):
+        if (self.min_ldss_dist[index] < 0.13):
 
             return True
         return False
+    
+    
 
-    def crash2(self):
-        if (self.min_lds_dist2 < 0.25):
+  
 
-            return True
-        return False
-
-    def goal_reached(self):
-
-        distance = self.get_distance_to_goal(self.goal_cord, 1)
-        distance2 = self.get_distance_to_goal(self.goal_cord2, 2)
-        if (distance < 0.20 and distance2 < 0.20):
-            print("gooooooal")
-            self.stop_robot()
-            self.stop_robot2()
-            return True
-        return False
-
-    def goal_reached_local(self, goal, id):
-        distance = self.get_distance_to_goal(goal, id)
+    def goal_reached(self,index):
+        distance = self.get_distance_to_goal(index)
 
         if (distance < 0.20):
-            #print(f"gooooooal {id}")
+            
 
             return True
         return False
-   # def angle_to_goal(self):
-        # if(self.position_x>0.01 and self.position_y>0.01 and )
 
-    def get_reward(self, id):
-        reward = 0.0
-        if (id == 1):
-            distance=self.get_distance_to_goal(self.goal_cord,1)
-            reward+=-(distance/self.get_abs_distance_to_goal())
 
-            
-            
-            if (self.goal_angle < 0.40):
-                reward += 5
-            print(reward)
-            
-                  
-            if self.success:
-                reward += 100
-            elif self.fail:
-                reward -= 100
+    def get_reward(self):
+        rewards = [0,0]
+        for index in range(self.num_agents):
+            distance = self.get_distance_to_goal(index)
+            rewards[index] += -(distance/self.get_abs_distance_to_goal(index))
 
-        else:
-            distance=self.get_distance_to_goal(self.goal_cord2,2)
-            reward+=-(distance/self.get_abs_distance_to_goal())
+            if (self.goal_angles[index] < 0.40):
+                rewards[index] += 5
+            #print(rewards[index])
 
-            if (self.goal_angle2 < 40):
-                reward += 5
+            if self.succeses[index]:
+                rewards[index] += 100
+            elif self.fails[index]:
+                rewards[index] -= 100
+        print(rewards)            
+        return rewards
 
-             
-
-        return reward
-
-    def get_state(self, id):
+    def get_state(self):
         l = list()
-        self.fail = False
-        self.success = False
-        print(self.goal_cord)
+     
+        self.succeses = [False for _ in range(self.num_agents)]
+        self.fails= [False for _ in range(self.num_agents)]
+        for index in range(self.num_agents):
+            l.append(self.get_abs_distance_to_goal(index))
+            l.append(float(self.min_ldss_dist[index]))
+            l.append(float(self.goal_angles[index]))
+        
 
-        if (id == 1):
+            if (self.crashs(index)):
+                    print(f"get reward of -10 {index}")
+                    self.fails[index] = True
+                    self.dones[index] = True
+                    self.steps = 0
+                    self.call_reset_sim()
+               
 
-            l.append(self.get_distance_to_goal(self.goal_cord, 1))
-            l.append(float(self.min_lds_dist))
-            l.append(float(self.goal_angle))
-            
+            if (self.goal_reached(index)):
+                    self.stop_robots(index)
+                    self.succeses[index] = True
+                    self.done = True
+                    
+                   
 
-            if (self.crash()):
-                print(f"get reward of -10 {id}")
-                self.fail = True
-                self.done = True
-                self.steps = 0
-                req = Empty.Request()
-                while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-                    self.get_logger().info('service not available, waiting again...')
+            if (self.steps == 500):
+                    self.dones = [True for _ in range(self.num_agents)]
+                    self.fails = [True for _ in range(self.num_agents)]
+                    self.steps = 0
+                    req = Empty.Request()
+                    while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
+                        self.get_logger().info('service not available, waiting again...')
 
-                self.reset_sim_client.call_async(req)
-
-            if (self.goal_reached_local(self.goal_cord, 1)):
-                self.stop_robot()
-
-                self.success = True
-                self.done = True
-                self.steps = 0
-                req = Empty.Request()
-                while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-                    self.get_logger().info('service not available, waiting again...')
-
-                self.reset_sim_client.call_async(req)
-                self.generate_goal_pose()
-
-            # if (self.steps == 500):
-            #     self.done = True
-            #     self.fail = True
-            #     self.steps = 0
-            #     req = Empty.Request()
-            #     while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-            #         self.get_logger().info('service not available, waiting again...')
-
-            #     self.reset_sim_client.call_async(req)
-            self.steps += 1
-            return l
-        else:
-            l.append(self.get_distance_to_goal(self.goal_cord2,2))
-            l.append(float(self.min_lds_dist2))
-            l.append(float(self.goal_angle2))
-            return l
-
+                    self.reset_sim_client.call_async(req)
+        
+        self.steps += 1
+        return l
+        
 
 def main(args=None):
     rclpy.init(args=args)
