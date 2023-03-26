@@ -23,21 +23,21 @@ class Env(Node):
     def __init__(self):
         super().__init__('env')
         self.num_agents = 2
-     
+
         self.cmd_vel_pub = {}
 
         self.create_subscription(
-                Odometry, f"/t1/odom", self.get_current_position, 10)
+            Odometry, f"/t1/odom", self.get_current_position, 10)
         self.create_subscription(
-                Odometry, f"/t2/odom", self.get_current_position2, 10)
-             
+            Odometry, f"/t2/odom", self.get_current_position2, 10)
+
         self.create_subscription(
-                LaserScan, f"/t1/scan", self.get_lds, 10)
+            LaserScan, f"/t1/scan", self.get_lds, 10)
         self.create_subscription(
-                LaserScan, f"/t2/scan", self.get_lds2, 10)
+            LaserScan, f"/t2/scan", self.get_lds2, 10)
         for i in range(self.num_agents):
             self.cmd_vel_pub[i] = self.create_publisher(
-                    Twist, f'/t{i+1}/cmd_vel', 10)
+                Twist, f'/t{i+1}/cmd_vel', 10)
 
         self.env_result_service = self.create_service(
             Mdqn, "env_result", self.step)
@@ -50,44 +50,44 @@ class Env(Node):
 
         self.steps = 0
         self.fails = [False for _ in range(self.num_agents)]
-     
-        self.succeses =  [False for _ in range(self.num_agents)]
-        self.positions = [[0,0] for _ in range(self.num_agents)]
-        self.min_ldss_dist=[0.0 for _ in range(self.num_agents)]
-        self.min_ldss_angle=[0.0 for _ in range(self.num_agents)]
+
+        self.succeses = [False for _ in range(self.num_agents)]
+        self.positions = [[0, 0] for _ in range(self.num_agents)]
+        self.min_ldss_dist = [0.0 for _ in range(self.num_agents)]
+        self.min_ldss_angle = [0.0 for _ in range(self.num_agents)]
         self.angles = [0.0 for _ in range(self.num_agents)]
         self.goal_angles = [0.0 for _ in range(self.num_agents)]
-        self.init_positions = [[0,0] for _ in range(self.num_agents)]
-       
+        self.init_positions = [[0, 0] for _ in range(self.num_agents)]
 
     def get_current_position(self, msg):
-        self.positions[0]=[msg.pose.pose.position.x,msg.pose.pose.position.y]
-        self.angles[0]=self.euler_from_quaternion(msg.pose.pose.orientation)[2]
-        self.goal_angles[0]=self.get_goal_angle(0)
-       
-   
+        self.positions[0] = [
+            msg.pose.pose.position.x, msg.pose.pose.position.y]
+        self.angles[0] = self.euler_from_quaternion(
+            msg.pose.pose.orientation)[2]
+        self.goal_angles[0] = self.get_goal_angle(0)
+
     def get_current_position2(self, msg):
-        self.positions[1]=[msg.pose.pose.position.x,msg.pose.pose.position.y]
-        self.angles[1]=self.euler_from_quaternion(msg.pose.pose.orientation)[2]
-        self.goal_angles[1]=self.get_goal_angle(1)
+        self.positions[1] = [
+            msg.pose.pose.position.x, msg.pose.pose.position.y]
+        self.angles[1] = self.euler_from_quaternion(
+            msg.pose.pose.orientation)[2]
+        self.goal_angles[1] = self.get_goal_angle(1)
 
     def get_lds(self, msg):
 
-      
-        self.min_ldss_dist[0]=np.min(msg.ranges)
+        self.min_ldss_dist[0] = np.min(msg.ranges)
         if (self.min_ldss_dist[0] == np.Inf):
             self.min_ldss_dist[0] = float(4)
         self.min_ldss_angle[0] = np.argmin(msg.ranges)
 
     def get_lds2(self, msg):
 
-      
-        self.min_ldss_dist[1]=np.min(msg.ranges)
-        if (self.min_ldss_dist[0] == np.Inf):
+        self.min_ldss_dist[1] = np.min(msg.ranges)
+        if (self.min_ldss_dist[1] == np.Inf):
             self.min_ldss_dist[1] = float(4)
         self.min_ldss_angle[1] = np.argmin(msg.ranges)
 
-    def get_goal_angle(self,index):
+    def get_goal_angle(self, index):
         if (self.positions[index][0] > self.goal_cords[index][0] and self.positions[index][1] > self.goal_cords[index][1]):
 
             return np.abs(self.angles[index]-(np.arctan2(np.abs(self.positions[index][1]-self.goal_cords[index][1]), np.abs(self.positions[index][0]-self.goal_cords[index][0]))-np.pi))
@@ -97,25 +97,21 @@ class Env(Node):
             return np.abs(self.angles[index]-(np.arctan2(np.abs(self.positions[index][0]-self.goal_cords[index][0]), np.abs(self.positions[index][1]-self.goal_cords[index][1]))+np.pi/2))
         else:
             return np.abs(self.angles[index]-(np.arctan2(np.abs(self.positions[index][0]-self.goal_cords[index][0]), np.abs(self.positions[index][1]-self.goal_cords[index][1]))-np.pi/2))
-   
-    def init_robots(self,index):
+
+    def init_robots(self, index):
 
         twist = Twist()
         twist.linear.x = 0.3
         self.cmd_vel_pub[index].publish(twist)
-     
-    def move_robots(self, action,index):
+
+    def move_robots(self, action, index):
         twist = Twist()
         twist.linear.x = 0.3
         twist.angular.z = action
         self.cmd_vel_pub[index].publish(twist)
-  
-    def stop_robots(self,index):
+
+    def stop_robots(self, index):
         self.cmd_vel_pub[index].publish(Twist())
-   
-
-
-    
 
     def euler_from_quaternion(self, quat):
         """
@@ -143,48 +139,47 @@ class Env(Node):
     def call_reset_sim(self):
         for i in range(self.num_agents):
             self.stop_robots(i)
-        self.dones=[False,False]    
-        
+
         req = Empty.Request()
         while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('service not available, waiting again...')
 
         self.reset_sim_client.call_async(req)
 
-    def get_abs_distance_to_goal(self,index):
+    def get_abs_distance_to_goal(self, index):
         return float(np.sqrt(np.square(self.init_positions[index][1]-self.goal_cords[index][1])+np.square(self.init_positions[index][0]-self.goal_cords[index][0])))
 
     def step(self, request, response):
-        
+
         if (request.init):
+            self.dones = [False, False]
             for index in range(self.num_agents):
-                self.init_positions[index] =self.positions[index]
-                print("yes",index)
-                self.init_robots(index) 
-            response.states= self.get_state()
+                self.init_positions[index] = self.positions[index]
+
+                self.init_robots(index)
+            response.states = self.get_state()
 
             return response
 
         actions_index = request.actions
         #self.dones = [False for _ in range(self.num_agents)]
-        actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
-        
+        actions = [-np.pi, -np.pi/2, 0, np.pi/2, np.pi]
 
         for index in range(self.num_agents):
             action = float(actions[actions_index[index]])
-            self.move_robots(action,index)       
+            self.move_robots(action, index)
 
         state_s = self.get_state()
         rewards = self.get_reward()
 
         response.states = state_s
         response.rewards = rewards
+
         response.dones = self.dones
         return response
 
     def get_distance_to_goal(self, index):
         return float(np.sqrt(np.square(self.positions[index][1]-self.goal_cords[index][1])+np.square(self.positions[index][0]-self.goal_cords[index][0])))
-      
 
     def generate_goal_pose(self):
         x = float(np.random.randint(-4, 4))
@@ -192,83 +187,84 @@ class Env(Node):
         self.goal_x = x
         self.goal_y = y
         return x, y
-    
-    def crashs(self,index):
+
+    def crashs(self, index):
+
         if (self.min_ldss_dist[index] < 0.13):
 
             return True
         return False
-    
-    
 
-  
-
-    def goal_reached(self,index):
+    def goal_reached(self, index):
         distance = self.get_distance_to_goal(index)
 
         if (distance < 0.20):
-            
 
             return True
         return False
 
+    def get_distance(self, p1, p2):
+        return float(np.sqrt(np.square(
+            p1[1]-p2[1])+np.square(p1[0]-p2[0])))
 
     def get_reward(self):
-        rewards = [0,0]
+        rewards = [0, 0]
         for index in range(self.num_agents):
             distance = self.get_distance_to_goal(index)
             rewards[index] += -(distance/self.get_abs_distance_to_goal(index))
 
             if (self.goal_angles[index] < 0.40):
-                rewards[index] += 5
-            #print(rewards[index])
-
+                rewards[index] += 1
+            if (self.min_ldss_dist[index] < 0.45):
+                rewards[index] -= 2
+            
+            # self.get_distance(self.positions[0],self.positions[1])
+            # print(rewards[index])
+            # add reward for being close to an obseacle
             if self.succeses[index]:
                 rewards[index] += 100
             elif self.fails[index]:
                 rewards[index] -= 100
-        print(rewards)            
+        print(rewards)
         return rewards
 
     def get_state(self):
         l = list()
-     
+
         self.succeses = [False for _ in range(self.num_agents)]
-        self.fails= [False for _ in range(self.num_agents)]
+        self.fails = [False for _ in range(self.num_agents)]
         for index in range(self.num_agents):
+
             l.append(self.get_abs_distance_to_goal(index))
             l.append(float(self.min_ldss_dist[index]))
+            l.append(float(self.min_ldss_angle[index]))
             l.append(float(self.goal_angles[index]))
-        
+            #l.append(self.get_distance(self.positions[0], self.positions[1]))
 
             if (self.crashs(index)):
-                    print(f"get reward of -10 {index}")
-                    self.fails[index] = True
-                    self.dones[index] = True
-                    self.steps = 0
-                    self.call_reset_sim()
-               
+                print(f"get reward of -10 {index}")
+                self.dones = [True, True]
+                self.fails[index] = True
+                self.steps = 0
 
             if (self.goal_reached(index)):
-                    self.stop_robots(index)
-                    self.succeses[index] = True
-                    self.done = True
-                    
-                   
+                self.stop_robots(index)
+                self.succeses[index] = True
+                self.dones[index] = True
 
-            if (self.steps == 500):
-                    self.dones = [True for _ in range(self.num_agents)]
-                    self.fails = [True for _ in range(self.num_agents)]
-                    self.steps = 0
-                    req = Empty.Request()
-                    while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-                        self.get_logger().info('service not available, waiting again...')
+            if (self.steps == 550):
+                self.dones = [True for _ in range(self.num_agents)]
+                self.fails = [True for _ in range(self.num_agents)]
+                if self.succeses[index]:
+                    self.fails[index] = False
+                self.steps = 0
 
-                    self.reset_sim_client.call_async(req)
-        
         self.steps += 1
+        if (all(self.dones)):
+            self.call_reset_sim()
+
         return l
-        
+
 
 def main(args=None):
     rclpy.init(args=args)

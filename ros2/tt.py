@@ -1,3 +1,4 @@
-arr=[1,2,3,4,5,6]
+import numpy as np
 
-print(arr[1*3:1*3+3])
+
+print(1e-2)

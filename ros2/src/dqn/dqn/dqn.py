@@ -73,154 +73,139 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep =0
-        self.test=False
-        self.num_agents=2
-        self.agents = [Network("robot-1",False, self.ep),
-                     Network("robot-2",False, self.ep)]
+        self.ep = 360
+        self.test = False
+        self.num_agents = 2
+        self.agents = [Network("robot-1", True, self.ep),
+                       Network("robot-2", True, self.ep)]
         self.epsilon = self.agents[0].get_epsilon()
 
-        self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
+        self.actions = [-np.pi, -np.pi/2, 0, np.pi/2, np.pi]
         self.actions_size = 5
         self.minbatch_size = 64
         self.episode_length = 10_000
         self.steps_per_episode = 700
         self.rewards = [0 for _ in range(len(self.agents))]
         self.episode_size = 3000
-        self.dones=[False,False]
+        self.dones = [False, False]
 
         self.current_states = [0, 0]
-        self.next_states=[0.0,0.0]
+        self.next_states = [0.0, 0.0]
         #self.epsilon = 1
         #self.EPSILON_DECAY = 0.992
-        self.EPSILON_DECAY = 0.99
+        self.EPSILON_DECAY = 0.995
         self.MIN_EPSILON = 0.1
         self.MIN_REPLAY_MEMORY_SIZE = 1000
         self.env_result_client = self.create_client(Mdqn, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = False
-        
+
         # self.tensorboard = ModifiedTensorBoard(
         #     log_dir="logs/{}-{}".format(MODEL_NAME, int(time.time())))
 
         self.start()
+
     def get_init_state(self):
-   
+
         self.req = Mdqn.Request()
         self.req.init = True
-        
-      
+
         future = self.env_result_client.call_async(self.req)
         while rclpy.ok():
             rclpy.spin_once(self)
             if future.done():
-                    if future.result() is not None:
-                                # Next state and reward
-                        for i in range(self.num_agents):        
-                            self.current_states[i] = future.result().states[i*3:i*3+3]
-                            
-                      
-                    else:
-                        self.get_logger().error(
-                            'Exception while calling service: {0}'.format(future.exception()))
-                    break 
+                if future.result() is not None:
+                    # Next state and reward
+                    for i in range(self.num_agents):
+                        self.current_states[i] = future.result(
+                        ).states[i*4:i*4+4]
+
+                else:
+                    self.get_logger().error(
+                        'Exception while calling service: {0}'.format(future.exception()))
+                break
+
     def start(self):
 
-
-          
         for _ in range(self.episode_length):
 
             time.sleep(1)
 
-    
+            self.dones = [False, False]
             self.get_init_state()
             self.ep += 1
             print("ep=", self.ep)
-            self.rewards = [0 for _ in range(len(self.agents))]
-            self.dones=[False,False]
-            done=False
-            # todo fix the dones // add condition for dones not a sigle
-            while not done:
+            self.rewards = [0.0 for _ in range(len(self.agents))]
+            self.returns = [0.0 for _ in range(len(self.agents))]
+
+            print(self.epsilon)
+            while not all(self.dones):
 
                 # while not self.env_result_client.wait_for_service(timeout_sec=1.0):
                 #     self.get_logger().info('service not available, waiting again...')
 
+                self.req = Mdqn.Request()
+                self.req.init = False
 
-               
-                    reward = 0
-                    self.req = Mdqn.Request()
-                    self.req.init = False
-                    
-                    actions=[0,0]
-                    if (not self.test):
-                        if np.random.random() > self.epsilon:
-                            for index,agent in enumerate(self.agents):
+                actions = [0, 0]
+                if (not self.test):
+                    if np.random.random() > self.epsilon:
+                        for index, agent in enumerate(self.agents):
 
-                                actions[index] = np.argmax(
-                                    agent.get_action(self.current_states[index]))
-                             
-                            
-                            
+                            actions[index] = int(np.argmax(
+                                agent.get_action(self.current_states[index])))
+
+                    else:
+                        for index, agent in enumerate(self.agents):
+                            actions[index] = np.random.randint(
+                                0, self.actions_size)
+
+                else:
+                    for index, agent in enumerate(self.agents):
+                        actions[index] = int(np.argmax(
+                            agent.get_action(self.current_states[index])))
+
+                self.req.actions = actions
+
+                future = self.env_result_client.call_async(self.req)
+                #rclpy.spin_until_future_complete(self, future)
+                while rclpy.ok():
+
+                    rclpy.spin_once(self)
+                    if future.done():
+                        if future.result() is not None:
+                            # Next state and reward
+                            for i in range(self.num_agents):
+
+                                self.next_states[i] = future.result(
+                                ).states[i*4:i*4+4]
+                                self.rewards[i] = future.result().rewards[i]
+                                self.returns[i] += self.rewards[i]
+                                self.dones[i] = future.result().dones[i]
 
                         else:
-                            for index,agent in enumerate(self.agents):
-                                actions[index] = np.random.randint(0, self.actions_size)
-                           
-                            
-                    else:
-                        for index,agent in enumerate(self.agents):
-                            actions[index] = np.argmax(
-                                agent.get_action(self.current_states[index]))
-                    
-                   
-                  
-                            
+                            self.get_logger().error(
+                                'Exception while calling service: {0}'.format(future.exception()))
+                        break
 
-                    self.req.actions = actions
-                    
+                for index, agent in enumerate(self.agents):
+                    if (not self.test and not self.dones[index]):
 
-                    future = self.env_result_client.call_async(self.req)
-                    #rclpy.spin_until_future_complete(self, future)
-                    while rclpy.ok():
-
-                        rclpy.spin_once(self)
-                        if future.done():
-                            if future.result() is not None:
-                                # Next state and reward
-                                for i in range(self.num_agents):
-                                        
-                                    self.next_states[i] = future.result().states[i*3:i*3+3]
-                                    self.rewards[i] = future.result().rewards[i]
-
-                                    self.dones[i] = future.result().dones[i]
-
-                            else:
-                                self.get_logger().error(
-                                    'Exception while calling service: {0}'.format(future.exception()))
-                            break
-                    
-                    for index,agent in enumerate(self.agents):
-                        if (not self.test):
-                            #self.rewards[index] += reward
-                            agent.update_replay_buffer(
+                        agent.update_replay_buffer(
                             (self.current_states[index], self.rewards[index], actions[index], self.next_states[index], self.dones[index]))
-                            agent.train(self.dones[index])
-                        self.current_states[index] = self.next_states[index]
-                    
-                    time.sleep(0.02)
+                        agent.train(self.dones[index])
+                    self.current_states[index] = self.next_states[index]
 
-                
-                
+                time.sleep(0.01)
 
             if (self.epsilon > self.MIN_EPSILON) and not self.test:
                 self.epsilon *= self.EPSILON_DECAY
                 self.epsilon = max(self.MIN_EPSILON, self.epsilon)
-                 
+
             for index, agent in enumerate(self.agents):
-                print(f"robot -{index+1} rewards", self.rewards[index])
-                if (self.ep % 10 == 0 and self.ep!=0) and not self.test:
+                print(f"robot -{index+1} return", self.returns[index])
+                if (self.ep % 30 == 0 and self.ep != 0) and not self.test:
                     agent.save_data(self.ep, self.epsilon, self.rewards[index])
-                   
 
             # if not self.ep % AGGREGATE_STATS_EVERY or self.ep == 1:
             #      average_reward = sum(

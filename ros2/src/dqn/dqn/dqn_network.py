@@ -33,10 +33,10 @@ class Network:
         self.optimizer = keras.optimizers.Adam(learning_rate=0.0001) 
         # to note we are having the same target of if we load the model
         self.target_model = self.model
-        self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
+        self.actions = [-np.pi, -np.pi/2, 0, np.pi/2, np.pi]
         self.actions_size = 5
         self.state_size = 3
-        self.discout_factor = 0.993
+        self.discout_factor = 0.98
         self.minbatch_size = 64
         self.MIN_REPLAY_MEMORY_SIZE = 1000
 
@@ -47,7 +47,7 @@ class Network:
 
         # initializer2 = tf.keras.initializers.GlorotNormal()
 
-        inputs = keras.layers.Input(shape=(3,))
+        inputs = keras.layers.Input(shape=(4,))
 
         out = keras.layers.Dense(
             128, activation="relu", kernel_initializer='glorot_normal')(inputs)
