@@ -73,8 +73,8 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep = 360
-        self.test = False
+        self.ep = 2070
+        self.test =True
         self.num_agents = 2
         self.agents = [Network("robot-1", True, self.ep),
                        Network("robot-2", True, self.ep)]
@@ -93,7 +93,7 @@ class Dqn(Node):
         self.next_states = [0.0, 0.0]
         #self.epsilon = 1
         #self.EPSILON_DECAY = 0.992
-        self.EPSILON_DECAY = 0.995
+        self.EPSILON_DECAY = 0.996
         self.MIN_EPSILON = 0.1
         self.MIN_REPLAY_MEMORY_SIZE = 1000
         self.env_result_client = self.create_client(Mdqn, "env_result")

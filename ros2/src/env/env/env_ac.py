@@ -78,6 +78,7 @@ class Env(Node):
             goal_angle += 2 * math.pi
 
         self.goal_angle = goal_angle
+        print(self.goal_angle)
         
        
         
