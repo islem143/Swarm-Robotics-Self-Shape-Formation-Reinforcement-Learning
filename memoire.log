@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.3.11)  18 MAR 2023 10:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.3.11)  27 MAR 2023 08:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -685,14 +685,14 @@ Package: pdflscape 2019/12/05 v0.12 Display of landscape pages in PDF (HO)
 Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
 )
 Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
-) (./memoire.toc)
+) (./memoire.toc
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}])
 \tf@toc=\write4
 \openout4 = `memoire.toc'.
 
-
-[1
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4] [5]
+ [2] [3] [4] [5]
 Underfull \hbox (badness 10000) in paragraph at lines 106--110
 
  []
@@ -721,21 +721,28 @@ Underfull \hbox (badness 10000) in paragraph at lines 250--251
 t/12 ^^^[]$ \OT1/cmtt/m/n/12 =
  []
 
-[13] [14] (./memoire.bbl) [15] (./memoire.aux)
+[13] [14]
+<images//formation.png, id=313, 435.6275pt x 235.88126pt>
+File: images//formation.png Graphic file (type png)
+<use images//formation.png>
+Package pdftex.def Info: images//formation.png  used on input line 316.
+(pdftex.def)             Requested size: 174.24791pt x 94.35083pt.
+ [15 <./images//formation.png>] [16] (./memoire.bbl) [17]
+(./memoire.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `memoire.out' has not changed.
-(rerunfilecheck)             Checksum: 1FC7308E33D8181C7849D98EBD527A94;6179.
+(rerunfilecheck)             Checksum: D533AF88A488348BC3801B29F8F7F1BE;6989.
  ) 
 Here is how much of TeX's memory you used:
- 19144 strings out of 480129
- 330104 string characters out of 5893409
- 695898 words of memory out of 5000000
- 36738 multiletter control sequences out of 15000+600000
+ 19173 strings out of 480129
+ 330571 string characters out of 5893409
+ 694904 words of memory out of 5000000
+ 36756 multiletter control sequences out of 15000+600000
  475267 words of font info for 49 fonts, out of 8000000 for 9000
  81 hyphenation exceptions out of 8191
- 91i,14n,91p,1145b,467s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 91i,14n,91p,1145b,549s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/islem/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.600
 pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></u
 sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/sha
@@ -747,10 +754,10 @@ type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
 public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
 amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
 ts/cm/cmtt12.pfb>
-Output written on memoire.pdf (15 pages, 149430 bytes).
+Output written on memoire.pdf (17 pages, 157707 bytes).
 PDF statistics:
- 359 PDF objects out of 1000 (max. 8388607)
- 317 compressed objects within 4 object streams
- 67 named destinations out of 1000 (max. 500000)
- 289 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 398 PDF objects out of 1000 (max. 8388607)
+ 352 compressed objects within 4 object streams
+ 75 named destinations out of 1000 (max. 500000)
+ 334 words of extra memory for PDF output out of 10000 (max. 10000000)
 

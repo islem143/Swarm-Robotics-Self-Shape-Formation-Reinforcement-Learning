@@ -73,8 +73,8 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep = 2070
-        self.test =True
+        self.ep = 480
+        self.test =False
         self.num_agents = 2
         self.agents = [Network("robot-1", True, self.ep),
                        Network("robot-2", True, self.ep)]
@@ -187,10 +187,24 @@ class Dqn(Node):
                             self.get_logger().error(
                                 'Exception while calling service: {0}'.format(future.exception()))
                         break
+                states=[]    
+                rewards=[]
+                next_states=[]
+                actions=[]
+                dones=[]
+                for index, agent in enumerate(self.agents):
+                    if (not self.test):
+                       states.append(self.current_states[index])
+                       rewards.append(self.rewards[index])
+                       next_states.append(self.next_states[index])
+                       actions.append(actions[index])
+                       dones.append(dones[index])
+
+
 
                 for index, agent in enumerate(self.agents):
                     if (not self.test and not self.dones[index]):
-
+                       
                         agent.update_replay_buffer(
                             (self.current_states[index], self.rewards[index], actions[index], self.next_states[index], self.dones[index]))
                         agent.train(self.dones[index])

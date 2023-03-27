@@ -47,7 +47,7 @@ class Network:
 
         # initializer2 = tf.keras.initializers.GlorotNormal()
 
-        inputs = keras.layers.Input(shape=(4,))
+        inputs = keras.layers.Input(shape=(8,))
 
         out = keras.layers.Dense(
             128, activation="relu", kernel_initializer='glorot_normal')(inputs)

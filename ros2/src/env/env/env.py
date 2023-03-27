@@ -66,29 +66,28 @@ class Env(Node):
         self.angles[0] = self.euler_from_quaternion(
             msg.pose.pose.orientation)[2]
         #self.goal_angles[0] = self.get_goal_angle(0)
-     
-        self.goal_angles[0]=(np.arctan2(self.goal_cords[0][1]-self.positions[0][1],self.goal_cords[0][0]-self.positions[0][0]))-(self.angles[0])
-        
-        if(self.goal_angles[0]>np.pi):
-            self.goal_angles[0]-=2*np.pi
-        elif(self.goal_angles[0]<-np.pi):
-            self.goal_angles[0]+=2*np.pi
 
+        self.goal_angles[0] = (np.arctan2(self.goal_cords[0][1]-self.positions[0]
+                               [1], self.goal_cords[0][0]-self.positions[0][0]))-(self.angles[0])
 
-               
+        if (self.goal_angles[0] > np.pi):
+            self.goal_angles[0] -= 2*np.pi
+        elif (self.goal_angles[0] < -np.pi):
+            self.goal_angles[0] += 2*np.pi
 
     def get_current_position2(self, msg):
         self.positions[1] = [
             msg.pose.pose.position.x, msg.pose.pose.position.y]
         self.angles[1] = self.euler_from_quaternion(
             msg.pose.pose.orientation)[2]
-       
-        self.goal_angles[1]=(np.arctan2(self.goal_cords[1][1]-self.positions[1][1],self.goal_cords[1][0]-self.positions[1][0]))-(self.angles[1])
-        if(self.goal_angles[1]>np.pi):
-            self.goal_angles[1]-=2*np.pi
-        elif(self.goal_angles[1]<-np.pi):
-            self.goal_angles[1]+=2*np.pi
-        
+
+        self.goal_angles[1] = (np.arctan2(self.goal_cords[1][1]-self.positions[1]
+                               [1], self.goal_cords[1][0]-self.positions[1][0]))-(self.angles[1])
+        if (self.goal_angles[1] > np.pi):
+            self.goal_angles[1] -= 2*np.pi
+        elif (self.goal_angles[1] < -np.pi):
+            self.goal_angles[1] += 2*np.pi
+
     def get_lds(self, msg):
 
         self.min_ldss_dist[0] = np.min(msg.ranges)
@@ -168,6 +167,7 @@ class Env(Node):
     def step(self, request, response):
 
         if (request.init):
+            self.steps = 0
             self.dones = [False, False]
             for index in range(self.num_agents):
                 self.init_positions[index] = self.positions[index]
@@ -228,14 +228,16 @@ class Env(Node):
         for index in range(self.num_agents):
             distance = self.get_distance_to_goal(index)
             rewards[index] += -(distance/self.get_abs_distance_to_goal(index))
-           
+
             rewards[index] += -2*np.abs(self.goal_angles[index])
-            
+
             # if (self.goal_angles[index] < 0.40):
             #     rewards[index] += 5
-            if (self.min_ldss_dist[index] < 0.45):
-                rewards[index] -= 100
-            
+            if (self.min_ldss_dist[index] < 0.45 and self.min_ldss_angle[index] in [21, 22, 23, 0, 1, 2]):
+                rewards[index] -= 10
+            else:
+                rewards[index] += 0.1
+
             # self.get_distance(self.positions[0],self.positions[1])
             # print(rewards[index])
             # add reward for being close to an obseacle
@@ -270,12 +272,12 @@ class Env(Node):
                 self.succeses[index] = True
                 self.dones[index] = True
 
-            # if (self.steps == 550):
-            #     self.dones = [True for _ in range(self.num_agents)]
-            #     self.fails = [True for _ in range(self.num_agents)]
-            #     if self.succeses[index]:
-            #         self.fails[index] = False
-            #     self.steps = 0
+            if (self.steps == 550):
+                self.dones = [True for _ in range(self.num_agents)]
+                self.fails = [True for _ in range(self.num_agents)]
+                if self.succeses[index]:
+                    self.fails[index] = False
+                self.steps = 0
 
         self.steps += 1
         if (all(self.dones)):
