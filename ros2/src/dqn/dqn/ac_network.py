@@ -27,15 +27,21 @@ class ACNetwork():
     def __init__(self, name, model_load=False, ep=0) -> None:
         self.name = name
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.upper_bound=1.5  
-        self.lower_bound=-1.5 
+        self.upper_bound=3.14 
+        self.lower_bound=-3.14
         #self.critic_lr = 0.001
         #self.actor_lr = 0.0001
         self.critic_lr=0.001 
         self.actor_lr=0.0001
         self.critic_optimizer = tf.keras.optimizers.Adam(learning_rate=self.critic_lr)
         self.actor_optimizer = tf.keras.optimizers.Adam(learning_rate=self.actor_lr)
-       
+        self.buffer_counter=0
+        self.buffer_capacity=100_000
+        self.state_buffer = np.zeros((self.buffer_capacity, 4))
+        self.action_buffer = np.zeros((self.buffer_capacity,1))
+        self.reward_buffer = np.zeros((self.buffer_capacity, 1))
+        self.next_state_buffer = np.zeros((self.buffer_capacity,4))
+        self.dones = np.zeros((self.buffer_capacity,1))
         if (model_load):
             self.ep = ep
             self.load_data()
@@ -51,13 +57,13 @@ class ACNetwork():
   
             #self.replay_memory = deque(maxlen=100_000)
             self.buffer_counter = 0
-            self.buffer_capacity=100_000
+            
             # Instead of list of tuples as the exp.replay concept go
             # We use different np.arrays for each tuple element
-            self.state_buffer = np.zeros((self.buffer_capacity, 3))
+            self.state_buffer = np.zeros((self.buffer_capacity, 4))
             self.action_buffer = np.zeros((self.buffer_capacity,1))
             self.reward_buffer = np.zeros((self.buffer_capacity, 1))
-            self.next_state_buffer = np.zeros((self.buffer_capacity,3))
+            self.next_state_buffer = np.zeros((self.buffer_capacity,4))
             self.dones = np.zeros((self.buffer_capacity,1))
             self.ep = ep
             
@@ -71,8 +77,8 @@ class ACNetwork():
 
         self.state_size = 3
         self.discout_factor = 0.99
-        self.minbatch_size = 64
-        self.MIN_REPLAY_MEMORY_SIZE =500
+        self.minbatch_size = 128
+        self.MIN_REPLAY_MEMORY_SIZE =2000
       
 
        
@@ -84,12 +90,12 @@ class ACNetwork():
         last_init = tf.random_uniform_initializer(minval=-0.0003, maxval=0.0003)
 
 
-        inputs = keras.layers.Input(shape=(3,))
+        inputs = keras.layers.Input(shape=(4,))
         out = keras.layers.Dense(128, activation="relu",kernel_initializer="he_normal")(inputs)
-        #out=keras.layers.Dropout(0.2)(out)
+        out=keras.layers.Dropout(0.1)(out)
         out = keras.layers.BatchNormalization()(out)
         out = keras.layers.Dense(128, activation="relu",kernel_initializer="he_normal")(out)
-        #out=keras.layers.Dropout(0.2)(out)
+        out=keras.layers.Dropout(0.1)(out)
         out = keras.layers.BatchNormalization()(out)
         #out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(out)
         #out=keras.layers.Dropout(0.2)(out)
@@ -105,24 +111,24 @@ class ACNetwork():
         return model
     
     def create_critic_model(self):
-        state_input = keras.layers.Input(shape=(3))
-        state_out = keras.layers.Dense(16, activation="relu",kernel_initializer="he_normal")(state_input)
-        state_out = keras.layers.BatchNormalization()(state_out)
-        state_out = keras.layers.Dense(32, activation="relu",kernel_initializer="he_normal")(state_out)
-        state_out = keras.layers.BatchNormalization()(state_out)
+        state_input = keras.layers.Input(shape=(4))
+        # state_out = keras.layers.Dense(32, activation="relu",kernel_initializer="he_normal")(state_input)
+        # state_out = keras.layers.BatchNormalization()(state_out)
+        # state_out = keras.layers.Dense(32, activation="relu",kernel_initializer="he_normal")(state_out)
+        # state_out = keras.layers.BatchNormalization()(state_out)
 
             # Action as input
         action_input = keras.layers.Input(shape=(1))
-        action_out = keras.layers.Dense(32, activation="relu",kernel_initializer="he_normal")(action_input)
-        action_out =  keras.layers.BatchNormalization()(action_out)
+        # action_out = keras.layers.Dense(32, activation="relu",kernel_initializer="he_normal")(action_input)
+        # action_out =  keras.layers.BatchNormalization()(action_out)
             # Both are passed through seperate layer before concatenating
-        concat = keras.layers.Concatenate()([state_out, action_out])
+        concat = keras.layers.Concatenate()([state_input, action_input])
 
         out = keras.layers.Dense(128, activation="relu",kernel_initializer="he_normal")(concat)
-        #out=keras.layers.Dropout(0.2)(out)
+        out=keras.layers.Dropout(0.1)(out)
         out = keras.layers.BatchNormalization()(out)
         out = keras.layers.Dense(128, activation="relu",kernel_initializer="he_normal")(out)
-       # out=keras.layers.Dropout(0.2)(out)
+        out=keras.layers.Dropout(0.1)(out)
         out = keras.layers.BatchNormalization()(out)
         # out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(out)
         # out=keras.layers.Dropout(0.2)(out)
@@ -144,7 +150,7 @@ class ACNetwork():
         noise = noise_object()
         
         # Adding noise to action
-        sampled_actions = sampled_actions.numpy() + 0
+        sampled_actions = sampled_actions.numpy() + noise
          
         # We make sure action is within bounds
         legal_action = np.clip(sampled_actions, self.lower_bound, self.upper_bound)
@@ -169,7 +175,7 @@ class ACNetwork():
                 critic_value = self.critic_model([state_batch, action_batch], training=True)
                 
                 critic_loss = tf.math.reduce_mean(tf.math.square(y - critic_value))
-                
+               
                 
                
 
@@ -246,10 +252,21 @@ class ACNetwork():
         self.target_actor = Utils.load_model(self.target_actor, path2)
         self.critic_model = Utils.load_model(self.critic_model, path3)
         self.target_critic = Utils.load_model(self.target_critic, path4)
-
+        path = os.path.join(self.dir_path, self.get_model_file_name("json"))
+        self.buffer_counter=Utils.load_json(path, "counter")
+        
     
-        # path = os.path.join(self.dir_path, self.get_model_file_name("obj","None"))
-        # self.replay_memory = Utils.load_pickle(path)
+        path = os.path.join(self.dir_path, self.get_model_file_name("obj","state"))
+        self.state_buffer= Utils.load_pickle(path)
+        path = os.path.join(self.dir_path, self.get_model_file_name("obj","reward"))
+        self.reward_buffer= Utils.load_pickle(path)
+        path = os.path.join(self.dir_path, self.get_model_file_name("obj","action"))
+        self.action_buffer= Utils.load_pickle(path)
+        path = os.path.join(self.dir_path, self.get_model_file_name("obj","next"))
+        self.next_state_buffer= Utils.load_pickle(path)
+        path = os.path.join(self.dir_path, self.get_model_file_name("obj","done"))
+        self.dones= Utils.load_pickle(path)
+       
 
     def get_epsilon(self):
         return self.epsilon
@@ -274,11 +291,19 @@ class ACNetwork():
         Utils.save_model(critic, path3)
         Utils.save_model(target_critic, path4)
         path = os.path.join(self.dir_path, self.get_model_file_name("json"))
-        data = {"reward":reward}
+        data = {"reward":reward,"counter":self.buffer_counter}
         Utils.save_json(path, data)
        
-        # path = os.path.join(self.dir_path, self.get_model_file_name("obj"))
-        # Utils.save_pickle(path, self.replay_memory)
+        path = os.path.join(self.dir_path, self.get_model_file_name("obj","state"))
+        Utils.save_pickle(path, self.state_buffer)
+        path = os.path.join(self.dir_path, self.get_model_file_name("obj","reward"))
+        Utils.save_pickle(path, self.reward_buffer)
+        path = os.path.join(self.dir_path, self.get_model_file_name("obj","action"))
+        Utils.save_pickle(path, self.action_buffer)
+        path = os.path.join(self.dir_path, self.get_model_file_name("obj","next"))
+        Utils.save_pickle(path, self.next_state_buffer)
+        path = os.path.join(self.dir_path, self.get_model_file_name("obj","done"))
+        Utils.save_pickle(path, self.dones)
 
     def get_model_file_name(self, type,ext=None):
         return f"models-{self.name}/my-model-{self.ep}-{ext}.{type}"

@@ -15,6 +15,7 @@ from dqn_msg.srv import Dqnn
 from dqn_msg.srv import Goal
 import time
 
+
 class Env(Node):
 
     def __init__(self):
@@ -36,21 +37,25 @@ class Env(Node):
             Goal, "goal_pose", self.generate_goal_pose)
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.goal_cord = [0.01, 0.01]
-        self.goal_cord2 = [0.01, 0.01-1]
+        self.goal_cord2 = [0.01, (0.01-1)]
         self.done = False
-        self.steps=0
+        self.steps = 0
         #self.create_timer(0.01, self.check)
-        self.position_x=0
-        self.success=False
-        self.fail=False
-        self.init_goal_distance=1.0
-        self.position_y=0
-        self.position_x2=0
-        self.position_y2=0
-        self.angle=0
-        self.angle2=0
-        self.goal_angle=0
-        self.goal_angle2=0
+        self.position_x = 0
+        self.success = False
+        self.fail = False
+        self.init_goal_distance = 1.0
+        self.position_y = 0
+        self.position_x2 = 0
+        self.position_y2 = 0
+        self.angle = 0
+        self.init_position=[-1.5,-1.5]
+
+        self.angle2 = 0
+        self.goal_angle = 0
+        self.goal_angle2 = 0
+        
+       
        # self.stop_robot()
 
     # def check(self):
@@ -63,9 +68,11 @@ class Env(Node):
 
         self.position_x = msg.pose.pose.position.x
         self.position_y = msg.pose.pose.position.y
+         
         self.angle = self.euler_from_quaternion(msg.pose.pose.orientation)[2]
         #self.goal_angle = self.get_goal_angle(self.goal_cord)
-        
+
+
         path_theta = math.atan2(
             0.01-self.position_y,
             0.01-self.position_x)
@@ -78,11 +85,14 @@ class Env(Node):
             goal_angle += 2 * math.pi
 
         self.goal_angle = goal_angle
-        print(self.goal_angle)
+        
         
        
         
         
+       
+      
+       
        
 
     def get_current_position2(self, msg):
@@ -95,11 +105,10 @@ class Env(Node):
     def get_lds(self, msg):
 
         self.min_lds_dist = np.min(msg.ranges)
-       
+
         if (self.min_lds_dist == np.Inf):
-            self.min_lds_dist = float(4)
+            self.min_lds_dist = float(3.5)
         self.min_lds_angle = np.argmin(msg.ranges)
-        
 
     def get_lds2(self, msg):
 
@@ -117,6 +126,7 @@ class Env(Node):
             return np.abs(self.angle-(np.arctan2(np.abs(self.position_x-goal[0]), np.abs(self.position_y-goal[1]))+np.pi/2))
         else:
             return np.abs(self.angle-(np.arctan2(np.abs(self.position_x-goal[0]), np.abs(self.position_y-goal[1]))-np.pi/2))
+
     def get_goal_angle2(self, goal):
         if (self.position_x2 > goal[0] and self.position_y2 > goal[1]):
 
@@ -127,37 +137,38 @@ class Env(Node):
             return np.abs(self.angle2-(np.arctan2(np.abs(self.position_x2-goal[0]), np.abs(self.position_y2-goal[1]))+np.pi/2))
         else:
             return np.abs(self.angle2-(np.arctan2(np.abs(self.position_x2-goal[0]), np.abs(self.position_y2-goal[1]))-np.pi/2))
+
     def init_robot(self):
 
         twist = Twist()
-        twist.linear.x = 0.3
-        
+        twist.linear.x = 0.4
+
         self.cmd_vel_pub.publish(twist)
 
     def init_robot2(self):
 
         twist = Twist()
-        twist.linear.x = 0.3
+        twist.linear.x = 0.4
         self.cmd_vel_pub2.publish(twist)
 
     def move_robot(self, action):
         twist = Twist()
-        twist.linear.x = 0.3
+        twist.linear.x = 0.4
         twist.angular.z = action
         self.cmd_vel_pub.publish(twist)
 
     def move_robot2(self, action):
         twist = Twist()
-        twist.linear.x = 0.3
+        twist.linear.x = 0.4
         twist.angular.z = action
         self.cmd_vel_pub2.publish(twist)
 
     def stop_robot(self):
         self.cmd_vel_pub.publish(Twist())
-        self.stop=True
+        self.stop = True
 
     def stop_robot2(self):
-        self.stop2=True
+        self.stop2 = True
         self.cmd_vel_pub2.publish(Twist())
 
     def euler_from_quaternion(self, quat):
@@ -193,25 +204,25 @@ class Env(Node):
         self.reset_sim_client.call_async(req)
 
     def step(self, request, response):
-        if(request.id==250):
-            response.state=self.get_state(1)
+        if (request.id == 250):
+            response.state = self.get_state(1)
             return response
-        elif(request.id==251):
-            response.state=self.get_state(2)
+        elif (request.id == 251):
+            response.state = self.get_state(2)
             return response
 
         if (request.init):
             if (request.id == 1):
                 self.init_robot()
                 self.init_goal_distance = math.sqrt(
-                (0.01-self.position_x)**2
-                + (0.01-self.position_y)**2)
+                    (0.01-self.position_x)**2
+                    + (0.01-self.position_y)**2)
+                self.init_position = [self.position_x, self.position_y]
             else:
                 self.init_robot2()
 
-      
-        self.done=False
-    
+        self.done = False
+
         action = float(request.action)
 
         if (request.id == 1):
@@ -236,11 +247,12 @@ class Env(Node):
         response.done = self.done
         return response
 
-    def get_distance_to_goal(self, goal,id):
-        if (id==1):
+    def get_distance_to_goal(self, goal, id):
+        if (id == 1):
             return float(np.sqrt(np.square(self.position_y-goal[1])+np.square(self.position_x-goal[0])))
         else:
             return float(np.sqrt(np.square(self.position_y2-goal[1])+np.square(self.position_x2-goal[0])))
+
     def generate_goal_pose(self):
         x = float(np.random.randint(-4, 4))
         y = float(np.random.randint(-4, 4))
@@ -262,8 +274,8 @@ class Env(Node):
 
     def goal_reached(self):
 
-        distance = self.get_distance_to_goal(self.goal_cord,1)
-        distance2 = self.get_distance_to_goal(self.goal_cord2,2)
+        distance = self.get_distance_to_goal(self.goal_cord, 1)
+        distance2 = self.get_distance_to_goal(self.goal_cord2, 2)
         if (distance < 0.20 and distance2 < 0.20):
             print("gooooooal")
             self.stop_robot()
@@ -271,9 +283,9 @@ class Env(Node):
             return True
         return False
 
-    def goal_reached_local(self, goal,id):
-        distance = self.get_distance_to_goal(goal,id)
-       
+    def goal_reached_local(self, goal, id):
+        distance = self.get_distance_to_goal(goal, id)
+
         if (distance < 0.20):
             #print(f"gooooooal {id}")
 
@@ -282,125 +294,129 @@ class Env(Node):
    # def angle_to_goal(self):
         # if(self.position_x>0.01 and self.position_y>0.01 and )
 
+    def get_abs_distance_to_goal(self):
+        return float(np.sqrt(np.square(self.init_position[1]-self.goal_cord[1])+np.square(self.init_position[0]-self.goal_cord[0])))
+
     def get_reward(self, id):
-        yaw_reward = 1 - 2*math.sqrt(math.fabs(self.goal_angle / math.pi))
 
-        distance_reward = (2 * self.init_goal_distance) / \
-            (self.init_goal_distance + self.get_distance_to_goal(self.goal_cord,1)) - 1
+        reward = 0.0
+        distance = self.get_distance_to_goal(self.goal_cord, 1)
+        norm_distance = (distance-0)/(6.22)
+        norm_angle = (self.goal_angle)/(3.14)
+      
+    
 
-        # Reward for avoiding obstacles
-        if self.min_lds_dist < 0.25:
-            obstacle_reward = -2
-        else:
-            obstacle_reward = 0
-
-        reward = yaw_reward + distance_reward + obstacle_reward
+    
+   
+        norm_abs_distance = self.get_abs_distance_to_goal()/6.22
+        
+        reward += -(norm_distance/norm_abs_distance)+1
+        
+        reward += -2*np.abs(norm_angle)
+     
+        
+        if (self.min_lds_dist < 0.3):
+            reward -= 0.1
 
         # + for succeed, - for fail
         if self.success:
-            reward += 5
+            reward += 500
         elif self.fail:
-            reward -= -10
+            reward += -500
+
         print(reward)
 
         return reward
-        # reward = 0.0
         # if (id == 1):
         #     distance = self.get_distance_to_goal(self.goal_cord,1)
-            
+
         #     #reward +=-distance
 
-            
-        #     #reward+=1/self.goal_angle 
+        #     #reward+=1/self.goal_angle
         #     if(distance<0.5):
         #         reward+=5
-         
-          
-               
+
         #     if (self.goal_angle < 0.20):
         #         reward += 5
-           
+
         #     if (self.fail):
         #         print(f"get reward of -10 {id}")
         #         reward -= 10
-               
+
         #     if (self.success):
         #         reward += 10
         #         self.stop_robot()
-               
-               
 
         #     # if (self.goal_reached()):
         #     #     print(f"get reward of +200 {id}")
         #     #     reward += 200
-            
+
         #     print(reward)
         # else:
         #         distance = self.get_distance_to_goal(self.goal_cord2,2)
         #         reward = 1/(distance*self.goal_angle2)
         #         #reward += 2*(1/self.goal_angle)
-                
+
         #         # if (self.goal_angle2 < 0.25):
         #         #     reward += 10
-                   
+
         #         if (self.crash2()):
         #             print(f"get reward of -100 {id}")
         #             reward -= 100
 
-                
         #         if (self.goal_reached_local(self.goal_cord2,2)):
         #             reward += 100
         #            # print(f"local goal reached {id}")
         #             self.stop_robot2()
-                    
 
         #         # if (self.goal_reached()):
         #         #     print(f"get reward of +200 {id}")
         #         #     reward += 200
-        #         #print(f"reward {id} ",reward)               
-             
+        #         #print(f"reward {id} ",reward)
+
         # return reward
 
     def get_state(self, id):
         l = list()
-        self.fail=False
-        self.success=False
-        self.steps+=1
+        self.fail = False
+        self.success = False
+        self.steps += 1
         if (id == 1):
 
-            # norm_angle=(self.goal_angle-0)/(5.21) 
-            # distance=self.get_distance_to_goal(self.goal_cord,1)
-            # norm_goal=(distance-0)/(6.22)
-            # norm_lds=(self.min_lds_dist-0)/(3.5)
-     
-            # l.append(float(norm_goal))
-            # l.append(float(norm_angle))
-            # l.append(float(norm_lds))
-            l.append(float(self.get_distance_to_goal(self.goal_cord,1)))
-            l.append(float(self.goal_angle))
-            l.append(float(self.min_lds_dist))
+            norm_angle = (self.goal_angle)/(3.14)
+            distance = self.get_distance_to_goal(self.goal_cord, 1)
+            norm_goal = distance/6.22
+            norm_lds = (self.min_lds_dist-0)/(3.5)
+            norm_lds_angle = (self.min_lds_angle-0)/(23)
+
+            l.append(float(norm_goal))
+            l.append(float(norm_angle))
+            l.append(float(norm_lds))
+            l.append(float(norm_lds_angle))
+            # l.append(float(self.get_distance_to_goal(self.goal_cord,1)))
+            # l.append(float(self.goal_angle))
+            # l.append(float(self.min_lds_dist))
+            # l.append(float(self.min_lds_angle))
 
             if (self.crash()):
                 print(f"get reward of -10 {id}")
-                self.fail=True
-                self.done=True
-                self.steps=0
+                self.fail = True
+                self.done = True
+                self.steps = 0
                 req = Empty.Request()
                 while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-                        self.get_logger().info('service not available, waiting again...')
+                    self.get_logger().info('service not available, waiting again...')
 
                 self.reset_sim_client.call_async(req)
-            
-            
-                
-            if (self.goal_reached_local(self.goal_cord,1)):
+
+            if (self.goal_reached_local(self.goal_cord, 1)):
                 self.stop_robot()
-                self.success=True
-                self.done=True
-                self.steps=0
+                self.success = True
+                self.done = True
+                self.steps = 0
                 req = Empty.Request()
                 while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-                        self.get_logger().info('service not available, waiting again...')
+                    self.get_logger().info('service not available, waiting again...')
 
                 self.reset_sim_client.call_async(req)
 
@@ -413,7 +429,7 @@ class Env(Node):
             #             self.get_logger().info('service not available, waiting again...')
 
             #     self.reset_sim_client.call_async(req)
-           
+
             return l
         # else:
         #     l.append(self.get_distance_to_goal(self.goal_cord2,2))

@@ -73,11 +73,11 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep = 480
-        self.test =False
-        self.num_agents = 2
+        self.ep = 810
+        self.test =True
+        self.num_agents = 3
         self.agents = [Network("robot-1", True, self.ep),
-                       Network("robot-2", True, self.ep)]
+                       Network("robot-2", True, self.ep),Network("robot-2", True, self.ep)]
         self.epsilon = self.agents[0].get_epsilon()
 
         self.actions = [-np.pi, -np.pi/2, 0, np.pi/2, np.pi]
@@ -87,10 +87,10 @@ class Dqn(Node):
         self.steps_per_episode = 700
         self.rewards = [0 for _ in range(len(self.agents))]
         self.episode_size = 3000
-        self.dones = [False, False]
+        self.dones = [False for _ in range(self.num_agents)]
 
-        self.current_states = [0, 0]
-        self.next_states = [0.0, 0.0]
+        self.current_states = [0.0 for _ in range(self.num_agents)]
+        self.next_states = [0.0 for _ in range(self.num_agents)]
         #self.epsilon = 1
         #self.EPSILON_DECAY = 0.992
         self.EPSILON_DECAY = 0.996
@@ -131,7 +131,7 @@ class Dqn(Node):
 
             time.sleep(1)
 
-            self.dones = [False, False]
+            self.dones = [False for _ in range(self.num_agents)]
             self.get_init_state()
             self.ep += 1
             print("ep=", self.ep)
@@ -147,7 +147,7 @@ class Dqn(Node):
                 self.req = Mdqn.Request()
                 self.req.init = False
 
-                actions = [0, 0]
+                actions = [0 for _ in range(self.num_agents)]
                 if (not self.test):
                     if np.random.random() > self.epsilon:
                         for index, agent in enumerate(self.agents):
@@ -162,8 +162,10 @@ class Dqn(Node):
 
                 else:
                     for index, agent in enumerate(self.agents):
+                       
                         actions[index] = int(np.argmax(
                             agent.get_action(self.current_states[index])))
+                        
 
                 self.req.actions = actions
 
@@ -187,20 +189,7 @@ class Dqn(Node):
                             self.get_logger().error(
                                 'Exception while calling service: {0}'.format(future.exception()))
                         break
-                states=[]    
-                rewards=[]
-                next_states=[]
-                actions=[]
-                dones=[]
-                for index, agent in enumerate(self.agents):
-                    if (not self.test):
-                       states.append(self.current_states[index])
-                       rewards.append(self.rewards[index])
-                       next_states.append(self.next_states[index])
-                       actions.append(actions[index])
-                       dones.append(dones[index])
-
-
+                
 
                 for index, agent in enumerate(self.agents):
                     if (not self.test and not self.dones[index]):

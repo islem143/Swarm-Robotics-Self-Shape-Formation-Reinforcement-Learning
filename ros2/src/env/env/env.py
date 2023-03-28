@@ -23,7 +23,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents = 2
+        self.num_agents = 3
 
         self.cmd_vel_pub = {}
 
@@ -31,11 +31,15 @@ class Env(Node):
             Odometry, f"/t1/odom", self.get_current_position, 10)
         self.create_subscription(
             Odometry, f"/t2/odom", self.get_current_position2, 10)
-
+        
+        self.create_subscription(
+            Odometry, f"/t3/odom", self.get_current_position3, 10)
         self.create_subscription(
             LaserScan, f"/t1/scan", self.get_lds, 10)
         self.create_subscription(
             LaserScan, f"/t2/scan", self.get_lds2, 10)
+        self.create_subscription(
+            LaserScan, f"/t3/scan", self.get_lds3, 10)
         for i in range(self.num_agents):
             self.cmd_vel_pub[i] = self.create_publisher(
                 Twist, f'/t{i+1}/cmd_vel', 10)
@@ -46,7 +50,7 @@ class Env(Node):
             Goal, "goal_pose", self.generate_goal_pose)
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
 
-        self.goal_cords = [[0.0, 0.0], [0.0, -1.0]]
+        self.goal_cords = [[0.0, 0.0], [0.0, -1.0],[0.0,0.5]]
         self.dones = [False for _ in range(self.num_agents)]
 
         self.steps = 0
@@ -87,13 +91,25 @@ class Env(Node):
             self.goal_angles[1] -= 2*np.pi
         elif (self.goal_angles[1] < -np.pi):
             self.goal_angles[1] += 2*np.pi
+    def get_current_position3(self, msg):
+        self.positions[2] = [
+            msg.pose.pose.position.x, msg.pose.pose.position.y]
+        self.angles[2] = self.euler_from_quaternion(
+            msg.pose.pose.orientation)[2]
 
+        self.goal_angles[2] = (np.arctan2(self.goal_cords[2][1]-self.positions[2]
+                               [1], self.goal_cords[2][0]-self.positions[2][0]))-(self.angles[2])
+        if (self.goal_angles[2] > np.pi):
+            self.goal_angles[2] -= 2*np.pi
+        elif (self.goal_angles[2] < -np.pi):
+            self.goal_angles[2] += 2*np.pi
     def get_lds(self, msg):
 
         self.min_ldss_dist[0] = np.min(msg.ranges)
         if (self.min_ldss_dist[0] == np.Inf):
             self.min_ldss_dist[0] = float(4)
         self.min_ldss_angle[0] = np.argmin(msg.ranges)
+        
 
     def get_lds2(self, msg):
 
@@ -101,6 +117,13 @@ class Env(Node):
         if (self.min_ldss_dist[1] == np.Inf):
             self.min_ldss_dist[1] = float(4)
         self.min_ldss_angle[1] = np.argmin(msg.ranges)
+
+    def get_lds3(self, msg):
+
+        self.min_ldss_dist[2] = np.min(msg.ranges)
+        if (self.min_ldss_dist[2] == np.Inf):
+            self.min_ldss_dist[2] = float(4)
+        self.min_ldss_angle[2] = np.argmin(msg.ranges)    
 
     def get_goal_angle(self, index):
         if (self.positions[index][0] > self.goal_cords[index][0] and self.positions[index][1] > self.goal_cords[index][1]):
@@ -168,7 +191,7 @@ class Env(Node):
 
         if (request.init):
             self.steps = 0
-            self.dones = [False, False]
+            self.dones = [False for _ in range(self.num_agents)]
             for index in range(self.num_agents):
                 self.init_positions[index] = self.positions[index]
 
@@ -224,19 +247,20 @@ class Env(Node):
             p1[1]-p2[1])+np.square(p1[0]-p2[0])))
 
     def get_reward(self):
-        rewards = [0, 0]
+        rewards = [0 for _ in range(self.num_agents)]
         for index in range(self.num_agents):
             distance = self.get_distance_to_goal(index)
-            rewards[index] += -(distance/self.get_abs_distance_to_goal(index))
+            rewards[index] += -(distance/self.get_abs_distance_to_goal(index))+1
 
             rewards[index] += -2*np.abs(self.goal_angles[index])
-
+            # if (self.get_distance(self.positions[0], self.positions[1]) < 0.45):
+                #rewards[index] -= 10
             # if (self.goal_angles[index] < 0.40):
             #     rewards[index] += 5
-            if (self.min_ldss_dist[index] < 0.45 and self.min_ldss_angle[index] in [21, 22, 23, 0, 1, 2]):
+            if (self.min_ldss_dist[index] < 0.80 ):
                 rewards[index] -= 10
-            else:
-                rewards[index] += 0.1
+            # else:
+            #     rewards[index] += 0.1
 
             # self.get_distance(self.positions[0],self.positions[1])
             # print(rewards[index])
@@ -263,7 +287,7 @@ class Env(Node):
 
             if (self.crashs(index)):
                 print(f"get reward of -10 {index}")
-                self.dones = [True, True]
+                self.dones = [True for _ in range(self.num_agents)]
                 self.fails[index] = True
                 self.steps = 0
 
@@ -272,12 +296,12 @@ class Env(Node):
                 self.succeses[index] = True
                 self.dones[index] = True
 
-            if (self.steps == 550):
-                self.dones = [True for _ in range(self.num_agents)]
-                self.fails = [True for _ in range(self.num_agents)]
-                if self.succeses[index]:
-                    self.fails[index] = False
-                self.steps = 0
+            # if (self.steps == 550):
+            #     self.dones = [True for _ in range(self.num_agents)]
+            #     self.fails = [True for _ in range(self.num_agents)]
+            #     if self.succeses[index]:
+            #         self.fails[index] = False
+            #     self.steps = 0
 
         self.steps += 1
         if (all(self.dones)):

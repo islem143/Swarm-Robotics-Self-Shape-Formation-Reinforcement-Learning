@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
              'env = env.env:main',
-             'envac = env.env_ac:main'
+             'envac = env.env_ac:main',
+             'envac2 = env.env_ac2:main'
         ],
     },
 )

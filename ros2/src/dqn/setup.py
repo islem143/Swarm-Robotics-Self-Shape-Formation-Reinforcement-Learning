@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
               'dqn = dqn.dqn:main',
-              'dqnac = dqn.dqn_ac:main'
+              'dqnac = dqn.dqn_ac:main',
+              'dqnac2 = dqn.dqn_ac2:main'
         ],
     },
 )
