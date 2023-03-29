@@ -31,7 +31,7 @@ class ACNetwork():
         self.lower_bound=-3.14
         #self.critic_lr = 0.001
         #self.actor_lr = 0.0001
-        self.critic_lr=0.001 
+        self.critic_lr=0.001
         self.actor_lr=0.0001
         self.critic_optimizer = tf.keras.optimizers.Adam(learning_rate=self.critic_lr)
         self.actor_optimizer = tf.keras.optimizers.Adam(learning_rate=self.actor_lr)
@@ -87,15 +87,15 @@ class ACNetwork():
 
     def create_actor_model(self):
         # Initialize weights between -3e-3 and 3-e3
-        last_init = tf.random_uniform_initializer(minval=-0.0003, maxval=0.0003)
+        last_init = tf.random_uniform_initializer(minval=-0.003, maxval=0.003)
 
 
         inputs = keras.layers.Input(shape=(4,))
         out = keras.layers.Dense(128, activation="relu",kernel_initializer="he_normal")(inputs)
-        out=keras.layers.Dropout(0.1)(out)
+        #out=keras.layers.Dropout(0.1)(out)
         out = keras.layers.BatchNormalization()(out)
         out = keras.layers.Dense(128, activation="relu",kernel_initializer="he_normal")(out)
-        out=keras.layers.Dropout(0.1)(out)
+        #out=keras.layers.Dropout(0.1)(out)
         out = keras.layers.BatchNormalization()(out)
         #out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(out)
         #out=keras.layers.Dropout(0.2)(out)
@@ -103,7 +103,9 @@ class ACNetwork():
         # out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(out)
         # out=keras.layers.Dropout(0.5)(out)
         # out = keras.layers.BatchNormalization()(out)
-        outputs = keras.layers.Dense(1, activation="tanh",kernel_initializer=last_init)(out)
+        outputs = keras.layers.Dense(1, activation="tanh",kernel_initializer=keras.initializers.RandomNormal(
+    mean=0.0, stddev=0.05, seed=40
+))(out)
 
         
         outputs = outputs * self.upper_bound
@@ -112,23 +114,23 @@ class ACNetwork():
     
     def create_critic_model(self):
         state_input = keras.layers.Input(shape=(4))
-        # state_out = keras.layers.Dense(32, activation="relu",kernel_initializer="he_normal")(state_input)
-        # state_out = keras.layers.BatchNormalization()(state_out)
-        # state_out = keras.layers.Dense(32, activation="relu",kernel_initializer="he_normal")(state_out)
-        # state_out = keras.layers.BatchNormalization()(state_out)
+        state_out = keras.layers.Dense(32, activation="relu",kernel_initializer="he_normal")(state_input)
+        state_out = keras.layers.BatchNormalization()(state_out)
+        state_out = keras.layers.Dense(32, activation="relu",kernel_initializer="he_normal")(state_out)
+        state_out = keras.layers.BatchNormalization()(state_out)
 
             # Action as input
         action_input = keras.layers.Input(shape=(1))
-        # action_out = keras.layers.Dense(32, activation="relu",kernel_initializer="he_normal")(action_input)
-        # action_out =  keras.layers.BatchNormalization()(action_out)
+        action_out = keras.layers.Dense(32, activation="relu",kernel_initializer="he_normal")(action_input)
+        action_out =  keras.layers.BatchNormalization()(action_out)
             # Both are passed through seperate layer before concatenating
-        concat = keras.layers.Concatenate()([state_input, action_input])
+        concat = keras.layers.Concatenate()([state_out, action_out])
 
         out = keras.layers.Dense(128, activation="relu",kernel_initializer="he_normal")(concat)
-        out=keras.layers.Dropout(0.1)(out)
+        #out=keras.layers.Dropout(0.1)(out)
         out = keras.layers.BatchNormalization()(out)
         out = keras.layers.Dense(128, activation="relu",kernel_initializer="he_normal")(out)
-        out=keras.layers.Dropout(0.1)(out)
+        #out=keras.layers.Dropout(0.1)(out)
         out = keras.layers.BatchNormalization()(out)
         # out = keras.layers.Dense(512, activation="relu",kernel_initializer="he_normal")(out)
         # out=keras.layers.Dropout(0.2)(out)
@@ -171,9 +173,9 @@ class ACNetwork():
                     [next_state_batch, target_actions], training=True
                 )*(1-dones)
                
-               
+              
                 critic_value = self.critic_model([state_batch, action_batch], training=True)
-                
+               
                 critic_loss = tf.math.reduce_mean(tf.math.square(y - critic_value))
                
                 
@@ -186,13 +188,16 @@ class ACNetwork():
 
             with tf.GradientTape() as tape:
                 actions = self.actor_model(state_batch, training=True)
-            
+               
                 critic_value = self.critic_model([state_batch, actions], training=True)
                 # Used `-value` as we want to maximize the value given
                 # by the critic for our actions
-               
+                # q_mean = tf.math.reduce_mean(critic_value)
+                # q_std = tf.math.reduce_std(critic_value)
+                # q_normalized = (critic_value - q_mean) / q_std
+                 
                 actor_loss = -tf.math.reduce_mean(critic_value)
-         
+                
 
             actor_grad = tape.gradient(actor_loss, self.actor_model.trainable_variables)
             self.actor_optimizer.apply_gradients(

@@ -76,7 +76,7 @@ class Dqn(Node):
         self.test=False
         self.agents = [ACNetwork("robot-1",False, self.ep)]
         
-
+   
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
         self.minbatch_size = 64
@@ -95,9 +95,9 @@ class Dqn(Node):
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = False
         #std_dev = 0.2
-        std_dev=0.25
+        std_dev=0.35
  
-        self.tau=0.05
+        self.tau=0.005
 
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(std_dev) * np.ones(1))
         self.tensorboard = ModifiedTensorBoard(

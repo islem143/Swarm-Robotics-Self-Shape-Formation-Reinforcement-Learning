@@ -315,14 +315,14 @@ class Env(Node):
         reward += -2*np.abs(norm_angle)
      
         
-        if (self.min_lds_dist < 0.3):
-            reward -= 0.1
+        if (self.min_lds_dist < 0.5):
+            reward -= 5
 
         # + for succeed, - for fail
         if self.success:
-            reward += 500
+            reward += 100
         elif self.fail:
-            reward += -500
+            reward += -100
 
         print(reward)
 

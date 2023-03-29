@@ -75,9 +75,9 @@ class Dqn(Node):
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         self.ep = 810
         self.test =True
-        self.num_agents = 3
+        self.num_agents = 4
         self.agents = [Network("robot-1", True, self.ep),
-                       Network("robot-2", True, self.ep),Network("robot-2", True, self.ep)]
+                       Network("robot-1", True, self.ep),Network("robot-1", True, self.ep),Network("robot-1", True, self.ep)]
         self.epsilon = self.agents[0].get_epsilon()
 
         self.actions = [-np.pi, -np.pi/2, 0, np.pi/2, np.pi]

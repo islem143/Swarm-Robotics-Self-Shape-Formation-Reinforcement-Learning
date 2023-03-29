@@ -23,7 +23,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents = 3
+        self.num_agents = 4
 
         self.cmd_vel_pub = {}
 
@@ -35,11 +35,15 @@ class Env(Node):
         self.create_subscription(
             Odometry, f"/t3/odom", self.get_current_position3, 10)
         self.create_subscription(
+            Odometry, f"/t4/odom", self.get_current_position4, 10)
+        self.create_subscription(
             LaserScan, f"/t1/scan", self.get_lds, 10)
         self.create_subscription(
             LaserScan, f"/t2/scan", self.get_lds2, 10)
         self.create_subscription(
             LaserScan, f"/t3/scan", self.get_lds3, 10)
+        self.create_subscription(
+            LaserScan, f"/t4/scan", self.get_lds4, 10)
         for i in range(self.num_agents):
             self.cmd_vel_pub[i] = self.create_publisher(
                 Twist, f'/t{i+1}/cmd_vel', 10)
@@ -50,7 +54,7 @@ class Env(Node):
             Goal, "goal_pose", self.generate_goal_pose)
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
 
-        self.goal_cords = [[0.0, 0.0], [0.0, -1.0],[0.0,0.5]]
+        self.goal_cords = [[0.0,-1.5],[0.0, 1.5], [1.5,0.0],[0.0, 0.0]]
         self.dones = [False for _ in range(self.num_agents)]
 
         self.steps = 0
@@ -103,6 +107,19 @@ class Env(Node):
             self.goal_angles[2] -= 2*np.pi
         elif (self.goal_angles[2] < -np.pi):
             self.goal_angles[2] += 2*np.pi
+    def get_current_position4(self, msg):
+        self.positions[3] = [
+            msg.pose.pose.position.x, msg.pose.pose.position.y]
+        self.angles[3] = self.euler_from_quaternion(
+            msg.pose.pose.orientation)[2]
+
+        self.goal_angles[3] = (np.arctan2(self.goal_cords[3][1]-self.positions[3]
+                               [1], self.goal_cords[3][0]-self.positions[3][0]))-(self.angles[3])
+        if (self.goal_angles[3] > np.pi):
+            self.goal_angles[3] -= 2*np.pi
+        elif (self.goal_angles[3] < -np.pi):
+            self.goal_angles[3] += 2*np.pi   
+
     def get_lds(self, msg):
 
         self.min_ldss_dist[0] = np.min(msg.ranges)
@@ -123,7 +140,13 @@ class Env(Node):
         self.min_ldss_dist[2] = np.min(msg.ranges)
         if (self.min_ldss_dist[2] == np.Inf):
             self.min_ldss_dist[2] = float(4)
-        self.min_ldss_angle[2] = np.argmin(msg.ranges)    
+        self.min_ldss_angle[2] = np.argmin(msg.ranges) 
+    def get_lds4(self, msg):
+
+        self.min_ldss_dist[3] = np.min(msg.ranges)
+        if (self.min_ldss_dist[3] == np.Inf):
+            self.min_ldss_dist[3] = float(4)
+        self.min_ldss_angle[3] = np.argmin(msg.ranges)     
 
     def get_goal_angle(self, index):
         if (self.positions[index][0] > self.goal_cords[index][0] and self.positions[index][1] > self.goal_cords[index][1]):
@@ -290,6 +313,7 @@ class Env(Node):
                 self.dones = [True for _ in range(self.num_agents)]
                 self.fails[index] = True
                 self.steps = 0
+                self.call_reset_sim()
 
             if (self.goal_reached(index)):
                 self.stop_robots(index)
@@ -304,8 +328,8 @@ class Env(Node):
             #     self.steps = 0
 
         self.steps += 1
-        if (all(self.dones)):
-            self.call_reset_sim()
+        #if (all(self.dones)):
+            
 
         return l
 
