@@ -28,6 +28,7 @@ AGGREGATE_STATS_EVERY = 5
 #         gc.collect()
 #         k.clear_session()
 
+summary_writer = tf.summary.create_file_writer('logs')
 
 class ModifiedTensorBoard(TensorBoard):
 
@@ -95,13 +96,14 @@ class Dqn(Node):
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = False
         #std_dev = 0.2
-        std_dev=0.35
+        std_dev=0.32
  
-        self.tau=0.005
+        self.tau=0.001
+    
 
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(std_dev) * np.ones(1))
-        self.tensorboard = ModifiedTensorBoard(
-            log_dir="logs/{}-{}".format(MODEL_NAME, int(time.time())))
+        # self.tensorboard = ModifiedTensorBoard(
+        #     log_dir="logs/{}-{}".format(MODEL_NAME, int(time.time())))
 
         self.start()
 
@@ -180,14 +182,17 @@ class Dqn(Node):
                     if (not self.test):
 
                         self.rewards[index] += reward
+                        
                         agent.update_replay_buffer(
                             (self.current_states[index], reward, action, next_state, done))
-                    self.current_states[index] = next_state
-                    
-                    if (not self.test):
                         agent.learn()
                         agent.update_target(agent.target_actor.variables,agent.actor_model.variables, self.tau)
                         agent.update_target(agent.target_critic.variables,agent.critic_model.variables, self.tau)
+                    self.current_states[index] = next_state
+                    
+
+                       
+                        
 
                     # if (done):
 
@@ -202,20 +207,22 @@ class Dqn(Node):
 
                     time.sleep(0.01)
                
-                if (i == self.steps_per_episode  and not self.test):
+                # if (i == self.steps_per_episode  and not self.test):
                    
-                    done = True
-                    req = Empty.Request()
-                    while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-                        self.get_logger().info('service not available, waiting again...')
+                #     done = True
+                #     req = Empty.Request()
+                #     while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
+                #         self.get_logger().info('service not available, waiting again...')
 
-                    self.reset_sim_client.call_async(req)
-                    time.sleep(0.5)
-                i += 1
+                #     self.reset_sim_client.call_async(req)
+                #     time.sleep(0.5)
+                # i += 1
 
             
             for index, agent in enumerate(self.agents):
                 print(f"robot -{index+1} rewards", self.rewards[index])
+                with summary_writer.as_default():
+                    tf.summary.scalar('rewards', self.rewards[index], step=self.ep)
                 if (self.ep % 20 == 0 and self.ep!=0) and not self.test:
                     agent.save_data(self.ep,self.rewards[index])
             self.ep += 1        

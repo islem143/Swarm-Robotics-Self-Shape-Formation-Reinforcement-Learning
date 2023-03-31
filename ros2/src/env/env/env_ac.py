@@ -87,6 +87,7 @@ class Env(Node):
         self.goal_angle = goal_angle
         
         
+        
        
         
         
@@ -206,21 +207,17 @@ class Env(Node):
     def step(self, request, response):
         if (request.id == 250):
             response.state = self.get_state(1)
+            self.init_robot()
+            self.init_goal_distance = math.sqrt(
+                    (0.01-self.position_x)**2
+                    + (0.01-self.position_y)**2)
+            self.init_position = [self.position_x, self.position_y]
             return response
         elif (request.id == 251):
             response.state = self.get_state(2)
             return response
 
-        if (request.init):
-            if (request.id == 1):
-                self.init_robot()
-                self.init_goal_distance = math.sqrt(
-                    (0.01-self.position_x)**2
-                    + (0.01-self.position_y)**2)
-                self.init_position = [self.position_x, self.position_y]
-            else:
-                self.init_robot2()
-
+       
         self.done = False
 
         action = float(request.action)
@@ -298,31 +295,51 @@ class Env(Node):
         return float(np.sqrt(np.square(self.init_position[1]-self.goal_cord[1])+np.square(self.init_position[0]-self.goal_cord[0])))
 
     def get_reward(self, id):
+        # yaw_reward = 1 - 2*math.sqrt(math.fabs(self.goal_angle / math.pi))
 
+        # distance_reward = (2 * self.init_goal_distance) / \
+        #     (self.init_goal_distance + self.get_distance_to_goal(self.goal_cord,1)) - 1
+
+        # # Reward for avoiding obstacles
+        # if self.min_lds_dist < 0.25:
+        #     obstacle_reward = -2
+        # else:
+        #     obstacle_reward = 0
+
+        # reward = yaw_reward + distance_reward + obstacle_reward
+
+        # # + for succeed, - for fail
+        # if self.success:
+        #     reward += 5
+        # elif self.fail:
+        #     reward -= 10
+        # print(reward)
+
+        # return reward
         reward = 0.0
         distance = self.get_distance_to_goal(self.goal_cord, 1)
-        norm_distance = (distance-0)/(6.22)
-        norm_angle = (self.goal_angle)/(3.14)
+        #norm_distance = (distance-0)/(6.22)
+        #norm_angle = (self.goal_angle)/(3.14)
       
     
 
     
    
-        norm_abs_distance = self.get_abs_distance_to_goal()/6.22
+        abs_distance = self.get_abs_distance_to_goal()
         
-        reward += -(norm_distance/norm_abs_distance)+1
+        reward += -(distance/abs_distance)+1
         
-        reward += -2*np.abs(norm_angle)
+        reward += -np.abs(self.goal_angle)+0.2
      
         
-        if (self.min_lds_dist < 0.5):
-            reward -= 5
+        if (self.min_lds_dist < 0.3):
+            reward -= 2
 
         # + for succeed, - for fail
         if self.success:
-            reward += 100
+            reward += 5
         elif self.fail:
-            reward += -100
+            reward += -5
 
         print(reward)
 
@@ -383,11 +400,11 @@ class Env(Node):
         self.steps += 1
         if (id == 1):
 
-            norm_angle = (self.goal_angle)/(3.14)
+            norm_angle = (self.goal_angle+3.14)/(3.14+3.14)
             distance = self.get_distance_to_goal(self.goal_cord, 1)
             norm_goal = distance/6.22
             norm_lds = (self.min_lds_dist-0)/(3.5)
-            norm_lds_angle = (self.min_lds_angle-0)/(23)
+            norm_lds_angle = self.min_lds_angle
 
             l.append(float(norm_goal))
             l.append(float(norm_angle))
@@ -420,15 +437,15 @@ class Env(Node):
 
                 self.reset_sim_client.call_async(req)
 
-            # if(self.steps==500):
-            #     self.done=True
-            #     self.fail=True
-            #     self.steps=0
-            #     req = Empty.Request()
-            #     while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-            #             self.get_logger().info('service not available, waiting again...')
+            if(self.steps==500):
+                self.done=True
+                self.fail=True
+                self.steps=0
+                req = Empty.Request()
+                while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
+                        self.get_logger().info('service not available, waiting again...')
 
-            #     self.reset_sim_client.call_async(req)
+                self.reset_sim_client.call_async(req)
 
             return l
         # else:
