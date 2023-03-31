@@ -36,8 +36,8 @@ class ACNetwork():
         # self.critic_lr = 0.001
         self.test=test
         # self.actor_lr = 0.0001
-        self.critic_lr=0.0002
-        self.actor_lr=0.0001
+        self.critic_lr = 0.001
+        self.actor_lr = 0.0001
         self.critic_optimizer = tf.keras.optimizers.Adam(learning_rate=self.critic_lr)
         self.actor_optimizer = tf.keras.optimizers.Adam(learning_rate=self.actor_lr)
         self.buffer_counter=0
@@ -109,9 +109,9 @@ class ACNetwork():
         # out = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
         # out=keras.layers.Dropout(0.2)(out)
         # out = keras.layers.BatchNormalization()(out)
-        outputs = keras.layers.Dense(1, activation="tanh",kernel_initializer=keras.initializers.GlorotNormal(
+        outputs = keras.layers.Dense(1, activation="tanh",kernel_initializer=last_init
    
-))(out)
+)(out)
 
         
         outputs = outputs * self.upper_bound
@@ -247,7 +247,7 @@ class ACNetwork():
         record_range = min(self.buffer_counter, self.buffer_capacity)
         # Randomly sample indices
         batch_indices = np.random.choice(record_range, self.minbatch_size)
-        #batch_indices = np.linspace(0, record_range, num=self.minbatch_size, dtype=int)
+        #batch_indices = np.linspace(0, record_range-1, num=self.minbatch_size, dtype=int)
         
         # Convert to tensors
         state_batch = tf.convert_to_tensor(self.state_buffer[batch_indices])

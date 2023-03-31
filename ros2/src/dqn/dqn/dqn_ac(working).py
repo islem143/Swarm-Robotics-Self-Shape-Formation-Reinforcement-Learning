@@ -28,6 +28,7 @@ AGGREGATE_STATS_EVERY = 5
 #         gc.collect()
 #         k.clear_session()
 
+summary_writer = tf.summary.create_file_writer('logs')
 
 class ModifiedTensorBoard(TensorBoard):
 
@@ -72,11 +73,11 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep =0
-        self.test=False
-        self.agents = [ACNetwork("robot-1",False, self.ep)]
+        self.ep =160
+        self.test=True
+        self.agents = [ACNetwork("robot-1",True, self.ep)]
         
-
+   
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
         self.minbatch_size = 64
@@ -88,17 +89,20 @@ class Dqn(Node):
         self.current_states = [0, 0]
         #self.epsilon = 1
         #self.EPSILON_DECAY = 0.992
-        self.EPSILON_DECAY = 0.992
+        self.EPSILON_DECAY = 0.995
         self.MIN_EPSILON = 0.2
         self.MIN_REPLAY_MEMORY_SIZE = 1000
         self.env_result_client = self.create_client(Dqnn, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = False
-        std_dev = 0.2
+        self.save_every=20
+        #std_dev = 0.2
+        self.std_dev=0.35
  
         self.tau=0.001
+    
 
-        self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(std_dev) * np.ones(1))
+        self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         # self.tensorboard = ModifiedTensorBoard(
         #     log_dir="logs/{}-{}".format(MODEL_NAME, int(time.time())))
 
@@ -133,11 +137,12 @@ class Dqn(Node):
                 sys.exit()
 
                 break
+            
             print("ep=", self.ep)
             time.sleep(1)
             i = 0
             # ep_reward=0
-            self.ep += 1
+            
             self.rewards = [0 for _ in range(len(self.agents))]
             self.get_init_state()
 
@@ -178,44 +183,55 @@ class Dqn(Node):
                     if (not self.test):
 
                         self.rewards[index] += reward
+                        
                         agent.update_replay_buffer(
                             (self.current_states[index], reward, action, next_state, done))
-                    self.current_states[index] = next_state
-                    
-                    if (not self.test):
                         agent.learn()
                         agent.update_target(agent.target_actor.variables,agent.actor_model.variables, self.tau)
                         agent.update_target(agent.target_critic.variables,agent.critic_model.variables, self.tau)
+                    self.current_states[index] = next_state
+                    
 
-                    if (done):
+                       
+                        
 
-                        req = Empty.Request()
-                        while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-                            self.get_logger().info('service not available, waiting again...')
+                    # if (done):
 
-                        self.reset_sim_client.call_async(req)
-                        time.sleep(0.5)
-                        # done=False
-                        break
+                    #     req = Empty.Request()
+                    #     while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
+                    #         self.get_logger().info('service not available, waiting again...')
+
+                    #     self.reset_sim_client.call_async(req)
+                    #     time.sleep(0.5)
+                    #     # done=False
+                    #     break
 
                     time.sleep(0.01)
                
-                if (i == self.steps_per_episode  and not self.test):
+                # if (i == self.steps_per_episode  and not self.test):
                    
-                    done = True
-                    req = Empty.Request()
-                    while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-                        self.get_logger().info('service not available, waiting again...')
+                #     done = True
+                #     req = Empty.Request()
+                #     while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
+                #         self.get_logger().info('service not available, waiting again...')
 
-                    self.reset_sim_client.call_async(req)
-                    time.sleep(0.5)
-                i += 1
+                #     self.reset_sim_client.call_async(req)
+                #     time.sleep(0.5)
+                # i += 1
 
             
             for index, agent in enumerate(self.agents):
                 print(f"robot -{index+1} rewards", self.rewards[index])
-                if (self.ep % 50 == 0) and not self.test:
+                with summary_writer.as_default():
+                    tf.summary.scalar('rewards', self.rewards[index], step=self.ep)
+                if (self.ep % self.save_every == 0 and self.ep!=0) and not self.test:
+                    
                     agent.save_data(self.ep,self.rewards[index])
+                if(self.ep%25==0 and self.ep!=0 and self.std_dev>0.01):
+                    self.std_dev-=0.02
+                    self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))    
+            self.ep += 1 
+            print("self.std",self.std_dev)       
 
             # if not self.ep % AGGREGATE_STATS_EVERY or self.ep == 1:
             #      average_reward = sum(
