@@ -307,7 +307,12 @@ Our objective in this thesis is to make multi robots  form geometric patterns li
  
 
 \subsubsection{Environement}
-Consider a scenario in which there are n (n> 2) robots moving in a 2D environment. Assuming that every robot is aware of a central point that they must form shapes around or along it.
+
+We will describe our multi robot environemnt as an MDP where $S$ are the set of states that each robot will reacive. $A$ are the set of actions that it can take (left,right,towords ...). and $R$ are the set of Rewards that each robot will get during each episode.
+The  goal of each robot is to  maximize his return by reaching the goal target and avoiding collisons with the wall and other  robots. We will use Deep Q learning to evaluate the states, and after that the robots will take the actions that  maximize their return.
+ 
+
+For the environemnt, we will Consider a scenario in which there are n ($n >  2$) robots moving in a 2D environment. Assuming that every robot is aware of a central point that they must form shapes around or along it.
 
 
  
@@ -317,7 +322,9 @@ Consider a scenario in which there are n (n> 2) robots moving in a 2D environmen
 \caption[formation]{formation}
 \end{figure}
 
-We'll utilize the polar coordinates (R,$Phi$), where R and $Phi$ stand for the target's radius and angle, respectively. After assigning each robot a goal position, we will convert it to homogeneous coordinates so  it may be reached  by it.
+We'll utilize the polar coordinates (R,$\Phi$), where R and $\Phi$ stand for the target's radius and angle, respectively. After assigning each robot a goal position, we will convert it to homogeneous coordinates so  it may be reached  by it. The desired shapes will be formed by defining the distance and the angle for each robot from the center of the formation.
+
+
 
 
 

@@ -73,9 +73,9 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep =0
-        self.test=False
-        self.agents = [ACNetwork("robot-1",False, self.ep)]
+        self.ep =160
+        self.test=True
+        self.agents = [ACNetwork("robot-1",True, self.ep)]
         
    
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
@@ -95,13 +95,14 @@ class Dqn(Node):
         self.env_result_client = self.create_client(Dqnn, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = False
+        self.save_every=20
         #std_dev = 0.2
-        std_dev=0.32
+        self.std_dev=0.35
  
         self.tau=0.001
     
 
-        self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(std_dev) * np.ones(1))
+        self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         # self.tensorboard = ModifiedTensorBoard(
         #     log_dir="logs/{}-{}".format(MODEL_NAME, int(time.time())))
 
@@ -223,9 +224,14 @@ class Dqn(Node):
                 print(f"robot -{index+1} rewards", self.rewards[index])
                 with summary_writer.as_default():
                     tf.summary.scalar('rewards', self.rewards[index], step=self.ep)
-                if (self.ep % 20 == 0 and self.ep!=0) and not self.test:
+                if (self.ep % self.save_every == 0 and self.ep!=0) and not self.test:
+                    
                     agent.save_data(self.ep,self.rewards[index])
-            self.ep += 1        
+                if(self.ep%25==0 and self.ep!=0 and self.std_dev>0.01):
+                    self.std_dev-=0.02
+                    self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))    
+            self.ep += 1 
+            print("self.std",self.std_dev)       
 
             # if not self.ep % AGGREGATE_STATS_EVERY or self.ep == 1:
             #      average_reward = sum(

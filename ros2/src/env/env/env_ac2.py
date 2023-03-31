@@ -12,7 +12,7 @@ from rclpy.qos import QoSProfile
 from std_srvs.srv import Empty
 
 from dqn_msg.srv import Dqnn
-from dqn_msg.srv import Goal
+from dqn_msg.msg import Goal
 import time
 
 
@@ -33,8 +33,7 @@ class Env(Node):
 
         self.env_result_service = self.create_service(
             Dqnn, "env_result", self.step)
-        self.env_goal_service = self.create_service(
-            Goal, "goal_pose", self.generate_goal_pose)
+      
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.goal_cord = [0.01, 0.01]
         self.goal_cord2 = [0.01, 0.01-1]

@@ -12,7 +12,7 @@ from rclpy.qos import QoSProfile
 from std_srvs.srv import Empty
 
 from dqn_msg.srv import Dqnn
-from dqn_msg.srv import Goal
+from dqn_msg.msg import Goal
 import time
 
 
@@ -33,10 +33,10 @@ class Env(Node):
 
         self.env_result_service = self.create_service(
             Dqnn, "env_result", self.step)
-        self.env_goal_service = self.create_service(
-            Goal, "goal_pose", self.generate_goal_pose)
+        # self.env_goal_service = self.create_service(
+        #     Goal, "goal_pose", self.generate_goal_pose)
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
-        self.goal_cord = [0.01, 0.01]
+        self.goal_cord = [1.0, 1.0]
         self.goal_cord2 = [0.01, (0.01-1)]
         self.done = False
         self.steps = 0
@@ -50,7 +50,7 @@ class Env(Node):
         self.position_y2 = 0
         self.angle = 0
         self.init_position=[-1.5,-1.5]
-
+        self.goal_publisher=self.create_publisher(Goal,"generate_goal",10)  
         self.angle2 = 0
         self.goal_angle = 0
         self.goal_angle2 = 0
@@ -74,8 +74,8 @@ class Env(Node):
 
 
         path_theta = math.atan2(
-            0.01-self.position_y,
-            0.01-self.position_x)
+            self.goal_cord[1]-self.position_y,
+            self.goal_cord[0]-self.position_x)
 
         goal_angle = path_theta - self.angle
         if goal_angle > math.pi:
@@ -85,6 +85,7 @@ class Env(Node):
             goal_angle += 2 * math.pi
 
         self.goal_angle = goal_angle
+        
         
         
         
@@ -209,9 +210,11 @@ class Env(Node):
             response.state = self.get_state(1)
             self.init_robot()
             self.init_goal_distance = math.sqrt(
-                    (0.01-self.position_x)**2
-                    + (0.01-self.position_y)**2)
+                    (self.goal_cord[0]-self.position_x)**2
+                    + (self.goal_cord[1]-self.position_y)**2)
             self.init_position = [self.position_x, self.position_y]
+            print("goal cord",self.goal_cord)
+            print("init",self.init_position)
             return response
         elif (request.id == 251):
             response.state = self.get_state(2)
@@ -251,11 +254,17 @@ class Env(Node):
             return float(np.sqrt(np.square(self.position_y2-goal[1])+np.square(self.position_x2-goal[0])))
 
     def generate_goal_pose(self):
-        x = float(np.random.randint(-4, 4))
-        y = float(np.random.randint(-4, 4))
-        self.goal_x = x
-        self.goal_y = y
-        return x, y
+        x = float(np.random.randint(-2.5, 2.5))
+        y = float(np.random.randint(-2.5, 2.5))
+        self.goal_cord[0]=x
+        self.goal_cord[1]=y
+        x = float(np.random.randint(-2.5, 2.5))
+        y = float(np.random.randint(-2.5, 2.5))
+        self.goal_cord2[0]=x
+        self.goal_cord2[1]=y
+        msg = Goal()                                               
+        msg.goal = [x,y]                                          
+        self.goal_publisher.publish(msg)
 
     def crash(self):
         if (self.min_lds_dist < 0.13):
@@ -337,9 +346,9 @@ class Env(Node):
 
         # + for succeed, - for fail
         if self.success:
-            reward += 5
+            reward += 100
         elif self.fail:
-            reward += -5
+            reward += -100
 
         print(reward)
 
@@ -399,7 +408,7 @@ class Env(Node):
         self.success = False
         self.steps += 1
         if (id == 1):
-
+            
             norm_angle = (self.goal_angle+3.14)/(3.14+3.14)
             distance = self.get_distance_to_goal(self.goal_cord, 1)
             norm_goal = distance/6.22
@@ -427,6 +436,7 @@ class Env(Node):
                 self.reset_sim_client.call_async(req)
 
             if (self.goal_reached_local(self.goal_cord, 1)):
+                print("local goal reached")
                 self.stop_robot()
                 self.success = True
                 self.done = True
@@ -436,16 +446,17 @@ class Env(Node):
                     self.get_logger().info('service not available, waiting again...')
 
                 self.reset_sim_client.call_async(req)
+                #self.generate_goal_pose()
 
-            if(self.steps==500):
-                self.done=True
-                self.fail=True
-                self.steps=0
-                req = Empty.Request()
-                while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-                        self.get_logger().info('service not available, waiting again...')
+            # if(self.steps==500):
+            #     self.done=True
+            #     self.fail=True
+            #     self.steps=0
+            #     req = Empty.Request()
+            #     while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
+            #             self.get_logger().info('service not available, waiting again...')
 
-                self.reset_sim_client.call_async(req)
+            #     self.reset_sim_client.call_async(req)
 
             return l
         # else:

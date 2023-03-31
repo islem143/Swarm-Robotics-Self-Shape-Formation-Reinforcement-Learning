@@ -29,8 +29,8 @@ class Gazebo(Node):
             Goal, "generate_goal", self.get_goal, 10)
         self.reset_simulation_client = self.create_client(Empty, 'reset_simulation')
         #self.init_service = self.create_service(Dqn, 'init', self.dqn_com_callback)
-        self.position_x=0.0
-        self.position_y=0.0
+        self.position_x=1.0
+        self.position_y=-1.0
         
         self.goal_entity_name="goal"
         entity_path = '/home/islem/Documents/PFE/ros2/model.sdf'
