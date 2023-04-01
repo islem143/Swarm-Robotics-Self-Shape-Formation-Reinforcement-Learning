@@ -1,0 +1,1 @@
+/home/islem/Documents/PFE/build/tutorial_interfaces/ament_cmake_python/tutorial_interfaces/tutorial_interfaces.egg-info/SOURCES.txt

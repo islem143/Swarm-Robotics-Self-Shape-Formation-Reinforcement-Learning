@@ -1,0 +1,1 @@
+/home/islem/Documents/PFE/build/mrs_msg/ament_cmake_python/mrs_msg/mrs_msg.egg-info/top_level.txt

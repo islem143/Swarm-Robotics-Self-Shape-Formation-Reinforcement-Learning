@@ -1,0 +1,6 @@
+float32[] actions
+bool init
+---
+float32[] states
+float32[] rewards
+bool[] dones

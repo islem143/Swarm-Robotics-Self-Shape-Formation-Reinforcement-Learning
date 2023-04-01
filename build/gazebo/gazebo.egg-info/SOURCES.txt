@@ -1,0 +1,13 @@
+package.xml
+setup.cfg
+setup.py
+gazebo/__init__.py
+gazebo/gazebo.py
+gazebo.egg-info/PKG-INFO
+gazebo.egg-info/SOURCES.txt
+gazebo.egg-info/dependency_links.txt
+gazebo.egg-info/entry_points.txt
+gazebo.egg-info/requires.txt
+gazebo.egg-info/top_level.txt
+gazebo.egg-info/zip-safe
+resource/gazebo

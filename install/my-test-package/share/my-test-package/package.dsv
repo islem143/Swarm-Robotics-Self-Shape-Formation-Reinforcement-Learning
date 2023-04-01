@@ -1,0 +1,6 @@
+source;share/my-test-package/hook/pythonpath.ps1
+source;share/my-test-package/hook/pythonpath.dsv
+source;share/my-test-package/hook/pythonpath.sh
+source;../../build/my-test-package/share/my-test-package/hook/pythonpath_develop.ps1
+source;../../build/my-test-package/share/my-test-package/hook/pythonpath_develop.dsv
+source;../../build/my-test-package/share/my-test-package/hook/pythonpath_develop.sh

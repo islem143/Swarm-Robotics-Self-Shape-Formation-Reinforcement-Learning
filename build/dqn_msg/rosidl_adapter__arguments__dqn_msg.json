@@ -1,0 +1,10 @@
+{
+  "package_name": "dqn_msg",
+  "non_idl_tuples": [
+    "/home/islem/Documents/PFE/ros2/src/dqn_msg:msg/Goal.msg",
+    "/home/islem/Documents/PFE/ros2/src/dqn_msg:srv/Dqnn.srv",
+    "/home/islem/Documents/PFE/ros2/src/dqn_msg:srv/Goal.srv",
+    "/home/islem/Documents/PFE/ros2/src/dqn_msg:srv/Mdqn.srv",
+    "/home/islem/Documents/PFE/ros2/src/dqn_msg:srv/Mac.srv"
+  ]
+}

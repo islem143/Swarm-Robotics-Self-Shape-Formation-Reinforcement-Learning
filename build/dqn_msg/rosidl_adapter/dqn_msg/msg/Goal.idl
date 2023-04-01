@@ -1,0 +1,12 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from dqn_msg/msg/Goal.msg
+// generated code does not contain a copyright notice
+
+
+module dqn_msg {
+  module msg {
+    struct Goal {
+      sequence<double> goal;
+    };
+  };
+};

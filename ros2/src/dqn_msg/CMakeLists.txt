@@ -18,6 +18,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/Dqnn.srv"
   "srv/Goal.srv"
   "srv/Mdqn.srv"
+  "srv/Mac.srv"
 
 
 )

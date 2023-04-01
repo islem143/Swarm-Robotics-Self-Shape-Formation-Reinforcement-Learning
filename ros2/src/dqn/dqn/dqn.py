@@ -9,8 +9,7 @@ import numpy as np
 #from tensorflow.keras import backend as k
 
 import tensorflow as tf
-from tensorflow import keras
-from dqn_msg.srv import Dqnn
+
 from dqn_msg.srv import Mdqn
 import psutil
 from collections import deque
@@ -85,8 +84,8 @@ class Dqn(Node):
         self.minbatch_size = 64
         self.episode_length = 10_000
         self.steps_per_episode = 700
-        self.rewards = [0 for _ in range(len(self.agents))]
         self.episode_size = 3000
+        self.rewards = [0 for _ in range(len(self.agents))]
         self.dones = [False for _ in range(self.num_agents)]
 
         self.current_states = [0.0 for _ in range(self.num_agents)]
@@ -95,7 +94,7 @@ class Dqn(Node):
         #self.EPSILON_DECAY = 0.992
         self.EPSILON_DECAY = 0.996
         self.MIN_EPSILON = 0.1
-        self.MIN_REPLAY_MEMORY_SIZE = 1000
+        self.MIN_REPLAY_MEMORY_SIZE = 3000
         self.env_result_client = self.create_client(Mdqn, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = False

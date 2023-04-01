@@ -1,0 +1,1 @@
+/home/islem/Documents/PFE/build/tutorial_interfaces/rosidl_generator_py/tutorial_interfaces/__init__.py

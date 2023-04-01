@@ -151,13 +151,12 @@ class ACNetwork():
 
         return model
 
-    def policy(self,state, noise_object):
+    def policy(self,state, noise):
         
         sampled_actions = tf.squeeze(self.actor_model(state))
         #print("samlple",sampled_actions)
-        noise = noise_object()
-        if(self.test):
-            noise=0 
+        
+       
         # Adding noise to action
         sampled_actions = sampled_actions.numpy() + noise
          
@@ -197,7 +196,7 @@ class ACNetwork():
                 zip(critic_grad, self.critic_model.trainable_variables)
             )
             with summary_writer.as_default():
-              tf.summary.scalar('loss_critic', critic_loss, step=self.critic_optimizer.iterations)
+              tf.summary.scalar(f'loss_critic-{self.name}', critic_loss, step=self.critic_optimizer.iterations)
 
             with tf.GradientTape() as tape:
                 actions = self.actor_model(state_batch, training=True)
@@ -217,7 +216,7 @@ class ACNetwork():
                 zip(actor_grad, self.actor_model.trainable_variables)
             )
             with summary_writer.as_default():
-              tf.summary.scalar('loss_actor', actor_loss, step=self.actor_optimizer.iterations)
+              tf.summary.scalar(f'loss_actor-{self.name}', actor_loss, step=self.actor_optimizer.iterations)
 
     @tf.function
     def update_target(self,target_weights, weights, tau):
@@ -227,7 +226,7 @@ class ACNetwork():
 
     def update_replay_buffer(self, sample):
         self.buffer_counter+=1
-
+       
         index = self.buffer_counter % self.buffer_capacity
         
         self.state_buffer[index] = sample[0]

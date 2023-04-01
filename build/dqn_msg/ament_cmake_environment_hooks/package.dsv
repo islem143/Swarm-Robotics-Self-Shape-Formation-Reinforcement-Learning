@@ -1,0 +1,4 @@
+source;share/dqn_msg/local_setup.bash
+source;share/dqn_msg/local_setup.dsv
+source;share/dqn_msg/local_setup.sh
+source;share/dqn_msg/local_setup.zsh

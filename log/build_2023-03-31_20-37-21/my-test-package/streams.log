@@ -1,0 +1,16 @@
+[0.865s] Invoking command in '/home/islem/Documents/PFE/build/my-test-package': PYTHONPATH=/home/islem/Documents/PFE/build/my-test-package/prefix_override:/home/islem/Documents/PFE/install/my-test-package/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/islem/Documents/PFE/build/my-test-package/build --no-deps
+[1.208s] error: Multiple top-level packages discovered in a flat-layout: ['share', 'prefix_override'].
+[1.208s] 
+[1.208s] To avoid accidental inclusion of unwanted files or directories,
+[1.208s] setuptools will not proceed with this build.
+[1.208s] 
+[1.208s] If you are trying to create a single distribution with multiple packages
+[1.208s] on purpose, you should not rely on automatic discovery.
+[1.208s] Instead, consider the following options:
+[1.208s] 
+[1.209s] 1. set up custom discovery (`find` directive with `include` or `exclude`)
+[1.209s] 2. use a `src-layout`
+[1.209s] 3. explicitly set `py_modules` or `packages` with a list of names
+[1.209s] 
+[1.209s] To find more information, look for "package discovery" on setuptools docs.
+[1.245s] Invoked command in '/home/islem/Documents/PFE/build/my-test-package' returned '1': PYTHONPATH=/home/islem/Documents/PFE/build/my-test-package/prefix_override:/home/islem/Documents/PFE/install/my-test-package/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/islem/Documents/PFE/build/my-test-package/build --no-deps

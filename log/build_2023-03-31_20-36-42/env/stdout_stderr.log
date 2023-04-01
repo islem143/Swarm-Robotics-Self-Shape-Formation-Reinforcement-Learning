@@ -1,0 +1,28 @@
+running develop
+/home/islem/.local/lib/python3.10/site-packages/setuptools/command/easy_install.py:144: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+/home/islem/.local/lib/python3.10/site-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+running egg_info
+creating env.egg-info
+writing env.egg-info/PKG-INFO
+writing dependency_links to env.egg-info/dependency_links.txt
+writing entry points to env.egg-info/entry_points.txt
+writing requirements to env.egg-info/requires.txt
+writing top-level names to env.egg-info/top_level.txt
+writing manifest file 'env.egg-info/SOURCES.txt'
+reading manifest file 'env.egg-info/SOURCES.txt'
+writing manifest file 'env.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/islem/Documents/PFE/install/env/lib/python3.10/site-packages/env.egg-link (link to .)
+Installing env script to /home/islem/Documents/PFE/install/env/lib/env
+Installing envac script to /home/islem/Documents/PFE/install/env/lib/env
+Installing envac2 script to /home/islem/Documents/PFE/install/env/lib/env
+
+Installed /home/islem/Documents/PFE/build/env
+running install_data
+creating /home/islem/Documents/PFE/install/env/share/ament_index
+creating /home/islem/Documents/PFE/install/env/share/ament_index/resource_index
+creating /home/islem/Documents/PFE/install/env/share/ament_index/resource_index/packages
+copying resource/env -> /home/islem/Documents/PFE/install/env/share/ament_index/resource_index/packages
+copying package.xml -> /home/islem/Documents/PFE/install/env/share/env

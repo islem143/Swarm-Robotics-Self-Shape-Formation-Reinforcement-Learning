@@ -1,0 +1,9 @@
+source;share/env/hook/pythonpath.ps1
+source;share/env/hook/pythonpath.dsv
+source;share/env/hook/pythonpath.sh
+source;share/env/hook/ament_prefix_path.ps1
+source;share/env/hook/ament_prefix_path.dsv
+source;share/env/hook/ament_prefix_path.sh
+source;../../build/env/share/env/hook/pythonpath_develop.ps1
+source;../../build/env/share/env/hook/pythonpath_develop.dsv
+source;../../build/env/share/env/hook/pythonpath_develop.sh

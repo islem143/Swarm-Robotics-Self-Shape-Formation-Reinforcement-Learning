@@ -1,0 +1,8 @@
+{
+  "package_name": "mrs_msg",
+  "non_idl_tuples": [
+    "/home/islem/Documents/PFE/ros2/venv/mrs_msg:msg/Num.msg",
+    "/home/islem/Documents/PFE/ros2/venv/mrs_msg:msg/Sphere.msg",
+    "/home/islem/Documents/PFE/ros2/venv/mrs_msg:srv/AddThreeInts.srv"
+  ]
+}

@@ -21,6 +21,7 @@ import time
 from std_srvs.srv import Empty
 from .ac_network import ACNetwork
 from .ouNoise import OUActionNoise
+from dqn_msg.srv import Mac
 AGGREGATE_STATS_EVERY = 5
 
 # class ClearMemory(Callback):
@@ -73,26 +74,25 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep =160
+        self.ep =440
         self.test=True
-        self.agents = [ACNetwork("robot-1",True, self.ep)]
-        
+        self.agents = [ACNetwork("robot-1",True, 340),ACNetwork("robot-1",True, 320)]
+        self.num_agents=2
    
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
         self.minbatch_size = 64
         self.episode_length = 10_000
         self.steps_per_episode = 700
-        self.rewards = [0 for _ in range(len(self.agents))]
+        
         self.episode_size = 3000
 
-        self.current_states = [0, 0]
         #self.epsilon = 1
         #self.EPSILON_DECAY = 0.992
         self.EPSILON_DECAY = 0.995
         self.MIN_EPSILON = 0.2
         self.MIN_REPLAY_MEMORY_SIZE = 1000
-        self.env_result_client = self.create_client(Dqnn, "env_result")
+        self.env_result_client = self.create_client(Mac, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = False
         self.save_every=20
@@ -100,6 +100,11 @@ class Dqn(Node):
         self.std_dev=0.35
  
         self.tau=0.001
+        self.rewards = [0 for _ in range(len(self.agents))]
+        self.dones = [False for _ in range(self.num_agents)]
+
+        self.current_states = [0.0 for _ in range(self.num_agents)]
+        self.next_states = [0.0 for _ in range(self.num_agents)]
     
 
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
@@ -109,88 +114,101 @@ class Dqn(Node):
         self.start()
 
     def get_init_state(self):
-     for index, agent in enumerate(self.agents):
-        self.req = Dqnn.Request()
+
+        self.req = Mac.Request()
         self.req.init = True
-        self.req.id = 250+index
-       
+        
+
         future = self.env_result_client.call_async(self.req)
         while rclpy.ok():
             rclpy.spin_once(self)
             if future.done():
-                    if future.result() is not None:
-                                # Next state and reward
-                        self.current_states[index] = future.result().state
-
-                    else:
-                        self.get_logger().error(
-                            'Exception while calling service: {0}'.format(future.exception()))
-                    break 
+                if future.result() is not None:
+                    
+                    for i in range(self.num_agents):
+                        self.current_states[i] = future.result(
+                        ).states[i*4:i*4+4]
+                        
+                else:
+                    self.get_logger().error(
+                        'Exception while calling service: {0}'.format(future.exception()))
+                break
         
                
     def start(self):
 
         for _ in range(self.episode_length):
-            if (psutil.virtual_memory().percent > 92):
-                self.stop = True
-                print("finished")
-                sys.exit()
-
-                break
+           
             
-            print("ep=", self.ep)
             time.sleep(1)
-            i = 0
-            # ep_reward=0
-            
-            self.rewards = [0 for _ in range(len(self.agents))]
+
+            self.dones = [False for _ in range(self.num_agents)]
             self.get_init_state()
-
-            done=False
-            while not done:
-
+            self.ep += 1
+            print("ep=", self.ep)
+            self.rewards = [0.0 for _ in range(len(self.agents))]
+            self.returns = [0.0 for _ in range(len(self.agents))]
+            print( not all(self.dones))
+            while  not all(self.dones):
+                
         
    
-                for index, agent in enumerate(self.agents):
-                    reward = 0
-                   
-                    self.req = Dqnn.Request()
-                    self.req.init = False
-                    self.req.id = index+1
-                    state = tf.expand_dims(tf.convert_to_tensor(self.current_states[index]), 0)
-                    action = agent.policy(state, self.ou_noise)
-                  
-                    self.req.action = float(action[0])
-                    
+                self.req = Mac.Request()
+                self.req.init = False
 
-                    future = self.env_result_client.call_async(self.req)
-                    #rclpy.spin_until_future_complete(self, future)
-                    while rclpy.ok():
+                actions = [0 for _ in range(self.num_agents)]
+                
 
-                        rclpy.spin_once(self)
-                        if future.done():
-                            if future.result() is not None:
-                                # Next state and reward
-                                next_state = future.result().state
-                                reward = future.result().reward
-
-                                done = future.result().done
-
-                            else:
-                                self.get_logger().error(
-                                    'Exception while calling service: {0}'.format(future.exception()))
-                            break
+                for index,agent in enumerate(self.agents):
                     if (not self.test):
 
-                        self.rewards[index] += reward
-                        
-                        agent.update_replay_buffer(
-                            (self.current_states[index], reward, action, next_state, done))
-                        agent.learn()
-                        agent.update_target(agent.target_actor.variables,agent.actor_model.variables, self.tau)
-                        agent.update_target(agent.target_critic.variables,agent.critic_model.variables, self.tau)
-                    self.current_states[index] = next_state
+                        noise = self.ou_noise()
+                    else:
+                        noise=0
+                    state = tf.expand_dims(tf.convert_to_tensor(self.current_states[index]), 0)
+                  
+                    actions[index] = float(agent.policy(state, noise)[0])
                     
+                
+                  
+
+                
+                self.req.actions = actions
+
+                future = self.env_result_client.call_async(self.req)
+                #rclpy.spin_until_future_complete(self, future)
+                
+                while rclpy.ok():
+            
+                    rclpy.spin_once(self)
+                    if future.done():
+                        if future.result() is not None:
+                            # Next state and reward
+                            for i in range(self.num_agents):
+                                
+                                self.next_states[i] = future.result(
+                                ).states[i*4:i*4+4]
+                                self.rewards[i] = future.result().rewards[i]
+                                self.returns[i] += self.rewards[i]
+                                self.dones[i] = future.result().dones[i]
+                               
+                        else:
+                            self.get_logger().error(
+                                'Exception while calling service: {0}'.format(future.exception()))
+                        break
+
+                for index,agent in enumerate(self.agents):
+                
+                        if (not self.test and not self.dones[index]):
+                            print(f"just {index}")
+                            agent.update_replay_buffer(
+                                (self.current_states[index], self.rewards[index], actions[index], self.next_states[index], self.dones[index]))
+                            agent.learn()
+                            agent.update_target(agent.target_actor.variables,agent.actor_model.variables, self.tau)
+                            agent.update_target(agent.target_critic.variables,agent.critic_model.variables, self.tau)
+                       
+                        self.current_states[index] = self.next_states[index]
+                       
 
                        
                         
@@ -206,7 +224,7 @@ class Dqn(Node):
                     #     # done=False
                     #     break
 
-                    time.sleep(0.01)
+                        time.sleep(0.01)
                
                 # if (i == self.steps_per_episode  and not self.test):
                    
@@ -221,16 +239,16 @@ class Dqn(Node):
 
             
             for index, agent in enumerate(self.agents):
-                print(f"robot -{index+1} rewards", self.rewards[index])
+                print(f"robot -{index+1} rewards", self.returns[index])
                 with summary_writer.as_default():
-                    tf.summary.scalar('rewards', self.rewards[index], step=self.ep)
+                    tf.summary.scalar(f'rewards{index+1}', self.returns[index], step=self.ep)
                 if (self.ep % self.save_every == 0 and self.ep!=0) and not self.test:
                     
                     agent.save_data(self.ep,self.rewards[index])
-                if(self.ep%25==0 and self.ep!=0 and self.std_dev>0.01):
-                    self.std_dev-=0.02
-                    self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))    
-            self.ep += 1 
+            if(self.ep%25==0 and self.ep!=0 and self.std_dev>0.01):
+                self.std_dev-=0.01
+                self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))       
+            
             print("self.std",self.std_dev)       
 
             # if not self.ep % AGGREGATE_STATS_EVERY or self.ep == 1:

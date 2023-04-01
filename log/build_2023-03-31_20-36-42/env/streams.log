@@ -1,0 +1,30 @@
+[1.311s] Invoking command in '/home/islem/Documents/PFE/build/env': PYTHONPATH=/home/islem/Documents/PFE/build/env/prefix_override:/home/islem/Documents/PFE/install/env/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/islem/Documents/PFE/build/env/build --no-deps install_data
+[1.601s] running develop
+[1.601s] /home/islem/.local/lib/python3.10/site-packages/setuptools/command/easy_install.py:144: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[1.601s]   warnings.warn(
+[1.628s] /home/islem/.local/lib/python3.10/site-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[1.628s]   warnings.warn(
+[1.765s] running egg_info
+[1.765s] creating env.egg-info
+[1.778s] writing env.egg-info/PKG-INFO
+[1.778s] writing dependency_links to env.egg-info/dependency_links.txt
+[1.778s] writing entry points to env.egg-info/entry_points.txt
+[1.778s] writing requirements to env.egg-info/requires.txt
+[1.779s] writing top-level names to env.egg-info/top_level.txt
+[1.779s] writing manifest file 'env.egg-info/SOURCES.txt'
+[1.838s] reading manifest file 'env.egg-info/SOURCES.txt'
+[1.838s] writing manifest file 'env.egg-info/SOURCES.txt'
+[1.857s] running build_ext
+[1.857s] Creating /home/islem/Documents/PFE/install/env/lib/python3.10/site-packages/env.egg-link (link to .)
+[1.857s] Installing env script to /home/islem/Documents/PFE/install/env/lib/env
+[1.857s] Installing envac script to /home/islem/Documents/PFE/install/env/lib/env
+[1.857s] Installing envac2 script to /home/islem/Documents/PFE/install/env/lib/env
+[1.857s] 
+[1.857s] Installed /home/islem/Documents/PFE/build/env
+[1.857s] running install_data
+[1.857s] creating /home/islem/Documents/PFE/install/env/share/ament_index
+[1.857s] creating /home/islem/Documents/PFE/install/env/share/ament_index/resource_index
+[1.857s] creating /home/islem/Documents/PFE/install/env/share/ament_index/resource_index/packages
+[1.858s] copying resource/env -> /home/islem/Documents/PFE/install/env/share/ament_index/resource_index/packages
+[1.858s] copying package.xml -> /home/islem/Documents/PFE/install/env/share/env
+[1.929s] Invoked command in '/home/islem/Documents/PFE/build/env' returned '0': PYTHONPATH=/home/islem/Documents/PFE/build/env/prefix_override:/home/islem/Documents/PFE/install/env/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/islem/Documents/PFE/build/env/build --no-deps install_data

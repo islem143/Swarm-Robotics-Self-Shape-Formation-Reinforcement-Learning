@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/islem/Documents/PFE/build/mrs_msg/rosidl_generator_py/mrs_msg/mrs_msg_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so" "TARGETS" "mrs_msg__rosidl_typesupport_c__pyext" "DESTINATION" "local/lib/python3.10/dist-packages/mrs_msg")

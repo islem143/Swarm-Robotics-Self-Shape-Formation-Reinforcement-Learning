@@ -1,0 +1,21 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from dqn_msg/srv/Mac.srv
+// generated code does not contain a copyright notice
+
+
+module dqn_msg {
+  module srv {
+    struct Mac_Request {
+      sequence<float> actions;
+
+      boolean init;
+    };
+    struct Mac_Response {
+      sequence<float> states;
+
+      sequence<float> rewards;
+
+      sequence<boolean> dones;
+    };
+  };
+};

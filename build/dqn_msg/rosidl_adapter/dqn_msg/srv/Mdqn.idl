@@ -1,0 +1,21 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from dqn_msg/srv/Mdqn.srv
+// generated code does not contain a copyright notice
+
+
+module dqn_msg {
+  module srv {
+    struct Mdqn_Request {
+      sequence<int8> actions;
+
+      boolean init;
+    };
+    struct Mdqn_Response {
+      sequence<float> states;
+
+      sequence<float> rewards;
+
+      sequence<boolean> dones;
+    };
+  };
+};

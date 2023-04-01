@@ -1,0 +1,30 @@
+[1.349s] Invoking command in '/home/islem/Documents/PFE/build/dqn': PYTHONPATH=/home/islem/Documents/PFE/build/dqn/prefix_override:/home/islem/Documents/PFE/install/dqn/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/islem/Documents/PFE/build/dqn/build --no-deps install_data
+[1.645s] running develop
+[1.645s] /home/islem/.local/lib/python3.10/site-packages/setuptools/command/easy_install.py:144: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[1.645s]   warnings.warn(
+[1.664s] /home/islem/.local/lib/python3.10/site-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[1.664s]   warnings.warn(
+[1.809s] running egg_info
+[1.809s] creating dqn.egg-info
+[1.821s] writing dqn.egg-info/PKG-INFO
+[1.821s] writing dependency_links to dqn.egg-info/dependency_links.txt
+[1.821s] writing entry points to dqn.egg-info/entry_points.txt
+[1.821s] writing requirements to dqn.egg-info/requires.txt
+[1.821s] writing top-level names to dqn.egg-info/top_level.txt
+[1.821s] writing manifest file 'dqn.egg-info/SOURCES.txt'
+[1.866s] reading manifest file 'dqn.egg-info/SOURCES.txt'
+[1.866s] writing manifest file 'dqn.egg-info/SOURCES.txt'
+[1.872s] running build_ext
+[1.872s] Creating /home/islem/Documents/PFE/install/dqn/lib/python3.10/site-packages/dqn.egg-link (link to .)
+[1.873s] Installing dqn script to /home/islem/Documents/PFE/install/dqn/lib/dqn
+[1.873s] Installing dqnac script to /home/islem/Documents/PFE/install/dqn/lib/dqn
+[1.873s] Installing dqnac2 script to /home/islem/Documents/PFE/install/dqn/lib/dqn
+[1.873s] 
+[1.873s] Installed /home/islem/Documents/PFE/build/dqn
+[1.873s] running install_data
+[1.873s] creating /home/islem/Documents/PFE/install/dqn/share/ament_index
+[1.874s] creating /home/islem/Documents/PFE/install/dqn/share/ament_index/resource_index
+[1.874s] creating /home/islem/Documents/PFE/install/dqn/share/ament_index/resource_index/packages
+[1.874s] copying resource/dqn -> /home/islem/Documents/PFE/install/dqn/share/ament_index/resource_index/packages
+[1.874s] copying package.xml -> /home/islem/Documents/PFE/install/dqn/share/dqn
+[1.951s] Invoked command in '/home/islem/Documents/PFE/build/dqn' returned '0': PYTHONPATH=/home/islem/Documents/PFE/build/dqn/prefix_override:/home/islem/Documents/PFE/install/dqn/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/islem/Documents/PFE/build/dqn/build --no-deps install_data

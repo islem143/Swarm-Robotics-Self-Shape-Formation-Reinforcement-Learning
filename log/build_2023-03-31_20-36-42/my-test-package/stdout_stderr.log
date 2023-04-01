@@ -1,0 +1,17 @@
+running develop
+/home/islem/.local/lib/python3.10/site-packages/setuptools/command/easy_install.py:144: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+/home/islem/.local/lib/python3.10/site-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+running egg_info
+creating my_test_package.egg-info
+writing my_test_package.egg-info/PKG-INFO
+writing dependency_links to my_test_package.egg-info/dependency_links.txt
+writing top-level names to my_test_package.egg-info/top_level.txt
+writing manifest file 'my_test_package.egg-info/SOURCES.txt'
+reading manifest file 'my_test_package.egg-info/SOURCES.txt'
+writing manifest file 'my_test_package.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/islem/Documents/PFE/install/my-test-package/lib/python3.10/site-packages/my-test-package.egg-link (link to .)
+
+Installed /home/islem/Documents/PFE/build/my-test-package
