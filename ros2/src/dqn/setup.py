@@ -22,7 +22,8 @@ setup(
         'console_scripts': [
               'dqn = dqn.dqn:main',
               'dqnac = dqn.dqn_ac:main',
-              'dqnac2 = dqn.dqn_ac2:main'
+              'dqnac2 = dqn.dqn_ac2:main',
+              'super = dqn.super_controller:main'
         ],
     },
 )

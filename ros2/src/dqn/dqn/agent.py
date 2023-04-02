@@ -27,13 +27,17 @@ def loss_actor(y):
     return -tf.math.reduce_mean(y)
 custom_objects = {"custom_loss_actor": loss_actor}
 keras.utils.get_custom_objects().update(custom_objects)
-class ACNetwork():
-    def __init__(self, name, model_load=False, ep=0,test=False) -> None:
+
+class Agent():
+    def __init__(self, name,model_load=False, ep=0,test=False,num_agents=2,state_size=4,action_size=1) -> None:
         self.name = name
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         self.upper_bound=np.pi/2
         self.lower_bound=-np.pi/2
         # self.critic_lr = 0.001
+        self.num_agents=num_agents
+        self.state_size=state_size
+        self.action_size=action_size
         self.test=test
         # self.actor_lr = 0.0001
         self.critic_lr = 0.001
@@ -80,10 +84,10 @@ class ACNetwork():
       
       
 
-        self.state_size = 3
+
         self.discout_factor = 0.99
         self.minbatch_size = 128
-        self.MIN_REPLAY_MEMORY_SIZE =500
+        self.MIN_REPLAY_MEMORY_SIZE =5000
       
 
        
@@ -95,7 +99,7 @@ class ACNetwork():
         last_init = tf.random_uniform_initializer(minval=-0.003, maxval=0.003)
 
 
-        inputs = keras.layers.Input(shape=(4,))
+        inputs = keras.layers.Input(shape=(self.state_size,))
         out = keras.layers.Dense(400, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(inputs)
         out=keras.layers.Dropout(0.5)(out)
         out = keras.layers.BatchNormalization()(out)
@@ -119,14 +123,14 @@ class ACNetwork():
         return model
     
     def create_critic_model(self):
-        state_input = keras.layers.Input(shape=(4))
+        state_input = keras.layers.Input(shape=(self.state_size*self.num_agents))
         state_out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_input)
         #state_out = keras.layers.BatchNormalization()(state_out)
         # state_out = keras.layers.Dense(32, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_out)
         # state_out = keras.layers.BatchNormalization()(state_out)
 
             # Action as input
-        action_input = keras.layers.Input(shape=(1))
+        action_input = keras.layers.Input(shape=(self.action_size*self.num_agents))
         action_out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(action_input)
       #  action_out =  keras.layers.BatchNormalization()(action_out)
             # Both are passed through seperate layer before concatenating
@@ -152,7 +156,8 @@ class ACNetwork():
         return model
 
     def policy(self,state, noise):
-        
+       
+        state = tf.expand_dims(tf.convert_to_tensor(state), 0)
         sampled_actions = tf.squeeze(self.actor_model(state))
         #print("samlple",sampled_actions)
         
@@ -164,21 +169,20 @@ class ACNetwork():
         legal_action = np.clip(sampled_actions, self.lower_bound, self.upper_bound)
         #print(legal_action)
 
-        return [np.squeeze(legal_action)]
+        return [np.squeeze(legal_action)][0]
     
    
 
-    #@tf.function
+    @tf.function
     def update(
         self, state_batch, action_batch, reward_batch, next_state_batch,dones
     ):
             # Training and updating Actor & Critic networks.
             # See Pseudo Code.
             
-
             with tf.GradientTape() as tape:
                 target_actions = self.target_actor(next_state_batch, training=True)
-        
+               
                 y = reward_batch + self.discout_factor * self.target_critic(
                     [next_state_batch, target_actions], training=True
                 )*(1-dones)
@@ -186,7 +190,7 @@ class ACNetwork():
                 
               
                 critic_value = self.critic_model([state_batch, action_batch], training=True)
-          
+
                 critic_loss = loss_function(y,critic_value)
                 
                 
@@ -203,7 +207,6 @@ class ACNetwork():
                 actions = self.actor_model(state_batch, training=True)
                
                 critic_value = self.critic_model([state_batch, actions], training=True)
-               
                 # Used `-value` as we want to maximize the value given
                 # by the critic for our actions
                 # q_mean = tf.math.reduce_mean(critic_value)
@@ -226,108 +229,6 @@ class ACNetwork():
      for (a, b) in zip(target_weights, weights):
         a.assign(b * tau + a * (1 - tau))
 
-    def update_replay_buffer(self, sample):
-        self.buffer_counter+=1
-       
-        index = self.buffer_counter % self.buffer_capacity
-        
-        self.state_buffer[index] = sample[0]
-      
-        self.reward_buffer[index] = sample[1]
-        self.action_buffer[index] = sample[2]
-        self.next_state_buffer[index] = sample[3]
-        self.dones[index]=sample[4]
-
-    def learn(self):
-        if (self.MIN_REPLAY_MEMORY_SIZE > self.buffer_counter):
-            return
-        
-        # mean=np.mean(np.array(self.replay_memory,dtype=np.float32),axis=1)
-        # std = np.std(np.array(self.replay_memory,dtype=np.float32), axis=1)
-        # print("mean",std)  
-     
-        record_range = min(self.buffer_counter, self.buffer_capacity)
-        # Randomly sample indices
-        batch_indices = np.random.choice(record_range, self.minbatch_size)
-        #batch_indices = np.linspace(0, record_range-1, num=self.minbatch_size, dtype=int)
-        
-        # Convert to tensors
-        state_batch = tf.convert_to_tensor(self.state_buffer[batch_indices])
-        action_batch = tf.convert_to_tensor(self.action_buffer[batch_indices])
-        reward_batch = tf.convert_to_tensor(self.reward_buffer[batch_indices])
-        reward_batch = tf.cast(reward_batch, dtype=tf.float32)
-        next_state_batch = tf.convert_to_tensor(self.next_state_buffer[batch_indices])
-        dones = tf.convert_to_tensor(self.dones[batch_indices])
-        dones = tf.cast(dones, dtype=tf.float32)
-        
-        self.update(state_batch, action_batch, reward_batch, next_state_batch,dones)
-
-    def load_data(self):
-        self.actor_model = self.create_actor_model()
-        self.target_actor = self.create_actor_model()
-        self.critic_model = self.create_critic_model()
-        self.target_critic = self.create_critic_model()
-        path1 = os.path.join(self.dir_path, self.get_model_file_name("h5","actor"))
-        path2 = os.path.join(self.dir_path, self.get_model_file_name("h5","target-actor"))
-        path3 = os.path.join(self.dir_path, self.get_model_file_name("h5","critic"))
-        path4 = os.path.join(self.dir_path, self.get_model_file_name("h5","target-critic"))
-        self.actor_model = Utils.load_model(self.actor_model, path1)
-        self.target_actor = Utils.load_model(self.target_actor, path2)
-        self.critic_model = Utils.load_model(self.critic_model, path3)
-        self.target_critic = Utils.load_model(self.target_critic, path4)
-        path = os.path.join(self.dir_path, self.get_model_file_name("json"))
-        self.buffer_counter=Utils.load_json(path, "counter")
-        
     
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","state"))
-        self.state_buffer= Utils.load_pickle(path)
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","reward"))
-        self.reward_buffer= Utils.load_pickle(path)
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","action"))
-        self.action_buffer= Utils.load_pickle(path)
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","next"))
-        self.next_state_buffer= Utils.load_pickle(path)
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","done"))
-        self.dones= Utils.load_pickle(path)
-       
 
-    def get_epsilon(self):
-        return self.epsilon
-
-    def save_data(self, ep,reward):
-        self.ep = ep
-        path1 = os.path.join(self.dir_path, self.get_model_file_name("h5","actor"))
-        path2 = os.path.join(self.dir_path, self.get_model_file_name("h5","target-actor"))
-        path3 = os.path.join(self.dir_path, self.get_model_file_name("h5","critic"))
-        path4 = os.path.join(self.dir_path, self.get_model_file_name("h5","target-critic"))
-        actor = copy(self.actor_model)
-        target_actor = copy(self.target_actor)
-        critic = copy(self.critic_model)
-        target_critic = copy(self.target_critic)
-        #fix this the loss function
-        actor.compile(optimizer=self.actor_optimizer, loss="custom_loss_actor")
-        target_actor.compile(optimizer=self.actor_optimizer, loss="custom_loss_actor")
-        critic.compile(optimizer=self.critic_optimizer, loss=loss_function)
-        target_critic.compile(optimizer=self.critic_optimizer, loss=loss_function)
-        Utils.save_model(actor, path1)
-        Utils.save_model(target_actor, path2)
-        Utils.save_model(critic, path3)
-        Utils.save_model(target_critic, path4)
-        path = os.path.join(self.dir_path, self.get_model_file_name("json"))
-        data = {"reward":reward,"counter":self.buffer_counter}
-        Utils.save_json(path, data)
-       
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","state"))
-        Utils.save_pickle(path, self.state_buffer)
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","reward"))
-        Utils.save_pickle(path, self.reward_buffer)
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","action"))
-        Utils.save_pickle(path, self.action_buffer)
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","next"))
-        Utils.save_pickle(path, self.next_state_buffer)
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","done"))
-        Utils.save_pickle(path, self.dones)
-
-    def get_model_file_name(self, type,ext=None):
-        return f"models-{self.name}/my-model-{self.ep}-{ext}.{type}"
-      
+    

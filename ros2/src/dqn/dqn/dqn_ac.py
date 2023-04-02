@@ -74,9 +74,9 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep =440
-        self.test=True
-        self.agents = [ACNetwork("robot-1",True, 340),ACNetwork("robot-1",True, 320)]
+        self.ep =0
+        self.test=False
+        self.agents = [ACNetwork("robot-1",False, self.ep),ACNetwork("robot-1",False, self.ep)]
         self.num_agents=2
    
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
@@ -91,13 +91,13 @@ class Dqn(Node):
         #self.EPSILON_DECAY = 0.992
         self.EPSILON_DECAY = 0.995
         self.MIN_EPSILON = 0.2
-        self.MIN_REPLAY_MEMORY_SIZE = 1000
+        self.MIN_REPLAY_MEMORY_SIZE = 500
         self.env_result_client = self.create_client(Mac, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = False
         self.save_every=20
         #std_dev = 0.2
-        self.std_dev=0.35
+        
  
         self.tau=0.001
         self.rewards = [0 for _ in range(len(self.agents))]
@@ -106,7 +106,7 @@ class Dqn(Node):
         self.current_states = [0.0 for _ in range(self.num_agents)]
         self.next_states = [0.0 for _ in range(self.num_agents)]
     
-
+        self.std_dev=0.35
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         # self.tensorboard = ModifiedTensorBoard(
         #     log_dir="logs/{}-{}".format(MODEL_NAME, int(time.time())))
@@ -148,7 +148,7 @@ class Dqn(Node):
             print("ep=", self.ep)
             self.rewards = [0.0 for _ in range(len(self.agents))]
             self.returns = [0.0 for _ in range(len(self.agents))]
-            print( not all(self.dones))
+            
             while  not all(self.dones):
                 
         
@@ -200,7 +200,7 @@ class Dqn(Node):
                 for index,agent in enumerate(self.agents):
                 
                         if (not self.test and not self.dones[index]):
-                            print(f"just {index}")
+                       
                             agent.update_replay_buffer(
                                 (self.current_states[index], self.rewards[index], actions[index], self.next_states[index], self.dones[index]))
                             agent.learn()

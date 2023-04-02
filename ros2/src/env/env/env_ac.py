@@ -315,15 +315,15 @@ class Env(Node):
             if (self.goal_reached(index)):
                
                 self.succeses[index] = True
-                #self.dones[index] = True
+                self.dones[index] = True
                 self.stop_robots(index)
 
-            # if (self.steps == 550):
-            #     self.dones = [True for _ in range(self.num_agents)]
-            #     self.fails = [True for _ in range(self.num_agents)]
-            #     if self.succeses[index]:
-            #         self.fails[index] = False
-            #     self.steps = 0
+            if (self.steps == 550):
+                self.dones = [True for _ in range(self.num_agents)]
+                self.fails = [True for _ in range(self.num_agents)]
+                if self.succeses[index]:
+                    self.fails[index] = False
+                self.steps = 0
           
             
          
