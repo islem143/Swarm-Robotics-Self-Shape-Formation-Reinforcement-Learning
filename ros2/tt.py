@@ -1,8 +1,8 @@
 import numpy as np
 import tensorflow as tf
-a = np.array([[1,2,5,6]])
+arr=[1,2,3]
 
-# Reshaping the array to an array of arrays with shape (5, 1)
-#b = a.reshape((-1, 1))
-b=tf.reshape(a,(-1,1))
-print(b)
+for index in tf.range(2):
+    print(arr[index])
+y = tf.map_fn(lambda x_i: x_i + 1, tf.constant([1, 2, 3]))
+print(y)

@@ -30,13 +30,18 @@
 \contentsline {subsection}{\numberline {4.2}Goal defintion}{15}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}Problem Formulation}{15}{subsection.4.3}%
 \contentsline {subsubsection}{\numberline {4.3.1}Environement}{15}{subsubsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.4}State Of the art}{16}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}DQN}{16}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}DDPG}{16}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Thier usages in multi agent pros and cons}{16}{subsection.4.7}%
-\contentsline {subsection}{\numberline {4.8}problem formulation and solution}{16}{subsection.4.8}%
-\contentsline {subsection}{\numberline {4.9}we opt for maddpg decentrilzed excution }{16}{subsection.4.9}%
-\contentsline {subsection}{\numberline {4.10}we opt for maddpg for better perfomance and scalability }{16}{subsection.4.10}%
-\contentsline {subsection}{\numberline {4.11}ROS and gazebo}{16}{subsection.4.11}%
-\contentsline {subsection}{\numberline {4.12}Conception of the solution}{16}{subsection.4.12}%
-\contentsline {subsection}{\numberline {4.13}implemtation of the solution}{16}{subsection.4.13}%
+\contentsline {subsubsection}{\numberline {4.3.2}Shape generation}{16}{subsubsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.4}State Of the art}{17}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}DQN}{17}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}DDPG}{17}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Thier usages in multi agent pros and cons}{17}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}problem formulation and solution}{17}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}we opt for maddpg decentrilzed excution }{17}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.10}we opt for maddpg for better perfomance and scalability }{17}{subsection.4.10}%
+\contentsline {subsection}{\numberline {4.11}ROS and gazebo}{17}{subsection.4.11}%
+\contentsline {subsection}{\numberline {4.12}Conception of the solution}{17}{subsection.4.12}%
+\contentsline {subsection}{\numberline {4.13}Rewards desgin}{17}{subsection.4.13}%
+\contentsline {subsection}{\numberline {4.14}Networks Desgin}{17}{subsection.4.14}%
+\contentsline {subsection}{\numberline {4.15}talk about how you choose the hyperparameters}{17}{subsection.4.15}%
+\contentsline {subsection}{\numberline {4.16}how you calculeted tha angle and how lds works}{17}{subsection.4.16}%
+\contentsline {subsection}{\numberline {4.17}implemtation of the solution}{17}{subsection.4.17}%

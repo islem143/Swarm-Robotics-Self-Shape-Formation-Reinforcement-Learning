@@ -41,7 +41,7 @@ class Env(Node):
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.goal_publisher=self.create_publisher(Goal,"generate_goal",10) 
         
-        self.goal_cords = [[0.0,1.0],[0.0,-1.0], [1.5,0.0],[0.0, 0.0]]
+        self.goal_cords = [[0.0,-1.0],[0.0,1.0], [1.5,0.0],[0.0, 0.0]]
         self.dones = [False for _ in range(self.num_agents)]
 
         self.steps = 0
@@ -301,15 +301,15 @@ class Env(Node):
             # l.append(float(self.min_lds_angle))
             if (self.crashs(index)):
                 print(f"get reward of -10 {index}")
-                if(not self.global_steps<5000):
+                # if(not self.global_steps<5000):
                 
-                    self.dones = [True for _ in range(self.num_agents)]
-                    self.fails[index] = True
-                    self.steps = 0
-                else:
-                    self.dones[index]=True  
-                    self.fails[index] = True
-                    self.stop_robots(index) 
+                self.dones = [True for _ in range(self.num_agents)]
+                self.fails[index] = True
+                self.steps = 0
+                #else:
+                self.dones[index]=True  
+                self.fails[index] = True
+                self.stop_robots(index) 
                 
 
             if (self.goal_reached(index)):

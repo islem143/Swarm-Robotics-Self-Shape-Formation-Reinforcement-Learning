@@ -10,16 +10,13 @@ import numpy as np
 
 import tensorflow as tf
 from tensorflow import keras
-from dqn_msg.srv import Dqnn
-import psutil
-from collections import deque
-from .utils import Utils
-import os
-from keras.callbacks import TensorBoard
-import random
+
+
+
+
 import time
 from std_srvs.srv import Empty
-from .ac_network import ACNetwork
+
 from .ouNoise import OUActionNoise
 from dqn_msg.srv import Mac
 from .super_agent import SuperAgent
@@ -48,6 +45,7 @@ class SuperController(Node):
         self.state_size = 4
         self.action_size = 1
         self.num_agents = 2
+        self.test=False
         self.episode_length = 3000
         self.ep = 0
         self.super_agent = SuperAgent()
@@ -65,7 +63,7 @@ class SuperController(Node):
             (self.num_agents*self.state_size,), dtype=np.float32)
         self.actions = np.zeros(
             (self.num_agents*self.action_size,), dtype=np.float32)
-        self.std_dev=0.35
+        self.std_dev=0.4
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         self.super_agent.set_noise(self.ou_noise)
         self.env_result_client = self.create_client(Mac, "env_result")
@@ -140,6 +138,7 @@ class SuperController(Node):
                                 'Exception while calling service: {0}'.format(future.exception()))
                         break
                
+
                 states=np.concatenate(self.current_actor_states)
                 next_states=np.concatenate(self.next_actor_states)
                
@@ -159,9 +158,9 @@ class SuperController(Node):
                 with summary_writer.as_default():
                     tf.summary.scalar(
                         f'rewards{index+1}', self.returns[index], step=self.ep)
-                if (self.ep % self.save_every == 0 and self.ep != 0) and not self.test:
+               # if (self.ep % self.save_every == 0 and self.ep != 0) and not self.test:
 
-                    agent.save_data(self.ep, self.rewards[index])
+                    #agent.save_data(self.ep, self.rewards[index])
             if (self.ep % 25 == 0 and self.ep != 0 and self.std_dev > 0.01):
                 self.std_dev -= 0.01
                 self.ou_noise = OUActionNoise(mean=np.zeros(

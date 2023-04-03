@@ -133,13 +133,13 @@ class ACNetwork():
         concat = keras.layers.Concatenate()([state_out, action_out])
 
         out = keras.layers.Dense(400, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(concat)
-        out=keras.layers.Dropout(0.5)(out)
+        out=keras.layers.Dropout(0.3)(out)
        # out = keras.layers.BatchNormalization()(out)
         out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        out=keras.layers.Dropout(0.5)(out)
-       # out = keras.layers.BatchNormalization()(out)
-        # = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        #out=keras.layers.Dropout(0.3)(out)
+        out=keras.layers.Dropout(0.3)(out)
+       out = keras.layers.BatchNormalization()(out)
+        = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        out=keras.layers.Dropout(0.3)(out)
        # out = keras.layers.BatchNormalization()(out)
         # out = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
         # out=keras.layers.Dropout(0.2)(out)
@@ -168,7 +168,7 @@ class ACNetwork():
     
    
 
-    #@tf.function
+    @tf.function
     def update(
         self, state_batch, action_batch, reward_batch, next_state_batch,dones
     ):

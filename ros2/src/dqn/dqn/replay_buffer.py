@@ -21,7 +21,7 @@ class ReplayBuffer():
 
     
     def add_record(self, states,next_states,rewards,dones,actor_states,actor_next_states,actor_actions):
-        
+    
        
         index = self.buffer_counter % self.buffer_capacity
         self.states[index]=states 
@@ -54,8 +54,8 @@ class ReplayBuffer():
         rewards_batch = tf.cast(rewards_batch, dtype=tf.float32)
         dones = tf.convert_to_tensor(self.dones[batch_indices])
         dones = tf.cast(dones, dtype=tf.float32)
-        actors_state_batch=tf.convert_to_tensor([ tf.convert_to_tensor(self.actor_states[index][batch_indices]) for index in range(self.num_agents)])
-        actors_next_state_batch=tf.convert_to_tensor([tf.convert_to_tensor(self.actor_next_states[index][batch_indices]) for index in range(self.num_agents)])
-        actors_actions_batch=tf.convert_to_tensor([tf.convert_to_tensor(self.actor_actions[index][batch_indices]) for index in range(self.num_agents)])
+        actors_state_batch=[ tf.convert_to_tensor(self.actor_states[index][batch_indices]) for index in range(self.num_agents)]
+        actors_next_state_batch=[tf.convert_to_tensor(self.actor_next_states[index][batch_indices]) for index in range(self.num_agents)]
+        actors_actions_batch=[tf.convert_to_tensor(self.actor_actions[index][batch_indices]) for index in range(self.num_agents)]
         
         return states_batch,next_states_batch,rewards_batch,dones,actors_state_batch,actors_next_state_batch,actors_actions_batch
