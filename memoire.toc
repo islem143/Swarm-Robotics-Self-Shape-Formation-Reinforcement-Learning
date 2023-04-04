@@ -31,17 +31,22 @@
 \contentsline {subsection}{\numberline {4.3}Problem Formulation}{15}{subsection.4.3}%
 \contentsline {subsubsection}{\numberline {4.3.1}Environement}{15}{subsubsection.4.3.1}%
 \contentsline {subsubsection}{\numberline {4.3.2}Shape generation}{16}{subsubsection.4.3.2}%
-\contentsline {subsection}{\numberline {4.4}State Of the art}{17}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}DQN}{17}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}DDPG}{17}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Thier usages in multi agent pros and cons}{17}{subsection.4.7}%
-\contentsline {subsection}{\numberline {4.8}problem formulation and solution}{17}{subsection.4.8}%
-\contentsline {subsection}{\numberline {4.9}we opt for maddpg decentrilzed excution }{17}{subsection.4.9}%
-\contentsline {subsection}{\numberline {4.10}we opt for maddpg for better perfomance and scalability }{17}{subsection.4.10}%
-\contentsline {subsection}{\numberline {4.11}ROS and gazebo}{17}{subsection.4.11}%
-\contentsline {subsection}{\numberline {4.12}Conception of the solution}{17}{subsection.4.12}%
-\contentsline {subsection}{\numberline {4.13}Rewards desgin}{17}{subsection.4.13}%
-\contentsline {subsection}{\numberline {4.14}Networks Desgin}{17}{subsection.4.14}%
-\contentsline {subsection}{\numberline {4.15}talk about how you choose the hyperparameters}{17}{subsection.4.15}%
-\contentsline {subsection}{\numberline {4.16}how you calculeted tha angle and how lds works}{17}{subsection.4.16}%
-\contentsline {subsection}{\numberline {4.17}implemtation of the solution}{17}{subsection.4.17}%
+\contentsline {subsection}{\numberline {4.4}State Representation And Reward Design}{16}{subsection.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.1}Introduction}{16}{subsubsection.4.4.1}%
+\contentsline {subsubsection}{\numberline {4.4.2}State Representation}{16}{subsubsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.5}Roboting Operating system}{16}{subsection.4.5}%
+\contentsline {subsubsection}{\numberline {4.5.1}Ros Basics}{16}{subsubsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.6}State Of the art}{18}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}DQN}{18}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}DDPG}{18}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}Thier usages in multi agent pros and cons}{18}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.10}problem formulation and solution}{18}{subsection.4.10}%
+\contentsline {subsection}{\numberline {4.11}we opt for maddpg decentrilzed excution }{18}{subsection.4.11}%
+\contentsline {subsection}{\numberline {4.12}we opt for maddpg for better perfomance and scalability }{18}{subsection.4.12}%
+\contentsline {subsection}{\numberline {4.13}ROS and gazebo}{18}{subsection.4.13}%
+\contentsline {subsection}{\numberline {4.14}Conception of the solution}{18}{subsection.4.14}%
+\contentsline {subsection}{\numberline {4.15}Rewards desgin}{18}{subsection.4.15}%
+\contentsline {subsection}{\numberline {4.16}Networks Desgin}{18}{subsection.4.16}%
+\contentsline {subsection}{\numberline {4.17}talk about how you choose the hyperparameters}{18}{subsection.4.17}%
+\contentsline {subsection}{\numberline {4.18}how you calculeted tha angle and how lds works}{18}{subsection.4.18}%
+\contentsline {subsection}{\numberline {4.19}implemtation of the solution}{18}{subsection.4.19}%

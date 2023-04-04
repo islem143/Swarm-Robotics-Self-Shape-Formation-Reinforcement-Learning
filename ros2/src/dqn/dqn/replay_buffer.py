@@ -4,7 +4,7 @@ class ReplayBuffer():
     
 
     def __init__(self,state_size=4,num_agents=2,action_size=1) -> None:
-        self.buffer_capacity=100_000
+        self.buffer_capacity=500_000
         self.state_size=state_size
         self.num_agents=num_agents
         self.action_size=action_size

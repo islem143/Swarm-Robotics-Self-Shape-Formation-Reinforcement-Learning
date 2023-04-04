@@ -351,6 +351,82 @@ $\Phi_{i}=0$
 
 and we can keep modifying the distance and angle for each robot to get any shape.
 
+And to simplify the job for the robot, we will transform the cordinates from polar to homogonous in order to calculate the distance between the robot and their target goal. 
+
+
+
+
+
+\subsection{State Representation And Reward Design}
+
+\subsubsection{Introduction}
+In order to achieve the target shape formation, state and reward  are critical component  of RL as  they representation will affect direcly the performance of our robot and will determine the neurel network architecutre.
+
+
+
+ \subsubsection{State Representation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Roboting Operating system}
+
+We will use the roboting operating system (ROS), a collection of open source software and tools, to control the robots.
+ROS will simplify our work by giving us the necessary tools for controlling the robots, determining their positions and angles, gathering sensor data and preparing it for manipulation, and also giving the robots a way to communicate with one another.
+
+\subsubsection{Ros Basics}
+There are five concepts that ROS is built on that will allow us to implement our solution in  simple and modular way.
+
+
+ 
+
+\begin{itemize}
+\item \textbf{Nodes}: ros is made up of noes where  each node     is responsible for a single giving task like moving the robot, getting sensor data, doing some processing ... \linebreak
+nodes can communicate between the using topics and services.
+     
+
+
+
+\item \textbf{Topics}: topics are a way for nodes to communicate between them. Each node can either subscribe to a topic thus reaciving informations from other nodes, or publish to some topic to send information to other nodes.
+
+For example: a node can subscribe to a topic that publish the position of the robot  from another node which is responsible for providing this information.
+
+
+\item \textbf{Services}:  They are the same as topics but they differ in that data is received when requested by a client in contrast to topics where there are a stream of data updated continuously.
+
+
+For example: We can have a service that generate goals or reset the simulation.
+
+
+
+\end{itemize}
+ 
+
+ 
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.4]{ros}
+\caption[Ros]{Ros}
+\end{figure}
 
 
 

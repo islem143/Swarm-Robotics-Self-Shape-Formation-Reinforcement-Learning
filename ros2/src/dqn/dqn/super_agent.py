@@ -38,14 +38,14 @@ class SuperAgent():
     def __init__(self, num_agents=2,ep=0) -> None:
         self.num_agents = num_agents
         self.ep=ep 
-        self.agents = [Agent(f"robot-{index+1}",False,) for index in range(self.num_agents)]
-        self.replay_buffer = ReplayBuffer()
+        self.agents = [Agent(f"robot-{index+1}",num_agents=self.num_agents,model_load=False,) for index in range(self.num_agents)]
+        self.replay_buffer = ReplayBuffer(num_agents=self.num_agents)
         #self.std_dev = 0.35
         self.tau = 0.001
         self.discout_factor = 0.99
         self.batch_size = 128
        
-        self.MIN_REPLAY_MEMORY_SIZE =10000
+        self.MIN_REPLAY_MEMORY_SIZE =7000
 
     def set_episode(self,ep):
         self.ep=ep
@@ -69,7 +69,7 @@ class SuperAgent():
             concat_target_actions=tf.concat(target_actions,axis=1)
            
             concat_policy_actions=tf.concat(policy_actions,axis=1)
-           
+          
             target_critics = [self.agents[index].target_critic(
                 [next_states, concat_target_actions], training=True) for index in range(self.num_agents)]
             critic_values_actor=[self.agents[index].critic_model(
@@ -82,7 +82,7 @@ class SuperAgent():
                 [states, concat_actions], training=True) for index in range(self.num_agents)]
             
             y=[tf.reshape(rewards[:, index],(-1,1)) +self.discout_factor*target_critics[index]*(1-tf.reshape(dones[:,index],(-1,1))) for index in range(self.num_agents)]
-          
+            
             critic_losses=[critic_loss(y[index],critic_values[index]) for index in range(self.num_agents)]
            
             actor_losses=[loss_actor(critic_values_actor[index]) for index in range(self.num_agents)]

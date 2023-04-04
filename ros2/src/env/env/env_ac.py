@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents=2 
+        self.num_agents=1 
         self.cmd_vel_pub = {}
         for i in range(self.num_agents):
             self.cmd_vel_pub[i] = self.create_publisher(
@@ -29,10 +29,10 @@ class Env(Node):
             Odometry, "/t1/odom", self.get_current_position, 10)
         self.get_laser = self.create_subscription(
             LaserScan, "/t1/scan", self.get_lds, 10)
-        self.get_odom2 = self.create_subscription(
-            Odometry, "/t2/odom", self.get_current_position2, 10)
-        self.get_laser2 = self.create_subscription(
-            LaserScan, "/t2/scan", self.get_lds2, 10)
+        # self.get_odom2 = self.create_subscription(
+        #     Odometry, "/t2/odom", self.get_current_position2, 10)
+        # self.get_laser2 = self.create_subscription(
+        #     LaserScan, "/t2/scan", self.get_lds2, 10)
        
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
@@ -41,7 +41,7 @@ class Env(Node):
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.goal_publisher=self.create_publisher(Goal,"generate_goal",10) 
         
-        self.goal_cords = [[0.0,-1.0],[0.0,1.0], [1.5,0.0],[0.0, 0.0]]
+        self.goal_cords = [[1.0,0.0],[0.0,1.0], [1.5,0.0],[0.0, 0.0]]
         self.dones = [False for _ in range(self.num_agents)]
 
         self.steps = 0
@@ -144,12 +144,12 @@ class Env(Node):
     def init_robots(self, index):
 
         twist = Twist()
-        twist.linear.x = 0.3
+        twist.linear.x = 0.4
         self.cmd_vel_pub[index].publish(twist)
 
     def move_robots(self, action, index):
         twist = Twist()
-        twist.linear.x = 0.3
+        twist.linear.x = 0.4
         twist.angular.z = action
         self.cmd_vel_pub[index].publish(twist)
 
@@ -195,6 +195,7 @@ class Env(Node):
                 self.init_positions[index] = self.positions[index]
 
                 self.init_robots(index)
+                print(self.goal_cords[0])
             response.states = self.get_state()
 
             return response
@@ -224,12 +225,12 @@ class Env(Node):
     def generate_goal_pose(self):
         x = float(np.random.randint(-2.5, 2.5))
         y = float(np.random.randint(-2.5, 2.5))
-        self.goal_cord[0]=x
-        self.goal_cord[1]=y
-        x = float(np.random.randint(-2.5, 2.5))
-        y = float(np.random.randint(-2.5, 2.5))
-        self.goal_cord2[0]=x
-        self.goal_cord2[1]=y
+        self.goal_cords[0][0]=x
+        self.goal_cords[0][1]=y
+        # x = float(np.random.randint(-2.5, 2.5))
+        # y = float(np.random.randint(-2.5, 2.5))
+        # self.goal_cord2[0]=x
+        # self.goal_cord2[1]=y
         msg = Goal()                                               
         msg.goal = [x,y]                                          
         self.goal_publisher.publish(msg)
@@ -273,7 +274,7 @@ class Env(Node):
                 rewards[index] += 500
             elif self.fails[index]:
                 rewards[index] -= 500
-        print(rewards)
+        #print(rewards)
         return rewards
        
 
@@ -317,6 +318,7 @@ class Env(Node):
                 self.succeses[index] = True
                 self.dones[index] = True
                 self.stop_robots(index)
+                self.generate_goal_pose()
 
             if (self.steps == 550):
                 self.dones = [True for _ in range(self.num_agents)]

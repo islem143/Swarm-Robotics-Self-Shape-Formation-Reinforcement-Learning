@@ -44,11 +44,11 @@ class SuperController(Node):
         super().__init__('dqn')
         self.state_size = 4
         self.action_size = 1
-        self.num_agents = 2
+        self.num_agents =2
         self.test=False
         self.episode_length = 3000
         self.ep = 0
-        self.super_agent = SuperAgent()
+        self.super_agent = SuperAgent(num_agents=self.num_agents)
         self.current_actor_states = np.zeros(
             (self.num_agents, self.state_size), dtype=np.float32)
         self.next_actor_states = np.zeros(
@@ -63,7 +63,7 @@ class SuperController(Node):
             (self.num_agents*self.state_size,), dtype=np.float32)
         self.actions = np.zeros(
             (self.num_agents*self.action_size,), dtype=np.float32)
-        self.std_dev=0.4
+        self.std_dev=0.5
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         self.super_agent.set_noise(self.ou_noise)
         self.env_result_client = self.create_client(Mac, "env_result")

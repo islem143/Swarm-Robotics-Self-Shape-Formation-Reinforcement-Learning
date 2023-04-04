@@ -74,10 +74,10 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep =0
+        self.ep =60
         self.test=False
-        self.agents = [ACNetwork("robot-1",False, self.ep),ACNetwork("robot-1",False, self.ep)]
-        self.num_agents=2
+        self.agents = [ACNetwork("robot-1",True, self.ep)]
+        self.num_agents=1
    
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
@@ -87,6 +87,8 @@ class Dqn(Node):
         
         self.episode_size = 3000
 
+        self.train_every=1
+
         #self.epsilon = 1
         #self.EPSILON_DECAY = 0.992
         self.EPSILON_DECAY = 0.995
@@ -95,7 +97,7 @@ class Dqn(Node):
         self.env_result_client = self.create_client(Mac, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = False
-        self.save_every=20
+        self.save_every=15
         #std_dev = 0.2
         
  
@@ -106,7 +108,7 @@ class Dqn(Node):
         self.current_states = [0.0 for _ in range(self.num_agents)]
         self.next_states = [0.0 for _ in range(self.num_agents)]
     
-        self.std_dev=0.35
+        self.std_dev=0.32
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         # self.tensorboard = ModifiedTensorBoard(
         #     log_dir="logs/{}-{}".format(MODEL_NAME, int(time.time())))
@@ -203,6 +205,8 @@ class Dqn(Node):
                        
                             agent.update_replay_buffer(
                                 (self.current_states[index], self.rewards[index], actions[index], self.next_states[index], self.dones[index]))
+                            #if(self.ep%self.train_every==0):
+                               # print("training ep",self.ep)
                             agent.learn()
                             agent.update_target(agent.target_actor.variables,agent.actor_model.variables, self.tau)
                             agent.update_target(agent.target_critic.variables,agent.critic_model.variables, self.tau)
@@ -245,9 +249,9 @@ class Dqn(Node):
                 if (self.ep % self.save_every == 0 and self.ep!=0) and not self.test:
                     
                     agent.save_data(self.ep,self.rewards[index])
-            if(self.ep%25==0 and self.ep!=0 and self.std_dev>0.01):
-                self.std_dev-=0.01
-                self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))       
+            if(self.ep%40==0 and self.ep!=0 and self.std_dev>0.01):
+               self.std_dev-=0.01
+               self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))       
             
             print("self.std",self.std_dev)       
 

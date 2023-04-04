@@ -40,8 +40,8 @@ class Agent():
         self.action_size=action_size
         self.test=test
         # self.actor_lr = 0.0001
-        self.critic_lr = 0.00005
-        self.actor_lr = 0.00001
+        self.critic_lr = 0.0002
+        self.actor_lr = 0.0001
         self.critic_optimizer = tf.keras.optimizers.Adam(learning_rate=self.critic_lr)
         self.actor_optimizer = tf.keras.optimizers.Adam(learning_rate=self.actor_lr)
         self.buffer_counter=0
@@ -87,7 +87,7 @@ class Agent():
 
         self.discout_factor = 0.99
         self.minbatch_size = 128
-        self.MIN_REPLAY_MEMORY_SIZE =5000
+        self.MIN_REPLAY_MEMORY_SIZE =50
       
 
        
@@ -124,9 +124,9 @@ class Agent():
     
     def create_critic_model(self):
         state_input = keras.layers.Input(shape=(self.state_size*self.num_agents))
-        state_out = keras.layers.Dense(400, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_input)
+        state_out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_input)
         #state_out = keras.layers.BatchNormalization()(state_out)
-        #state_out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_out)
+        state_out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_out)
         # state_out = keras.layers.BatchNormalization()(state_out)
 
             # Action as input
@@ -142,14 +142,14 @@ class Agent():
         out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
         out=keras.layers.Dropout(0.5)(out)
         #added
-        # out = keras.layers.Dense(256, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        # out=keras.layers.Dropout(0.3)(out)
+        out = keras.layers.Dense(256, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        out=keras.layers.Dropout(0.3)(out)
        # out = keras.layers.BatchNormalization()(out)
         # = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
         #out=keras.layers.Dropout(0.3)(out)
        # out = keras.layers.BatchNormalization()(out)
-        # out = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        # out=keras.layers.Dropout(0.2)(out)
+        out = keras.layers.Dense(126, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        out=keras.layers.Dropout(0.2)(out)
         # out = keras.layers.BatchNormalization()(out)
         outputs = keras.layers.Dense(1)(out)
 
@@ -162,7 +162,6 @@ class Agent():
        
         state = tf.expand_dims(tf.convert_to_tensor(state), 0)
         sampled_actions = tf.squeeze(self.actor_model(state))
-        #print("samlple",sampled_actions)
         
        
         # Adding noise to action
@@ -170,7 +169,6 @@ class Agent():
          
         # We make sure action is within bounds
         legal_action = np.clip(sampled_actions, self.lower_bound, self.upper_bound)
-        #print(legal_action)
 
         return [np.squeeze(legal_action)][0]
     
