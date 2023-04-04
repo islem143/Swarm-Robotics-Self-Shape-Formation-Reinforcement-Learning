@@ -1,5 +1,7 @@
 \documentclass[12pt]{article}
 \usepackage{algorithm}
+
+
 \usepackage{amsmath}
 \usepackage{algpseudocode}
 \usepackage[%
@@ -360,11 +362,59 @@ And to simplify the job for the robot, we will transform the cordinates from pol
 \subsection{State Representation And Reward Design}
 
 \subsubsection{Introduction}
-In order to achieve the target shape formation, state and reward  are critical component  of RL as  they representation will affect direcly the performance of our robot and will determine the neurel network architecutre.
-
+The state and reward function must be well designed in order to generate the desired shape because how they are represented will directly impact our robot's performance towards achieving their goals and the architecture of the neural network.
 
 
 \subsubsection{State Representation}
+State  are the inputs to our neural network. They are the inputs for our neural network and  based on them, we can  calulate  the rewards that the robot will get when acting in the environement.
+
+In our implementation we have defined four kind  of state information, the distance to goal, angle to goal, the minimun detected object distance and it's angle for collision avoidance.
+
+
+
+\pagebreak
+\begin{itemize}
+\item \textbf{The distance to goal}: 
+The first component in our state representation is the distance to goal, which will be calculated using the euclidean distance  between the robot and the goal .
+
+
+\[ D(P,G)=\sqrt{(Py-Gy)^2+(Px-Gx)^2}  \] 
+
+Where P and G are the current homogeneous coordinates of the robot and the target goal respectively.
+
+\item \textbf{The angle to goal}: 
+The second component  is the angle  to goal. And to find it we need to calculate  the difference between the robot yaw, which is it's orientation around it's vertical axis, and the angle between the goal and the robot positions.
+
+
+\[ \theta(P,G)=yaw-arctan(P/G)  \] 
+
+
+\item \textbf{The minimum detected distance}: 
+And we can get this from and LDS (we will talk about it later when we describe the robot equipment  )  
+
+
+\[ \theta(P,G)=yaw-arctan(P/G)  \] 
+
+
+
+
+
+Why we choose them?
+\end{itemize}
+ 
+
+
+
+
+
+
+
+\pagebreak
+
+
+
+
+
 
 
 
