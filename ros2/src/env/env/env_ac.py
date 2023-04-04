@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents=1 
+        self.num_agents=4
         self.cmd_vel_pub = {}
         for i in range(self.num_agents):
             self.cmd_vel_pub[i] = self.create_publisher(
@@ -29,10 +29,18 @@ class Env(Node):
             Odometry, "/t1/odom", self.get_current_position, 10)
         self.get_laser = self.create_subscription(
             LaserScan, "/t1/scan", self.get_lds, 10)
-        # self.get_odom2 = self.create_subscription(
-        #     Odometry, "/t2/odom", self.get_current_position2, 10)
-        # self.get_laser2 = self.create_subscription(
-        #     LaserScan, "/t2/scan", self.get_lds2, 10)
+        self.get_odom2 = self.create_subscription(
+            Odometry, "/t2/odom", self.get_current_position2, 10)
+        self.get_laser2 = self.create_subscription(
+            LaserScan, "/t2/scan", self.get_lds2, 10)
+        self.get_odom2 = self.create_subscription(
+            Odometry, "/t3/odom", self.get_current_position3, 10)
+        self.get_laser2 = self.create_subscription(
+            LaserScan, "/t3/scan", self.get_lds4, 10)
+        self.get_odom2 = self.create_subscription(
+            Odometry, "/t4/odom", self.get_current_position4, 10)
+        self.get_laser2 = self.create_subscription(
+            LaserScan, "/t4/scan", self.get_lds3, 10)
        
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
@@ -41,7 +49,7 @@ class Env(Node):
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.goal_publisher=self.create_publisher(Goal,"generate_goal",10) 
         
-        self.goal_cords = [[1.0,0.0],[0.0,1.0], [1.5,0.0],[0.0, 0.0]]
+        self.goal_cords = [[0.0,1.2],[0.0,-1.0], [0.0,-1.0],[-1.0,-1.5]]
         self.dones = [False for _ in range(self.num_agents)]
 
         self.steps = 0
@@ -91,7 +99,7 @@ class Env(Node):
             msg.pose.pose.position.x, msg.pose.pose.position.y]
         self.angles[2] = self.euler_from_quaternion(
             msg.pose.pose.orientation)[2]
-
+            
         self.goal_angles[2] = (np.arctan2(self.goal_cords[2][1]-self.positions[2]
                                [1], self.goal_cords[2][0]-self.positions[2][0]))-(self.angles[2])
         if (self.goal_angles[2] > np.pi):
@@ -318,9 +326,9 @@ class Env(Node):
                 self.succeses[index] = True
                 self.dones[index] = True
                 self.stop_robots(index)
-                self.generate_goal_pose()
+                #self.generate_goal_pose()
 
-            if (self.steps == 550):
+            if (self.steps == 700):
                 self.dones = [True for _ in range(self.num_agents)]
                 self.fails = [True for _ in range(self.num_agents)]
                 if self.succeses[index]:
