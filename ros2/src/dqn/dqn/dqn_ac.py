@@ -74,9 +74,14 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep =0
+        #self.ep =255
+        self.ep =15
         self.test=False
-        self.agents = [ACNetwork("robot-1",False, self.ep),ACNetwork("robot-1",False, self.ep),ACNetwork("robot-1",False, self.ep),ACNetwork("robot-1",False, self.ep)]
+        self.agents = [ACNetwork("robot-1",True, self.ep),
+                       ACNetwork("robot-2",True, self.ep),
+                        ACNetwork("robot-3",True, self.ep),
+                        ACNetwork("robot-4",True, self.ep)
+                       ]
         self.num_agents=4
    
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
@@ -96,8 +101,8 @@ class Dqn(Node):
         self.MIN_REPLAY_MEMORY_SIZE = 500
         self.env_result_client = self.create_client(Mac, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
-        self.stop = False
-        self.save_every=40
+        self.stop = True
+        self.save_every=10
         #std_dev = 0.2
         
  

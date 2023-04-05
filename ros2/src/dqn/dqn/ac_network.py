@@ -31,8 +31,8 @@ class ACNetwork():
     def __init__(self, name, model_load=False, ep=0,test=False) -> None:
         self.name = name
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.upper_bound=np.pi/2
-        self.lower_bound=-np.pi/2
+        self.upper_bound=np.pi
+        self.lower_bound=-np.pi
         # self.critic_lr = 0.001
         self.test=test
         # self.actor_lr = 0.0001
@@ -83,7 +83,7 @@ class ACNetwork():
         self.state_size = 3
         self.discout_factor = 0.99
         self.minbatch_size = 128
-        self.MIN_REPLAY_MEMORY_SIZE =10000
+        self.MIN_REPLAY_MEMORY_SIZE =3000
       
 
        

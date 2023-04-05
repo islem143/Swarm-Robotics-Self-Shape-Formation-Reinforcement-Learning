@@ -5,7 +5,7 @@ from nav_msgs.msg import Odometry
 from std_msgs.msg import String
 from sensor_msgs.msg import LaserScan
 import numpy as np
-import math
+import random
 
 from geometry_msgs.msg import Twist
 from rclpy.qos import QoSProfile
@@ -22,9 +22,11 @@ class Env(Node):
         super().__init__('env')
         self.num_agents=4
         self.cmd_vel_pub = {}
+        self.goal_reached_by={}
         for i in range(self.num_agents):
             self.cmd_vel_pub[i] = self.create_publisher(
                 Twist, f'/t{i+1}/cmd_vel', 10)
+            self.goal_reached_by[i]=0
         self.get_odom = self.create_subscription(
             Odometry, "/t1/odom", self.get_current_position, 10)
         self.get_laser = self.create_subscription(
@@ -33,23 +35,33 @@ class Env(Node):
             Odometry, "/t2/odom", self.get_current_position2, 10)
         self.get_laser2 = self.create_subscription(
             LaserScan, "/t2/scan", self.get_lds2, 10)
-        self.get_odom2 = self.create_subscription(
+        self.get_odom3 = self.create_subscription(
             Odometry, "/t3/odom", self.get_current_position3, 10)
-        self.get_laser2 = self.create_subscription(
-            LaserScan, "/t3/scan", self.get_lds4, 10)
-        self.get_odom2 = self.create_subscription(
+        self.get_laser3 = self.create_subscription(
+             LaserScan, "/t3/scan", self.get_lds3, 10)
+        self.get_odom4 = self.create_subscription(
             Odometry, "/t4/odom", self.get_current_position4, 10)
-        self.get_laser2 = self.create_subscription(
+        self.get_laser4 = self.create_subscription(
             LaserScan, "/t4/scan", self.get_lds3, 10)
-       
+        self.test=True
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
         # self.env_goal_service = self.create_service(
         #     Goal, "goal_pose", self.generate_goal_pose)
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.goal_publisher=self.create_publisher(Goal,"generate_goal",10) 
+        self.shapes={
+            "line":[[0.0,1.0],[0.0,2.0] ,[0.0,-1.0],[0.0,0.0]],
+            "line2":[[1.0,0.0],[2.0,0.0] ,[-1.0,0.0],[-2.0,0.0]],
+            "trianlge":[[0.0,0.0],[0.0,1.2] ,[0.0,-1.2],[1.2,0.0]],
+            "trianlge2":[[0.0,1.5],[0.0,0.0] ,[0.0,-1.2],[1.5,0.0]],
+            "square":[[-1.2,-1.2],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
+            "line3":[[2.5,2.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
+           
+
+        }
+        self.goal_cords = self.shapes["line"]
         
-        self.goal_cords = [[0.0,1.2],[0.0,-1.0], [0.0,-1.0],[-1.0,-1.5]]
         self.dones = [False for _ in range(self.num_agents)]
 
         self.steps = 0
@@ -57,9 +69,9 @@ class Env(Node):
 
         self.succeses = [False for _ in range(self.num_agents)]
         self.positions = [[0, 0] for _ in range(self.num_agents)]
-        self.min_ldss_dist = [0.0 for _ in range(self.num_agents)]
-        self.min_ldss_angle = [0.0 for _ in range(self.num_agents)]
-        self.angles = [0.0 for _ in range(self.num_agents)]
+        self.min_ldss_dist = [3.5 for _ in range(self.num_agents)]
+        self.min_ldss_angle = [3.5 for _ in range(self.num_agents)]
+        self.angles = [3.5 for _ in range(self.num_agents)]
         self.goal_angles = [0.0 for _ in range(self.num_agents)]
         self.init_positions = [[0, 0] for _ in range(self.num_agents)]
         self.global_steps=0
@@ -81,6 +93,11 @@ class Env(Node):
             self.goal_angles[0] -= 2*np.pi
         elif (self.goal_angles[0] < -np.pi):
             self.goal_angles[0] += 2*np.pi
+        
+        
+
+
+       
 
     def get_current_position2(self, msg):
         self.positions[1] = [
@@ -94,6 +111,7 @@ class Env(Node):
             self.goal_angles[1] -= 2*np.pi
         elif (self.goal_angles[1] < -np.pi):
             self.goal_angles[1] += 2*np.pi
+          
     def get_current_position3(self, msg):
         self.positions[2] = [
             msg.pose.pose.position.x, msg.pose.pose.position.y]
@@ -125,6 +143,8 @@ class Env(Node):
         if (self.min_ldss_dist[0] == np.Inf):
             self.min_ldss_dist[0] = float(4)
         self.min_ldss_angle[0] = np.argmin(msg.ranges)
+        
+        
         
 
     def get_lds2(self, msg):
@@ -203,7 +223,7 @@ class Env(Node):
                 self.init_positions[index] = self.positions[index]
 
                 self.init_robots(index)
-                print(self.goal_cords[0])
+                print(self.goal_cords)
             response.states = self.get_state()
 
             return response
@@ -229,22 +249,49 @@ class Env(Node):
 
     def get_distance_to_goal(self, index):
         return float(np.sqrt(np.square(self.positions[index][1]-self.goal_cords[index][1])+np.square(self.positions[index][0]-self.goal_cords[index][0])))
-
+    
+    def shape_formed(self):
+        for i in range(self.num_agents):
+            if(not self.goal_reached(i)):
+                return False
+        return True    
+            
     def generate_goal_pose(self):
-        x = float(np.random.randint(-2.5, 2.5))
-        y = float(np.random.randint(-2.5, 2.5))
-        self.goal_cords[0][0]=x
-        self.goal_cords[0][1]=y
-        # x = float(np.random.randint(-2.5, 2.5))
-        # y = float(np.random.randint(-2.5, 2.5))
-        # self.goal_cord2[0]=x
-        # self.goal_cord2[1]=y
-        msg = Goal()                                               
-        msg.goal = [x,y]                                          
-        self.goal_publisher.publish(msg)
+        #x = float(np.random.randint(-0.5, 2.2))
+        #y = float(np.random.randint(-2.2, 2.2))
+
+        #xx=[2.0,0.5,1.5,0.0,-2.0]
+        #yy=[2.0,0.5,1.5,0.0,-2.0]
+        a=["line","trianlge","square"]
+        chosen=random.choice(a)
+        self.goal_cords=self.shapes[chosen]
+        print("chosen shape",chosen)
+        print(self.goal_cords)
+        
+        # for i in range(self.num_agents):
+        #     #x=np.random.choice(xx)
+        #     #y=np.random.choice(yy)
+        #     if(self.goal_reached_by[i]>=1):
+        #         # a=["line","trianlge","square"]
+        #         # chosen=random.choice(a)
+        #         # print("chosen shape",chosen)
+        #         # self.goal_cords=self.shapes[chosen]
+
+               
+        #         self.goal_cords[i][0]=x
+        #         self.goal_cords[i][1]=y
+        #         msg = Goal()                                               
+        #         msg.goal = [x,y]                                          
+        #         self.goal_publisher.publish(msg)
+        #         self.goal_reached_by[i]=0
+
+       
+       
+        
+        
 
     def crashs(self, index):
-
+     
         if (self.min_ldss_dist[index] < 0.13):
 
             return True
@@ -257,7 +304,7 @@ class Env(Node):
     def goal_reached(self, index):
         distance = self.get_distance_to_goal(index)
 
-        if (distance < 0.20):
+        if (distance < 0.2):
 
             return True
         return False
@@ -275,14 +322,14 @@ class Env(Node):
 
             rewards[index] += -np.abs(self.goal_angles[index])+0.2
             
-            if (self.min_ldss_dist[index] < 0.80 ):
+            if (self.min_ldss_dist[index] < 0.5 ):
                 rewards[index] -= 10
         
             if self.succeses[index]:
                 rewards[index] += 500
             elif self.fails[index]:
                 rewards[index] -= 500
-        #print(rewards)
+    
         return rewards
        
 
@@ -299,36 +346,39 @@ class Env(Node):
             norm_lds = (self.min_ldss_dist[index]-0)/(3.5)
             norm_lds_angle = self.min_ldss_angle[index]
            
-            l.append(float(norm_goal))
-            l.append(float(norm_angle))
-            l.append(float(norm_lds))
-            l.append(float(norm_lds_angle))
+            # l.append(float(norm_goal))
+            # l.append(float(norm_angle))
+            # l.append(float(norm_lds))
+            # l.append(float(norm_lds_angle))
             
-            # l.append(float(self.get_distance_to_goal(self.goal_cord,1)))
-            # l.append(float(self.goal_angle))
-            # l.append(float(self.min_lds_dist))
-            # l.append(float(self.min_lds_angle))
+            l.append(float(self.get_distance_to_goal(index)))
+            l.append(float(self.goal_angles[index]))
+            l.append(float(self.min_ldss_dist[index]))
+            l.append(float(self.min_ldss_angle[index]))
             if (self.crashs(index)):
-                print(f"get reward of -10 {index}")
-                # if(not self.global_steps<5000):
-                
-                self.dones = [True for _ in range(self.num_agents)]
-                self.fails[index] = True
-                self.steps = 0
-                #else:
-                self.dones[index]=True  
-                self.fails[index] = True
-                self.stop_robots(index) 
+                 if(self.test):
+                     self.dones = [True for _ in range(self.num_agents)]
+                     self.fails = [True for _ in range(self.num_agents)]
+                 else:     
+                    #if(not self.global_steps<5000):
+                    
+                        self.dones = [True for _ in range(self.num_agents)]
+                        self.fails[index] = True
+                        self.steps = 0
+                    # else:
+                    #     self.dones[index]=True  
+                    #     self.fails[index] = True
+                    #     self.stop_robots(index) 
                 
 
             if (self.goal_reached(index)):
-               
+                self.goal_reached_by[index]+=1
                 self.succeses[index] = True
                 self.dones[index] = True
                 self.stop_robots(index)
-                #self.generate_goal_pose()
+               
 
-            if (self.steps == 700):
+            if (self.steps == 550 and not self.test):
                 self.dones = [True for _ in range(self.num_agents)]
                 self.fails = [True for _ in range(self.num_agents)]
                 if self.succeses[index]:
@@ -336,11 +386,13 @@ class Env(Node):
                 self.steps = 0
           
             
-         
+
         if (all(self.dones)):
             for index in range(self.num_agents):
                 self.stop_robots(index)
             self.call_reset_sim()
+            if(all(self.succeses)):
+                self.generate_goal_pose()
         self.steps += 1
      
       
