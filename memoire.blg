@@ -4,45 +4,45 @@ The top-level auxiliary file: memoire.aux
 The style file: ieeetr.bst
 Database file #1: bib.bib
 Warning--empty journal in olaronke2020systematic
-You've used 11 entries,
+You've used 13 entries,
             1876 wiz_defined-function locations,
-            548 strings with 5447 characters,
-and the built_in function-call counts, 3271 in all, are:
-= -- 334
-> -- 125
+            564 strings with 5841 characters,
+and the built_in function-call counts, 3842 in all, are:
+= -- 388
+> -- 156
 < -- 0
-+ -- 46
-- -- 35
-* -- 218
-:= -- 455
-add.period$ -- 11
-call.type$ -- 11
-change.case$ -- 11
++ -- 57
+- -- 44
+* -- 260
+:= -- 538
+add.period$ -- 13
+call.type$ -- 13
+change.case$ -- 13
 chr.to.int$ -- 0
-cite$ -- 12
-duplicate$ -- 181
-empty$ -- 290
-format.name$ -- 35
-if$ -- 802
+cite$ -- 14
+duplicate$ -- 215
+empty$ -- 334
+format.name$ -- 44
+if$ -- 944
 int.to.chr$ -- 0
-int.to.str$ -- 11
-missing$ -- 11
-newline$ -- 36
-num.names$ -- 11
-pop$ -- 32
+int.to.str$ -- 13
+missing$ -- 13
+newline$ -- 42
+num.names$ -- 13
+pop$ -- 36
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 138
+skip$ -- 164
 stack$ -- 0
-substring$ -- 222
-swap$ -- 88
+substring$ -- 238
+swap$ -- 106
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 1
-while$ -- 33
-width$ -- 13
-write$ -- 108
+while$ -- 37
+width$ -- 15
+write$ -- 130
 (There was 1 warning)

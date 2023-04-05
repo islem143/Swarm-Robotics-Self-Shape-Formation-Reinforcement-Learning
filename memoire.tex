@@ -390,7 +390,39 @@ The second component  is the angle  to goal. And to find it we need to calculate
 
 
 \item \textbf{The minimum detected distance}: 
-And we can get this from and LDS (we will talk about it later when we describe the robot equipment  )  
+In order to detect other robots and avoid collision, we use an  LDS (we will talk about it later when we describe the robot equipment )  which gives us an array of 24 elements where each value is the minimum distance detected and each index is the angle of detection.
+
+
+\item \textbf{The angle of detection}: 
+It is is the angle of the detected object relative to the robot lds.
+
+
+
+\end{itemize}
+
+This is a common state representation used  to control a moving robot towards the goal target,as they have provide a very clear guidance for it. 
+\cite{quiroga2022position} \cite{gong2022efficient}
+
+In the next part, we will talk how we calculate the rewards of each robot to guide it in a efficent manner  towards it goal based on the state input  .
+ 
+
+
+
+\pagebreak
+
+\subsection{Reward Function Design}
+
+The reward function design is a critical part of any RL system. A well designed reward function will give the  robot more feedback when acting in the environment thus making the task more straight forward.
+
+The reward function was designed to engourge and reward the robot  more, when he  aproches the goal target, and penilize him when he collide with the wall or other robots.
+
+The design of the function is based on the state. We have used the distance , the  angle and the LDS to form the final function.
+
+We have   divided  the function into three parts:
+The first part deals with the distance reward. We will give the robot more reward when he aporoches the target goal and less when he does'nt. Formally
+it can be described:
+
+
 
 
 \[ \theta(P,G)=yaw-arctan(P/G)  \] 
@@ -399,8 +431,7 @@ And we can get this from and LDS (we will talk about it later when we describe t
 
 
 
-Why we choose them?
-\end{itemize}
+ 
  
 
 
@@ -408,11 +439,7 @@ Why we choose them?
 
 
 
-
 \pagebreak
-
-
-
 
 
 
@@ -492,7 +519,7 @@ For example: We can have a service that generate goals or reset the simulation.
 
 
 
-
+\subsection{Talk about how we used diffrent formation from easy one to hard}
 
 
 

@@ -43,7 +43,7 @@ class Env(Node):
             Odometry, "/t4/odom", self.get_current_position4, 10)
         self.get_laser4 = self.create_subscription(
             LaserScan, "/t4/scan", self.get_lds3, 10)
-        self.test=True
+        self.test=False
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
         # self.env_goal_service = self.create_service(
@@ -60,7 +60,7 @@ class Env(Node):
            
 
         }
-        self.goal_cords = self.shapes["line"]
+        self.goal_cords = self.shapes["line2"]
         
         self.dones = [False for _ in range(self.num_agents)]
 
@@ -262,7 +262,7 @@ class Env(Node):
 
         #xx=[2.0,0.5,1.5,0.0,-2.0]
         #yy=[2.0,0.5,1.5,0.0,-2.0]
-        a=["line","trianlge","square"]
+        a=["line","trianlge","square","line2","trianlge2","line3"]
         chosen=random.choice(a)
         self.goal_cords=self.shapes[chosen]
         print("chosen shape",chosen)

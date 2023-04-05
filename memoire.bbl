@@ -53,4 +53,14 @@ V.~Mnih, K.~Kavukcuoglu, D.~Silver, A.~Graves, I.~Antonoglou, D.~Wierstra, and
   M.~Riedmiller, ``Playing atari with deep reinforcement learning,'' {\em arXiv
   preprint arXiv:1312.5602}, 2013.
 
+\bibitem{quiroga2022position}
+F.~Quiroga, G.~Hermosilla, G.~Farias, E.~Fabregas, and G.~Montenegro,
+  ``Position control of a mobile robot through deep reinforcement learning,''
+  {\em Applied Sciences}, vol.~12, no.~14, p.~7194, 2022.
+
+\bibitem{gong2022efficient}
+H.~Gong, P.~Wang, C.~Ni, and N.~Cheng, ``Efficient path planning for mobile
+  robot based on deep deterministic policy gradient,'' {\em Sensors}, vol.~22,
+  no.~9, p.~3579, 2022.
+
 \end{thebibliography}

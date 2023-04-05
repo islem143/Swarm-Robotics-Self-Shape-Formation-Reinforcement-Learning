@@ -75,7 +75,7 @@ class Dqn(Node):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
-        self.ep =15
+        self.ep =380
         self.test=False
         self.agents = [ACNetwork("robot-1",True, self.ep),
                        ACNetwork("robot-2",True, self.ep),
