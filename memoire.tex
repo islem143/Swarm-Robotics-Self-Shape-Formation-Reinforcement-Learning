@@ -419,20 +419,43 @@ The reward function was designed to engourge and reward the robot  more, when he
 The design of the function is based on the state. We have used the distance , the  angle and the LDS to form the final function.
 
 We have   divided  the function into three parts:
-The first part deals with the distance reward. We will give the robot more reward when he aporoches the target goal and less when he does'nt. Formally
+The first part contains with the distance reward. We will give the robot more reward when he aporoches the target goal and less when he doesn't. Formally
 it can be described:
+   
+\setcounter{equation}{0}
+
+       \begin{equation} \label{dist_r}
+     R_{D}=-(D_{goal}-D_{init})+\alpha
+   \end{equation}
+    Where $D_{goal}$  is the changing distance between the robot and the target goal,${D_{init}}$ is the initial distance between the robot and the target goal. and $\alpha$ is a parameter to adjust.
+    
+The second part is to the angle of the robot to the goal. formally:
 
 
 
+     \begin{equation} \label{angle_r}
+     R_{\theta}=-(\theta_{goal})+ + \beta
+   \end{equation}
+ 
+ where $\theta_{goal}$  ranges  between $-\pi$  and $\pi$. we added the $\beta$ which add some reward when the  angle aproches zero.
+  
+And For avoiding collion between the robots and the wall, we have set two values. The first one is set  when the robot aproches the object which can lead to a collision. And the second one is when is actualy collide  with it.
 
-\[ \theta(P,G)=yaw-arctan(P/G)  \] 
 
+\begin{equation}  \label{obs_r}
+  R_{c}=\begin{cases}
+    -10, & \text{if $mdd< 0.5m$}.\\
+    -500 , & \text{ if $mdd <0.13m$ (a crash )}.\\
+    0 & \text{ else}.
+  \end{cases}
+\end{equation}
 
-
-
+Finally, we can add \ref{dist_r}, \ref{angle_r} and \ref{obs_r} to form the finale reward function 
 
  
- 
+    \begin{equation} \label{final_r}
+     R=R_{D}+R_{\theta}+R{c}
+   \end{equation}
 
 
 

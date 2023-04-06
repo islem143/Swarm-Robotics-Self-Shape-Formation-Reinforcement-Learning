@@ -75,7 +75,7 @@ class Dqn(Node):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
-        self.ep =380
+        self.ep =200
         self.test=False
         self.agents = [ACNetwork("robot-1",True, self.ep),
                        ACNetwork("robot-2",True, self.ep),
@@ -113,7 +113,7 @@ class Dqn(Node):
         self.current_states = [0.0 for _ in range(self.num_agents)]
         self.next_states = [0.0 for _ in range(self.num_agents)]
     
-        self.std_dev=0.32
+        self.std_dev=0.15
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         # self.tensorboard = ModifiedTensorBoard(
         #     log_dir="logs/{}-{}".format(MODEL_NAME, int(time.time())))

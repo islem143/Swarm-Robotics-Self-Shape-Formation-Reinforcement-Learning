@@ -93,6 +93,7 @@ class Env(Node):
             self.goal_angles[0] -= 2*np.pi
         elif (self.goal_angles[0] < -np.pi):
             self.goal_angles[0] += 2*np.pi
+
         
         
 
@@ -143,6 +144,7 @@ class Env(Node):
         if (self.min_ldss_dist[0] == np.Inf):
             self.min_ldss_dist[0] = float(4)
         self.min_ldss_angle[0] = np.argmin(msg.ranges)
+       
         
         
         
@@ -322,7 +324,7 @@ class Env(Node):
 
             rewards[index] += -np.abs(self.goal_angles[index])+0.2
             
-            if (self.min_ldss_dist[index] < 0.5 ):
+            if (self.min_ldss_dist[index] < 0.55):
                 rewards[index] -= 10
         
             if self.succeses[index]:

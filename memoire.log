@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.3.11)  5 APR 2023 16:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.3.11)  6 APR 2023 07:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -728,10 +728,10 @@ File: images//formation.png Graphic file (type png)
 Package pdftex.def Info: images//formation.png  used on input line 327.
 (pdftex.def)             Requested size: 174.24791pt x 94.35083pt.
  [15 <./images//formation.png>] [16] [17] [18]
-<images//ros.png, id=397, 705.63625pt x 430.60875pt>
+<images//ros.png, id=404, 705.63625pt x 430.60875pt>
 File: images//ros.png Graphic file (type png)
 <use images//ros.png>
-Package pdftex.def Info: images//ros.png  used on input line 506.
+Package pdftex.def Info: images//ros.png  used on input line 529.
 (pdftex.def)             Requested size: 282.2495pt x 172.24043pt.
  [19 <./images//ros.png>] [20] (./memoire.bbl [21]) [22] (./memoire.aux)
 
@@ -741,10 +741,10 @@ Package rerunfilecheck Info: File `memoire.out' has not changed.
 (rerunfilecheck)             Checksum: 59506EA72E444B4BB625FCF42BBABD36;9477.
  ) 
 Here is how much of TeX's memory you used:
- 19218 strings out of 480129
- 331304 string characters out of 5893409
- 694992 words of memory out of 5000000
- 36781 multiletter control sequences out of 15000+600000
+ 19226 strings out of 480129
+ 331385 string characters out of 5893409
+ 695188 words of memory out of 5000000
+ 36785 multiletter control sequences out of 15000+600000
  475267 words of font info for 49 fonts, out of 8000000 for 9000
  81 hyphenation exceptions out of 8191
  91i,14n,91p,1145b,549s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -759,10 +759,10 @@ type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
 public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
 amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
 ts/cm/cmtt12.pfb>
-Output written on memoire.pdf (22 pages, 209849 bytes).
+Output written on memoire.pdf (22 pages, 213383 bytes).
 PDF statistics:
- 490 PDF objects out of 1000 (max. 8388607)
- 436 compressed objects within 5 object streams
- 95 named destinations out of 1000 (max. 500000)
+ 498 PDF objects out of 1000 (max. 8388607)
+ 444 compressed objects within 5 object streams
+ 99 named destinations out of 1000 (max. 500000)
  435 words of extra memory for PDF output out of 10000 (max. 10000000)
 
