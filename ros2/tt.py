@@ -1,1 +1,7 @@
-print(1 in [0,1,2,21,22,23])
+import random
+
+arr = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+
+random.shuffle(arr)
+
+print(arr)

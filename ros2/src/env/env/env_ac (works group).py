@@ -43,7 +43,7 @@ class Env(Node):
             Odometry, "/t4/odom", self.get_current_position4, 10)
         self.get_laser4 = self.create_subscription(
             LaserScan, "/t4/scan", self.get_lds3, 10)
-        self.test=True
+        self.test=False
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
         # self.env_goal_service = self.create_service(
@@ -52,11 +52,15 @@ class Env(Node):
         self.goal_publisher=self.create_publisher(Goal,"generate_goal",10) 
         self.shapes={
             "line":[[0.0,1.0],[0.0,2.0] ,[0.0,-1.0],[0.0,0.0]],
+            "line2":[[1.0,0.0],[2.0,0.0] ,[-1.0,0.0],[-2.0,0.0]],
             "trianlge":[[0.0,0.0],[0.0,1.2] ,[0.0,-1.2],[1.2,0.0]],
-            "square":[[-1.2,-1.2],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]]
+            "trianlge2":[[0.0,1.5],[0.0,0.0] ,[0.0,-1.2],[1.5,0.0]],
+            "square":[[-1.2,-1.2],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
+            "line3":[[2.5,2.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
+           
 
         }
-        self.goal_cords = self.shapes["line"]
+        self.goal_cords = self.shapes["line2"]
         
         self.dones = [False for _ in range(self.num_agents)]
 
@@ -89,6 +93,8 @@ class Env(Node):
             self.goal_angles[0] -= 2*np.pi
         elif (self.goal_angles[0] < -np.pi):
             self.goal_angles[0] += 2*np.pi
+        #print(self.get_distance(self.positions[0],self.positions[1]))
+        print(np.arctan2(np.abs(self.positions[0][0]-self.positions[1][0]),np.abs(self.positions[0][1]-self.positions[1][1])))
         
         
 
@@ -139,6 +145,7 @@ class Env(Node):
         if (self.min_ldss_dist[0] == np.Inf):
             self.min_ldss_dist[0] = float(4)
         self.min_ldss_angle[0] = np.argmin(msg.ranges)
+       
         
         
         
@@ -258,7 +265,7 @@ class Env(Node):
 
         #xx=[2.0,0.5,1.5,0.0,-2.0]
         #yy=[2.0,0.5,1.5,0.0,-2.0]
-        a=["line","trianlge","square"]
+        a=["line","trianlge","square","line2","trianlge2","line3"]
         chosen=random.choice(a)
         self.goal_cords=self.shapes[chosen]
         print("chosen shape",chosen)
@@ -318,7 +325,7 @@ class Env(Node):
 
             rewards[index] += -np.abs(self.goal_angles[index])+0.2
             
-            if (self.min_ldss_dist[index] < 0.25 ):
+            if (self.min_ldss_dist[index] < 0.55):
                 rewards[index] -= 10
         
             if self.succeses[index]:

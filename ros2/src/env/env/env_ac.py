@@ -60,8 +60,9 @@ class Env(Node):
            
 
         }
-        self.goal_cords = self.shapes["line2"]
-        
+
+        self.goal_cords = self.shapes["line3"]
+        self.goal_freq=0
         self.dones = [False for _ in range(self.num_agents)]
 
         self.steps = 0
@@ -259,6 +260,7 @@ class Env(Node):
         return True    
             
     def generate_goal_pose(self):
+        
         #x = float(np.random.randint(-0.5, 2.2))
         #y = float(np.random.randint(-2.2, 2.2))
 
@@ -267,6 +269,10 @@ class Env(Node):
         a=["line","trianlge","square","line2","trianlge2","line3"]
         chosen=random.choice(a)
         self.goal_cords=self.shapes[chosen]
+        if(self.goal_freq==2):
+            print("arrays shufeld")
+            random.shuffle(self.goal_cords)
+            self.goal_freq=0
         print("chosen shape",chosen)
         print(self.goal_cords)
         
@@ -324,7 +330,7 @@ class Env(Node):
 
             rewards[index] += -np.abs(self.goal_angles[index])+0.2
             
-            if (self.min_ldss_dist[index] < 0.55):
+            if (self.min_ldss_dist[index] < 0.65):
                 rewards[index] -= 10
         
             if self.succeses[index]:
@@ -394,6 +400,7 @@ class Env(Node):
                 self.stop_robots(index)
             self.call_reset_sim()
             if(all(self.succeses)):
+                self.goal_freq+=1
                 self.generate_goal_pose()
         self.steps += 1
      
