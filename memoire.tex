@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[12pt]{extarticle}
 \usepackage{algorithm}
 
 
@@ -359,7 +359,7 @@ And to simplify the job for the robot, we will transform the cordinates from pol
 
 
 
-\subsection{State Representation And Reward Design}
+\subsection{State Representationn}
 
 \subsubsection{Introduction}
 The state and reward function must be well designed in order to generate the desired shape because how they are represented will directly impact our robot's performance towards achieving their goals and the architecture of the neural network.
@@ -449,8 +449,8 @@ And For avoiding collion between the robots and the wall, we have set two values
     0 & \text{ else}.
   \end{cases}
 \end{equation}
-
-Finally, we can add \ref{dist_r}, \ref{angle_r} and \ref{obs_r} to form the finale reward function 
+where $mdd$ stands for the minimum detected distance.\linebreak
+Finally, we can add \ref{dist_r}, \ref{angle_r} and \ref{obs_r} to form the finale reward function: 
 
  
     \begin{equation} \label{final_r}
@@ -466,7 +466,6 @@ Finally, we can add \ref{dist_r}, \ref{angle_r} and \ref{obs_r} to form the fina
 
 
 
-start in a specif distance then after the fisrt robot takes the other will wail a 0.5s.
 
 
 

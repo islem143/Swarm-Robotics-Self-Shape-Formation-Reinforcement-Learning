@@ -31,7 +31,7 @@
 \contentsline {subsection}{\numberline {4.3}Problem Formulation}{15}{subsection.4.3}%
 \contentsline {subsubsection}{\numberline {4.3.1}Environement}{15}{subsubsection.4.3.1}%
 \contentsline {subsubsection}{\numberline {4.3.2}Shape generation}{16}{subsubsection.4.3.2}%
-\contentsline {subsection}{\numberline {4.4}State Representation And Reward Design}{16}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.4}State Representationn}{16}{subsection.4.4}%
 \contentsline {subsubsection}{\numberline {4.4.1}Introduction}{16}{subsubsection.4.4.1}%
 \contentsline {subsubsection}{\numberline {4.4.2}State Representation}{16}{subsubsection.4.4.2}%
 \contentsline {subsection}{\numberline {4.5}Reward Function Design}{18}{subsection.4.5}%

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.3.11)  6 APR 2023 07:11
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.4.4)  6 APR 2023 11:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -6,10 +6,19 @@ entering extended mode
 (./memoire.tex
 LaTeX2e <2021-11-15> patch level 1
 L3 programming layer <2022-01-21>
-(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
-Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/extsizes/extarticle.cls
+Document Class: extarticle 1996/10/08 v1.0 Non Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo
 File: size12.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/exscale.sty
+Package: exscale 2018/09/24 v2.1i Standard LaTeX package exscale
+LaTeX Font Info:    Redeclaring symbol font `largesymbols' on input line 57.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/cmex/m/n on input line 57.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> OMX/cmex/m/n on input line 57.
+\big@size=\dimen138
 )
 \c@part=\count185
 \c@section=\count186
@@ -21,7 +30,7 @@ File: size12.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
 \c@table=\count192
 \abovecaptionskip=\skip47
 \belowcaptionskip=\skip48
-\bibindent=\dimen138
+\bibindent=\dimen139
 )
 (/usr/share/texlive/texmf-dist/tex/latex/algorithms/algorithm.sty
 Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
@@ -52,11 +61,11 @@ Package: amstext 2021/08/26 v2.01 AMS text
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks19
-\ex@=\dimen139
+\ex@=\dimen140
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
-\pmbraise@=\dimen140
+\pmbraise@=\dimen141
 )
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2021/08/26 v2.02 operator names
@@ -73,7 +82,7 @@ LaTeX Info: Redefining \dots on input line 499.
 LaTeX Info: Redefining \cdots on input line 620.
 \Mathstrutbox@=\box52
 \strutbox@=\box53
-\big@size=\dimen141
+\big@size=\dimen142
 LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
 \macc@depth=\count266
@@ -86,12 +95,12 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
 \column@=\count271
 \maxfields@=\count272
 \andhelp@=\toks21
-\eqnshift@=\dimen142
-\alignsep@=\dimen143
-\tagshift@=\dimen144
-\tagwidth@=\dimen145
-\totwidth@=\dimen146
-\lineht@=\dimen147
+\eqnshift@=\dimen143
+\alignsep@=\dimen144
+\tagshift@=\dimen145
+\tagwidth@=\dimen146
+\totwidth@=\dimen147
+\lineht@=\dimen148
 \@envbody=\toks22
 \multlinegap=\skip50
 \multlinetaggap=\skip51
@@ -134,20 +143,20 @@ Package: iftex 2020/03/06 v1.0d TeX engine tests
 \Gm@cnth=\count280
 \Gm@cntv=\count281
 \c@Gm@tempcnt=\count282
-\Gm@bindingoffset=\dimen148
-\Gm@wd@mp=\dimen149
-\Gm@odd@mp=\dimen150
-\Gm@even@mp=\dimen151
-\Gm@layoutwidth=\dimen152
-\Gm@layoutheight=\dimen153
-\Gm@layouthoffset=\dimen154
-\Gm@layoutvoffset=\dimen155
+\Gm@bindingoffset=\dimen149
+\Gm@wd@mp=\dimen150
+\Gm@odd@mp=\dimen151
+\Gm@even@mp=\dimen152
+\Gm@layoutwidth=\dimen153
+\Gm@layoutheight=\dimen154
+\Gm@layouthoffset=\dimen155
+\Gm@layoutvoffset=\dimen156
 \Gm@dimlist=\toks25
 )
 (/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
 Package: babel 2022/01/26 3.70 The Babel package
 \babel@savecnt=\count283
-\U@D=\dimen156
+\U@D=\dimen157
 \l@unhyphenated=\language9
 
 (/usr/share/texlive/texmf-dist/tex/generic/babel/txtbabel.def)
@@ -159,9 +168,9 @@ Language: english 2017/06/06 v3.3r English support from the babel system
 Package babel Info: Hyphen rules for 'canadian' set to \l@english
 (babel)             (\language0). Reported on input line 102.
 Package babel Info: Hyphen rules for 'australian' set to \l@ukenglish
-(babel)             (\language8). Reported on input line 105.
+(babel)             (\language5). Reported on input line 105.
 Package babel Info: Hyphen rules for 'newzealand' set to \l@ukenglish
-(babel)             (\language8). Reported on input line 108.
+(babel)             (\language5). Reported on input line 108.
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/blindtext/blindtext.sty
 Package: blindtext 2012/01/06 V2.0 blindtext-Package
@@ -226,7 +235,7 @@ Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
 (/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty
 Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
 )
-\@linkdim=\dimen157
+\@linkdim=\dimen158
 \Hy@linkcounter=\count303
 \Hy@pagecounter=\count304
 
@@ -266,7 +275,7 @@ Package hyperref Info: Bookmarks ON on input line 4445.
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4804.
-\XeTeXLinkMargin=\dimen158
+\XeTeXLinkMargin=\dimen159
 
 (/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -276,8 +285,8 @@ Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
 \Fld@menulength=\count307
-\Field@Width=\dimen159
-\Fld@charsize=\dimen160
+\Field@Width=\dimen160
+\Fld@charsize=\dimen161
 Package hyperref Info: Hyper figures OFF on input line 6076.
 Package hyperref Info: Link nesting OFF on input line 6081.
 Package hyperref Info: Hyper index ON on input line 6084.
@@ -342,8 +351,8 @@ Package graphics Info: Driver file: pdftex.def on input line 107.
 (/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
 File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
 ))
-\Gin@req@height=\dimen161
-\Gin@req@width=\dimen162
+\Gin@req@height=\dimen162
+\Gin@req@width=\dimen163
 )
 (/usr/share/texlive/texmf-dist/tex/latex/pdfpages/pdfpages.sty
 Package: pdfpages 2022/01/29 v0.5u Insert pages of external PDF documents (AM)
@@ -352,8 +361,8 @@ Package: pdfpages 2022/01/29 v0.5u Insert pages of external PDF documents (AM)
 Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
 \calc@Acount=\count313
 \calc@Bcount=\count314
-\calc@Adimen=\dimen163
-\calc@Bdimen=\dimen164
+\calc@Adimen=\dimen164
+\calc@Bdimen=\dimen165
 \calc@Askip=\skip56
 \calc@Bskip=\skip57
 LaTeX Info: Redefining \setlength on input line 80.
@@ -363,8 +372,8 @@ LaTeX Info: Redefining \addtolength on input line 81.
 )
 (/usr/share/texlive/texmf-dist/tex/latex/eso-pic/eso-pic.sty
 Package: eso-pic 2020/10/14 v3.0a eso-pic (RN)
-\ESO@tempdima=\dimen165
-\ESO@tempdimb=\dimen166
+\ESO@tempdima=\dimen166
+\ESO@tempdimb=\dimen167
 
 (/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
 Package: xcolor 2021/10/31 v2.13 LaTeX color extensions (UK)
@@ -383,9 +392,9 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1373.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1374.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1375.
 ))
-\AM@pagewidth=\dimen167
-\AM@pageheight=\dimen168
-\AM@fboxrule=\dimen169
+\AM@pagewidth=\dimen168
+\AM@pageheight=\dimen169
+\AM@fboxrule=\dimen170
 
 (/usr/share/texlive/texmf-dist/tex/latex/pdfpages/pppdftex.def
 File: pppdftex.def 2022/01/29 v0.5u Pdfpages driver for pdfTeX (AM)
@@ -534,7 +543,7 @@ Package: longtable 2021-09-01 v4.17 Multi-page Table package (DPC)
 \LTpre=\skip64
 \LTpost=\skip65
 \LTchunksize=\count341
-\LTcapwidth=\dimen170
+\LTcapwidth=\dimen171
 \LT@head=\box56
 \LT@firsthead=\box57
 \LT@foot=\box58
@@ -555,19 +564,19 @@ Package: glossary-super 2021/11/01 v4.49 (NLCT)
 (/usr/share/texlive/texmf-dist/tex/latex/supertabular/supertabular.sty
 Package: supertabular 2020/02/02 v4.1g the supertabular environment
 \c@tracingst=\count346
-\ST@wd=\dimen171
+\ST@wd=\dimen172
 \ST@rightskip=\skip68
 \ST@leftskip=\skip69
 \ST@parfillskip=\skip70
-\ST@pageleft=\dimen172
-\ST@headht=\dimen173
-\ST@tailht=\dimen174
-\ST@pagesofar=\dimen175
-\ST@pboxht=\dimen176
-\ST@lineht=\dimen177
-\ST@prevht=\dimen178
-\ST@toadd=\dimen179
-\ST@dimen=\dimen180
+\ST@pageleft=\dimen173
+\ST@headht=\dimen174
+\ST@tailht=\dimen175
+\ST@pagesofar=\dimen176
+\ST@pboxht=\dimen177
+\ST@lineht=\dimen178
+\ST@prevht=\dimen179
+\ST@toadd=\dimen180
+\ST@dimen=\dimen181
 \ST@pbox=\box61
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/glossaries/styles/glossary-tree.sty
@@ -659,13 +668,13 @@ LaTeX Info: Redefining \nameref on input line 32.
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count349
-\scratchdimen=\dimen181
+\scratchdimen=\dimen182
 \scratchbox=\box63
 \nofMPsegments=\count350
 \nofMParguments=\count351
 \everyMPshowfont=\toks39
 \MPscratchCnt=\count352
-\MPscratchDim=\dimen182
+\MPscratchDim=\dimen183
 \MPnumerator=\count353
 \makeMPintoPDFobject=\count354
 \everyMPtoPDFconversion=\toks40
@@ -727,27 +736,36 @@ File: images//formation.png Graphic file (type png)
 <use images//formation.png>
 Package pdftex.def Info: images//formation.png  used on input line 327.
 (pdftex.def)             Requested size: 174.24791pt x 94.35083pt.
- [15 <./images//formation.png>] [16] [17] [18]
+ [15 <./images//formation.png>] [16] [17]
+Underfull \hbox (badness 10000) in paragraph at lines 451--454
+\OT1/cmr/m/n/12 where $\OML/cmm/m/it/12 mdd$ \OT1/cmr/m/n/12 stands for the min
+-i-mum de-tected dis-tance.
+ []
+
+[18]
 <images//ros.png, id=404, 705.63625pt x 430.60875pt>
 File: images//ros.png Graphic file (type png)
 <use images//ros.png>
-Package pdftex.def Info: images//ros.png  used on input line 529.
+Package pdftex.def Info: images//ros.png  used on input line 530.
 (pdftex.def)             Requested size: 282.2495pt x 172.24043pt.
  [19 <./images//ros.png>] [20] (./memoire.bbl [21]) [22] (./memoire.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `memoire.out' has not changed.
-(rerunfilecheck)             Checksum: 59506EA72E444B4BB625FCF42BBABD36;9477.
+(rerunfilecheck)             Checksum: D3F59FB08A7621E50CFD86610A653E1B;9383.
  ) 
 Here is how much of TeX's memory you used:
- 19226 strings out of 480129
- 331385 string characters out of 5893409
- 695188 words of memory out of 5000000
- 36785 multiletter control sequences out of 15000+600000
+ 19272 strings out of 480129
+ 334061 string characters out of 5893410
+ 695403 words of memory out of 5000000
+ 36827 multiletter control sequences out of 15000+600000
  475267 words of font info for 49 fonts, out of 8000000 for 9000
  81 hyphenation exceptions out of 8191
- 91i,14n,91p,1145b,549s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 91i,15n,91p,1145b,549s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/islem/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.600
 pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></u
 sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/sha
@@ -759,7 +777,7 @@ type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
 public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
 amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
 ts/cm/cmtt12.pfb>
-Output written on memoire.pdf (22 pages, 213383 bytes).
+Output written on memoire.pdf (22 pages, 213381 bytes).
 PDF statistics:
  498 PDF objects out of 1000 (max. 8388607)
  444 compressed objects within 5 object streams
