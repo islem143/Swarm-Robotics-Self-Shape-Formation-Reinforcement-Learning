@@ -75,14 +75,12 @@ class Dqn(Node):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
-        self.ep =70
+        self.ep =0
         self.test=False
-        self.agents = [ACNetwork("robot-1",True, self.ep),
-                       ACNetwork("robot-2",True, self.ep),
-                        ACNetwork("robot-3",True, self.ep),
-                        ACNetwork("robot-4",True, self.ep)
+        self.agents = [ACNetwork("robot-1",False, self.ep),
+                      
                        ]
-        self.num_agents=4
+        self.num_agents=1
    
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
@@ -102,7 +100,7 @@ class Dqn(Node):
         self.env_result_client = self.create_client(Mac, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = True
-        self.save_every=50
+        self.save_every=15
         #std_dev = 0.2
         
  
@@ -113,8 +111,10 @@ class Dqn(Node):
         self.current_states = [0.0 for _ in range(self.num_agents)]
         self.next_states = [0.0 for _ in range(self.num_agents)]
     
-        self.std_dev=0.15
+        self.std_dev=0.32
+        self.std_dev2=0.05
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
+        self.ou_noise2 = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev2) * np.ones(1))
         # self.tensorboard = ModifiedTensorBoard(
         #     log_dir="logs/{}-{}".format(MODEL_NAME, int(time.time())))
 
@@ -163,23 +163,29 @@ class Dqn(Node):
                 self.req = Mac.Request()
                 self.req.init = False
 
-                actions = [0 for _ in range(self.num_agents)]
+                actions = [0 for _ in range(self.num_agents*2)]
                 
 
                 for index,agent in enumerate(self.agents):
+                    
                     if (not self.test):
 
                         noise = self.ou_noise()
+                        noise2 = np.abs(self.ou_noise2())
+                        
                     else:
                         noise=0
+                        noise2=0
                     state = tf.expand_dims(tf.convert_to_tensor(self.current_states[index]), 0)
-                  
-                    actions[index] = float(agent.policy(state, noise)[0])
-                    
+                    result=agent.policy(state, noise,noise2)
+                    actions[index*2] =float(result[0])
+                    actions[index*2+1]=float(result[1]) 
+
+                 
                 
                   
 
-                
+                print("actions",actions)
                 self.req.actions = actions
 
                 future = self.env_result_client.call_async(self.req)
@@ -207,9 +213,9 @@ class Dqn(Node):
                 for index,agent in enumerate(self.agents):
                 
                         if (not self.test and not self.dones[index]):
-                       
+                      
                             agent.update_replay_buffer(
-                                (self.current_states[index], self.rewards[index], actions[index], self.next_states[index], self.dones[index]))
+                                (self.current_states[index], self.rewards[index], actions[index*2:index*2+2], self.next_states[index], self.dones[index]))
                             #if(self.ep%self.train_every==0):
                                # print("training ep",self.ep)
                             agent.learn()
@@ -249,12 +255,13 @@ class Dqn(Node):
             
             for index, agent in enumerate(self.agents):
                 print(f"robot -{index+1} rewards", self.returns[index])
-                with summary_writer.as_default():
-                    tf.summary.scalar(f'rewards{index+1}', self.returns[index], step=self.ep)
+                if(not self.test):
+                 with summary_writer.as_default():
+                     tf.summary.scalar(f'rewards{index+1}', self.returns[index], step=self.ep)
                 if (self.ep % self.save_every == 0 and self.ep!=0) and not self.test:
                     
                     agent.save_data(self.ep,self.rewards[index])
-            if(self.ep%40==0 and self.ep!=0 and self.std_dev>0.01):
+            if(self.ep%60==0 and self.ep!=0 and self.std_dev>0.01):
                self.std_dev-=0.01
                self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))       
             
