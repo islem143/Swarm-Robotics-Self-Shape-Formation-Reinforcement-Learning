@@ -93,7 +93,7 @@ class ACNetwork():
     def create_actor_model(self):
         # Initialize weights between -3e-3 and 3-e3
         last_init = tf.random_uniform_initializer(minval=-0.003, maxval=0.003)
-        last_init2 = tf.random_uniform_initializer(minval=-0.003, maxval=0.003)
+        last_init2 = tf.random_uniform_initializer(minval=-0.0003, maxval=0.0003)
 
 
         inputs = keras.layers.Input(shape=(4,))

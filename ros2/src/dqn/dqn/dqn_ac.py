@@ -75,12 +75,15 @@ class Dqn(Node):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
-        self.ep =0
-        self.test=False
-        self.agents = [ACNetwork("robot-1",False, self.ep),
+        self.ep =450
+        self.test=True
+        self.agents = [ACNetwork("robot-1",True, self.ep),
+                       ACNetwork("robot-2",True, self.ep),
+                       ACNetwork("robot-3",True, self.ep),
+                       ACNetwork("robot-4",True, self.ep)
                       
                        ]
-        self.num_agents=1
+        self.num_agents=4
    
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
@@ -100,7 +103,7 @@ class Dqn(Node):
         self.env_result_client = self.create_client(Mac, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = True
-        self.save_every=15
+        self.save_every=50
         #std_dev = 0.2
         
  
@@ -111,7 +114,7 @@ class Dqn(Node):
         self.current_states = [0.0 for _ in range(self.num_agents)]
         self.next_states = [0.0 for _ in range(self.num_agents)]
     
-        self.std_dev=0.32
+        self.std_dev=0.27
         self.std_dev2=0.05
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         self.ou_noise2 = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev2) * np.ones(1))
@@ -185,7 +188,7 @@ class Dqn(Node):
                 
                   
 
-                print("actions",actions)
+                
                 self.req.actions = actions
 
                 future = self.env_result_client.call_async(self.req)

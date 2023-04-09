@@ -150,12 +150,12 @@ A swarm of robots can reduce the cost and time in such incidents. an exemple of 
 To investigate Mars, swarm robots like Marsbees have been created. the same holds true for the CoCoRo swarm, which was employed for in-depth underwater investigation.
 \subsubsection{Agriculture}
 As they can be used to improve the agriculture and monitor the status of crops. 
-
+\pagebreak
 \subsection{Swarm robotics basic tasks and problems}
 SR problems can be broken down into fundamental tasks that the swarm frequently carries out in an effort to accomplish its objective.
 this tasks are: aggregation,d ispersion,pattern formation, coordinated
 movement, hole avoidance and foraging\cite{bayindir2007review}\cite{navarro2013introduction}.
-\newpage
+
 \subsubsection{Aggregation}
 Aggregation of the robots is performed in order to accomplish some form or to exchange information. This problem can be easy in a centralized system, but  difficult in a decentralized one.
 \subsubsection{Dispersion}
@@ -191,7 +191,7 @@ focuses on developing algorithms and models that make prediction and take decisi
 based on the input data they receive.
 Generally speaking, there are three types of machine learning algorithms,
 suppervised algorithms which obtain labeled data and attempt to categorize or anticipate the unknown one. Unsupervised learning algorithms, where the  data is unlabeled and it is the job of the ml algorithms  to extract  hidden patterns in it. And finally, reinforcement learning algorithms  where the algorithm learns to make decisions based on trial and error and rewards, by interacting with an environment.
-  
+
 \subsection{Reinforcement learning}
 Reinforcement learning algorithms are based on a agent that interact and observe  an environment in order to take actions that maximize the reward for a given task.
 
@@ -274,12 +274,76 @@ minibatch of transitions $(\phi_{t} , a_{t} , r_{t} , \phi_{t+1} )$ in $D$
 \end{algorithm}
  
 
+
+\pagebreak
+
+\subsection{Deep Deterministic policy gradient }
+One of the major problems of DQN is that he works only in discreate action spaces. For this, tasks that require continuous control, such as the linear and rotational movements of robots, require discretization. In most cases, this can result in a large action space, which slows convergence and causes instability.. \cite{lillicrap2015continuous}
+
+For this, there is another type of DRL algothims named Deep Determinisitc policy gradient, which is a policy based method actor critic algoithm, that takes the benifites of both methods (policy based method and value based method, and useses the actor critic to reduce the bias (underfitting) that occurs ...
+
+DDPG in  composed  of two neural networks: the actor and the critic. The job of the actor is to select an action based on the input state. And it is the critic who will determine if that action was suitable or not by observing the rewards  returned when taking that specific action in a specific state.
+
+The critic network is  learned using bellman equation same as q-learning.
+
+The DDPG algothim also useses a replay buffer to store agent exepriences
+in order to sample from them later when training the netwroks.
+
+Like in Q-learning and to enable better exploration for the agent, a noise 
+is sampled from a process $\eta$  then added to the output of the actor network. It is common to use the Ornstein-Uhlenbeck process to generate temporally correlated values.\cite{lillicrap2015continuous}
+
+
+
+
+
  
+\begin{algorithm}[H]
+\caption{Deep Deterministic Policy Gradient (DDPG)}
+\label{alg:ddpg}
+\begin{algorithmic}[1]
+\State Initialize actor network $\mu(s|\theta^\mu)$ and critic network $Q(s,a|\theta^Q)$ with weights $\theta^\mu$ and $\theta^Q$
+\State Initialize target networks $\mu'(s|\theta^{\mu'}) \leftarrow \mu(s|\theta^\mu)$ and $Q'(s,a|\theta^{Q'}) \leftarrow Q(s,a|\theta^Q)$ with weights $\theta^{\mu'} \leftarrow \theta^\mu$ and $\theta^{Q'} \leftarrow \theta^Q$
+\State Initialize replay buffer $R$
+\For{episode $=1$ to $M$}
+\State Initialize a random process for action exploration
+\State Receive initial observation state $s_1$
+\For{$t = 1$ to $T$}
+\State Select action $a_t = \mu(s_t|\theta^\mu) + \mathcal{N}t$ according to current policy and exploration noise $\mathcal{N}t$
+\State Execute action $a_t$ and observe reward $r_t$ and new state $s{t+1}$
+\State Store transition $(s_t, a_t, r_t, s{t+1})$ in $R$
+\State Sample a random minibatch of $N$ transitions $(s_i, a_i, r_i, s_{i+1})$ from $R$
+\State Set $y_i = r_i + \gamma Q'(s_{i+1},\mu'(s_{i+1}|\theta^{\mu'})|\theta^{Q'})$
+\State Update critic by minimizing the loss: $\mathcal{L} = \frac{1}{N}\sum_i(y_i - Q(s_i,a_i|\theta^Q))^2$
+\State Update actor policy using the sampled policy gradient: $\nabla_{\theta^\mu} J \approx \frac{1}{N}\sum_i \nabla_a Q(s,a|\theta^Q)|{s=s_i,a=\mu(s_i)} \nabla{\theta^\mu} \mu(s|\theta^\mu)|_{s_i}$
+\State Update target networks: $\theta^{\mu'} \leftarrow \tau \theta^\mu + (1-\tau)\theta^{\mu'}$ and $\theta^{Q'} \leftarrow \tau \theta^Q + (1-\tau)\theta^{Q'}$
+\EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Related Work}
+In this section, we present some of the work that have applied RL algorithms in  training agents and robotics systems.
+
+
+The most used algorithm  is Deep Q learning, where  \cite{mnih2013playing} have applied it in learning playing atari games by using a convolutionnal neural netwrok by providing raw image pixels as input, where they demonstarted that the agents achived great performance even surpassing human level.
+
+In continous action spaces, \cite{lillicrap2015continuous} have used the ddpg algorithm, which is an extension of the DQN and the DPG algorithms. They have used an actor critic model free  policy based algorithm which operate in conitous action space by appliyng it in several simulated physics tasks, and also shows great result achived by the agents.
+
+In field of multi agents. \cite{diallo2020multi} where they used a decentrilized aproach to train multi agent to form some patterns using the DQN network with  a central replay buffer that contains agents experinces in order for them to learn cooparitvly.
+
+
+For robotics, \cite{long2018towards} have used the Proxiaml policy optimization algorithm (PPO) wchih is a policy based one , to controll in a decentrilzed manner a group of robot to reach their target by avoidng collison between them. Also in \cite{ma2020multi} have used the ddpg algorithm to traing mutli robtos to encircle some target in a static position  or in mouvement where the agents (robots) learn to coopretivly achevce their task by using also a central replay memory.
  
-algo1:
-  -the leader robot or first robot will calculate the points and choose one
-  and give it to hi neigbor
-  -the neighbor will do the same and choose one and pass the array to the next.
+
+Finnaly, in \cite{dong2020mobile},\cite{gong2022efficient} and \cite{quiroga2022position} have applied the ddpg and dqn algorithms for path playing and postion control of robots in order to achive the target goals.
+
+
+
+
+
+
+ 
+
   
   
   
@@ -288,7 +352,7 @@ algo1:
 \hspace{0pt}
 \vfill
 \begin{center}
-\section{Problem formulation And Solution Conception }
+\section{Problem formulation And Solution Conception}
 \end{center}
 \vfill
 \hspace{0pt}
@@ -534,12 +598,35 @@ For example: We can have a service that generate goals or reset the simulation.
 
 
 
+\subsection{TurtleBot}
+We will be using the turtlebot robot which is developed by open robotics. They same organization behind ros and the gazebo similator.
+
+This robot is used for educational,reaserch and prototyping purpuses, where multiple version have been developed. In this thesis, we will be using the turblebot3-burger version.
+
+\subsubsection{TurtleBot3 components}
+TurtleBot3 is a two wheeled, small size robot composed of many parts that generally robots have like  Gyroscope, Accelerometer and Programmable LEDs ..., and he uses Raspberry Pi as the core computer board.
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.4]{turtlebot3_burger_components.png}
+\caption[TurtleBot3]{TurtleBot3 [\textbf{ref}:https://emanual.robotis.com/]]}
+\end{figure}
 
 
+But the most important component, and what we will relay on in this project is the Laser Distance Sensor or (LDS) which gives a 360 degree sensing of ob objects  in the environemnt with a maximun distance of 3.5m
+
+The (LDS) was the main source of data to train our neural networks besides the robots positions. we have used it to detect other robots and to avoid collisions during the navigation.  
+   
+
+
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.4]{lds.png}
+\caption[Lds]{Lds}
+\end{figure}
 
 
  
-   
+  
 
 
 
@@ -573,6 +660,13 @@ For example: We can have a service that generate goals or reset the simulation.
 
 \subsection{implemtation of the solution}
 
+
+\subsection{How other papers algorithms to train the agents }. 
+\subsection{basics of robotics ,turtlebot and equipments}. 
+\subsection{Networks desgin talk in detail whey the paremerrs was choses}. 
+\subsection{shape generation and random}. 
+
+\subsection{Multi agent systems}. 
 
 
 

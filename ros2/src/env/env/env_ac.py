@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents=1
+        self.num_agents=4
         self.cmd_vel_pub = {}
         self.goal_reached_by={}
         for i in range(self.num_agents):
@@ -43,7 +43,7 @@ class Env(Node):
             Odometry, "/t4/odom", self.get_current_position4, 10)
         self.get_laser4 = self.create_subscription(
             LaserScan, "/t4/scan", self.get_lds3, 10)
-        self.test=False
+        self.test=True
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
         # self.env_goal_service = self.create_service(
@@ -51,12 +51,12 @@ class Env(Node):
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.goal_publisher=self.create_publisher(Goal,"generate_goal",10) 
         self.shapes={
-            "line":[[0.0,-1.0],[0.0,2.0] ,[0.0,-1.0],[0.0,0.0]],
+            "line":[[0.0,1.0],[0.0,2.0] ,[0.0,-1.0],[0.0,0.0]],
             "line2":[[1.0,0.0],[2.0,0.0] ,[-1.0,0.0],[-2.0,0.0]],
             "trianlge":[[0.0,0.0],[0.0,1.2] ,[0.0,-1.2],[1.2,0.0]],
-            "trianlge2":[[0.0,1.0],[0.0,0.0] ,[0.0,-1.2],[1.5,0.0]],
-            "square":[[-1.5,-1.5],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
-            "line3":[[-2.0,-3.0],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
+            "trianlge2":[[0.0,1.5],[0.0,0.0] ,[0.0,-1.2],[1.5,0.0]],
+            "square":[[-1.2,-1.2],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
+            "line3":[[2.5,2.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
            
 
         }
@@ -235,13 +235,14 @@ class Env(Node):
        
         #self.dones = [False for _ in range(self.num_agents)]
         actions = request.actions
-
+    
         for index in range(self.num_agents):
+           
             angular = actions[index*2]
             velocity=actions[index*2+1]
-            actions=[angular,velocity]
+            actionss=[angular,velocity]
            
-            self.move_robots(actions, index)
+            self.move_robots(actionss, index)
 
         state_s = self.get_state()
         rewards = self.get_reward()
@@ -269,11 +270,11 @@ class Env(Node):
         #xx=[2.0,0.5,1.5,0.0,-2.0]
         #yy=[2.0,0.5,1.5,0.0,-2.0]
 
-        if(self.goal_freq==3):
+        if(self.goal_freq==2):
             a=["line","trianlge","square","line2","trianlge2","line3"]
             chosen=random.choice(a)
             self.goal_cords=self.shapes[chosen]
-           
+            random.shuffle(self.goal_cords)
            
             self.goal_freq=0
             print("chosen shape",chosen)
@@ -389,7 +390,7 @@ class Env(Node):
                 self.stop_robots(index)
                
 
-            if (self.steps == 500 and not self.test):
+            if (self.steps == 700 and not self.test):
                 self.dones = [True for _ in range(self.num_agents)]
                 self.fails = [True for _ in range(self.num_agents)]
                 if self.succeses[index]:

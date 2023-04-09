@@ -12,7 +12,7 @@
 \contentsline {subsubsection}{\numberline {2.5.3}Cleaning of oil speals}{8}{subsubsection.2.5.3}%
 \contentsline {subsubsection}{\numberline {2.5.4}Exploration}{8}{subsubsection.2.5.4}%
 \contentsline {subsubsection}{\numberline {2.5.5}Agriculture}{8}{subsubsection.2.5.5}%
-\contentsline {subsection}{\numberline {2.6}Swarm robotics basic tasks and problems}{8}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.6}Swarm robotics basic tasks and problems}{9}{subsection.2.6}%
 \contentsline {subsubsection}{\numberline {2.6.1}Aggregation}{9}{subsubsection.2.6.1}%
 \contentsline {subsubsection}{\numberline {2.6.2}Dispersion}{9}{subsubsection.2.6.2}%
 \contentsline {subsubsection}{\numberline {2.6.3}Pattern formation}{9}{subsubsection.2.6.3}%
@@ -25,30 +25,39 @@
 \contentsline {subsection}{\numberline {3.3}Reinforcement learning}{11}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}Q learning}{12}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Deep Q learning}{13}{subsection.3.5}%
-\contentsline {section}{\numberline {4}Problem formulation And Solution Conception }{14}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Introduction}{15}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Goal defintion}{15}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Problem Formulation}{15}{subsection.4.3}%
-\contentsline {subsubsection}{\numberline {4.3.1}Environement}{15}{subsubsection.4.3.1}%
-\contentsline {subsubsection}{\numberline {4.3.2}Shape generation}{16}{subsubsection.4.3.2}%
-\contentsline {subsection}{\numberline {4.4}State Representationn}{16}{subsection.4.4}%
-\contentsline {subsubsection}{\numberline {4.4.1}Introduction}{16}{subsubsection.4.4.1}%
-\contentsline {subsubsection}{\numberline {4.4.2}State Representation}{16}{subsubsection.4.4.2}%
-\contentsline {subsection}{\numberline {4.5}Reward Function Design}{18}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Roboting Operating system}{19}{subsection.4.6}%
-\contentsline {subsubsection}{\numberline {4.6.1}Ros Basics}{19}{subsubsection.4.6.1}%
-\contentsline {subsection}{\numberline {4.7}Talk about how we used diffrent formation from easy one to hard}{20}{subsection.4.7}%
-\contentsline {subsection}{\numberline {4.8}State Of the art}{20}{subsection.4.8}%
-\contentsline {subsection}{\numberline {4.9}DQN}{20}{subsection.4.9}%
-\contentsline {subsection}{\numberline {4.10}DDPG}{20}{subsection.4.10}%
-\contentsline {subsection}{\numberline {4.11}Thier usages in multi agent pros and cons}{20}{subsection.4.11}%
-\contentsline {subsection}{\numberline {4.12}problem formulation and solution}{20}{subsection.4.12}%
-\contentsline {subsection}{\numberline {4.13}we opt for maddpg decentrilzed excution }{20}{subsection.4.13}%
-\contentsline {subsection}{\numberline {4.14}we opt for maddpg for better perfomance and scalability }{20}{subsection.4.14}%
-\contentsline {subsection}{\numberline {4.15}ROS and gazebo}{20}{subsection.4.15}%
-\contentsline {subsection}{\numberline {4.16}Conception of the solution}{20}{subsection.4.16}%
-\contentsline {subsection}{\numberline {4.17}Rewards desgin}{20}{subsection.4.17}%
-\contentsline {subsection}{\numberline {4.18}Networks Desgin}{20}{subsection.4.18}%
-\contentsline {subsection}{\numberline {4.19}talk about how you choose the hyperparameters}{20}{subsection.4.19}%
-\contentsline {subsection}{\numberline {4.20}how you calculeted tha angle and how lds works}{20}{subsection.4.20}%
-\contentsline {subsection}{\numberline {4.21}implemtation of the solution}{20}{subsection.4.21}%
+\contentsline {subsection}{\numberline {3.6}Deep Deterministic policy gradient }{14}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Related Work}{15}{subsection.3.7}%
+\contentsline {section}{\numberline {4}Problem formulation And Solution Conception}{17}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Introduction}{18}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Goal defintion}{18}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Problem Formulation}{18}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Environement}{18}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}Shape generation}{19}{subsubsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.4}State Representationn}{19}{subsection.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.1}Introduction}{19}{subsubsection.4.4.1}%
+\contentsline {subsubsection}{\numberline {4.4.2}State Representation}{19}{subsubsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.5}Reward Function Design}{21}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Roboting Operating system}{22}{subsection.4.6}%
+\contentsline {subsubsection}{\numberline {4.6.1}Ros Basics}{22}{subsubsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.7}TurtleBot}{23}{subsection.4.7}%
+\contentsline {subsubsection}{\numberline {4.7.1}TurtleBot3 components}{23}{subsubsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.8}Talk about how we used diffrent formation from easy one to hard}{25}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}State Of the art}{25}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.10}DQN}{25}{subsection.4.10}%
+\contentsline {subsection}{\numberline {4.11}DDPG}{25}{subsection.4.11}%
+\contentsline {subsection}{\numberline {4.12}Thier usages in multi agent pros and cons}{25}{subsection.4.12}%
+\contentsline {subsection}{\numberline {4.13}problem formulation and solution}{25}{subsection.4.13}%
+\contentsline {subsection}{\numberline {4.14}we opt for maddpg decentrilzed excution }{25}{subsection.4.14}%
+\contentsline {subsection}{\numberline {4.15}we opt for maddpg for better perfomance and scalability }{25}{subsection.4.15}%
+\contentsline {subsection}{\numberline {4.16}ROS and gazebo}{25}{subsection.4.16}%
+\contentsline {subsection}{\numberline {4.17}Conception of the solution}{25}{subsection.4.17}%
+\contentsline {subsection}{\numberline {4.18}Rewards desgin}{25}{subsection.4.18}%
+\contentsline {subsection}{\numberline {4.19}Networks Desgin}{25}{subsection.4.19}%
+\contentsline {subsection}{\numberline {4.20}talk about how you choose the hyperparameters}{25}{subsection.4.20}%
+\contentsline {subsection}{\numberline {4.21}how you calculeted tha angle and how lds works}{25}{subsection.4.21}%
+\contentsline {subsection}{\numberline {4.22}implemtation of the solution}{25}{subsection.4.22}%
+\contentsline {subsection}{\numberline {4.23}How other papers algorithms to train the agents }{25}{subsection.4.23}%
+\contentsline {subsection}{\numberline {4.24}basics of robotics ,turtlebot and equipments}{25}{subsection.4.24}%
+\contentsline {subsection}{\numberline {4.25}Networks desgin talk in detail whey the paremerrs was choses}{26}{subsection.4.25}%
+\contentsline {subsection}{\numberline {4.26}shape generation and random}{26}{subsection.4.26}%
+\contentsline {subsection}{\numberline {4.27}Multi agent systems}{26}{subsection.4.27}%
