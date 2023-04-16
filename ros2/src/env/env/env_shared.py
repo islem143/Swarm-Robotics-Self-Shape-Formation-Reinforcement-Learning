@@ -258,10 +258,10 @@ class Env(Node):
         l.append(float(self.min_ldss_dist[0]))
         l.append(float(self.min_ldss_angle[0]))
         l.append(float(self.goal_angles[0]))
-        l.append(self.get_distance(self.positions[0], self.goal_cords[0]))
+        l.append(self.get_distance(self.positions[1], self.goal_cords[1]))
         l.append(float(self.min_ldss_dist[1]))
         l.append(float(self.min_ldss_angle[1]))
-        l.append(float(self.goal_angles[0]))
+        l.append(float(self.goal_angles[1]))
 
         if (self.crashs()):
             print(f"get reward of -10")

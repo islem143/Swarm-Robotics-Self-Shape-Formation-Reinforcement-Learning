@@ -43,7 +43,7 @@ class Env(Node):
             Odometry, "/t4/odom", self.get_current_position4, 10)
         self.get_laser4 = self.create_subscription(
             LaserScan, "/t4/scan", self.get_lds3, 10)
-        self.test=True
+        self.test=False
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
         # self.env_goal_service = self.create_service(
@@ -57,6 +57,7 @@ class Env(Node):
             "trianlge2":[[0.0,1.5],[0.0,0.0] ,[0.0,-1.2],[1.5,0.0]],
             "square":[[-1.2,-1.2],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
             "line3":[[2.5,2.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
+            #"test":[[3.2,3.3],[2.0,-1.6] ,[0.0,-3.2],[-2.3,2.3]],
            
 
         }
@@ -270,8 +271,9 @@ class Env(Node):
         #xx=[2.0,0.5,1.5,0.0,-2.0]
         #yy=[2.0,0.5,1.5,0.0,-2.0]
 
-        if(self.goal_freq==2):
+        if(self.goal_freq==1):
             a=["line","trianlge","square","line2","trianlge2","line3"]
+            #a=["test"]
             chosen=random.choice(a)
             self.goal_cords=self.shapes[chosen]
             random.shuffle(self.goal_cords)
@@ -332,7 +334,7 @@ class Env(Node):
             distance = self.get_distance_to_goal(index)
             rewards[index] += -(distance/self.get_abs_distance_to_goal(index))+1
 
-            rewards[index] += -np.abs(self.goal_angles[index])+0.2
+            rewards[index] += -np.abs(self.goal_angles[index])+0.1
             
             if (self.min_ldss_dist[index] < 0.60):
                 rewards[index] -= 10
@@ -402,6 +404,7 @@ class Env(Node):
         if (all(self.dones)):
             for index in range(self.num_agents):
                 self.stop_robots(index)
+           
             self.call_reset_sim()
             if(all(self.succeses)):
                 self.goal_freq+=1

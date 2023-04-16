@@ -7,8 +7,8 @@
 \usepackage[%
     left=1.3in,%
     right=1.3in,%
-    top=1.0in,%
-    bottom=1.0in,%
+    top=1.1in,%
+    bottom=1.1in,%
     paperheight=11in,%
     paperwidth=8.5in%
 ]{geometry}%
@@ -529,6 +529,156 @@ Finally, we can add \ref{dist_r}, \ref{angle_r} and \ref{obs_r} to form the fina
 \pagebreak
 
 
+\subsection{Formation Control Algorithm}
+
+
+\begin{algorithm}[H]
+\caption{Shape Formation Algorithm}
+\label{alg:ddpg}
+\begin{algorithmic}[1]
+
+\State Initialize $n=N$ number of robots.
+\State Initialize $c=0$ goal counter.
+\State Assign each robot an id starting from $id=1...N$
+
+\State Set the central robot with $id=1$.
+\State The central robot will choose a random postion and stay on it.
+
+\State The central broadcast a message containing his position with the desired shape by using the distance $d$ and angle $\theta$ from his position.
+
+\While{$c!=N$}
+\For{robot in robots}
+\State Reacive the message with the target goal.
+\State Reach the target goal.
+\State Inform the central robot with his current postions every $t seconds$.
+\If{target position reached} 
+    \State Stop the robot and inform the central robot.
+    \State $c++$ 
+
+\EndIf 
+
+\EndFor
+
+\EndWhile
+
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Explanation}
+
+The first robot will choose a random position and place himself in it. Then he broadcast a msg containing his position and the target positions to other robots in order to form the shape by using the distance and the angle.
+
+Once the message reacived by other robots, each one of them will try to reach the target goal autonomously by avoiding colision with other robots.
+And once they reach their goal they will inform the central robot with their task completion.
+
+Finally, and if all robots are in place, the central robot will check  the state of the formation a and declare the task  as complete if all the shape is formed correclty .
+
+
+
+
+\subsection{Formation and Deep Reinfocement Learing}
+\subsubsection{Introduction}
+Until now, we haven't talk about the role of DRL in this mission.
+
+Each robot will have it's own neural network which will guide him towards the goal positions by avoiding obstacles with other robots.
+
+As  mentioned earlier, we have used the DDPG algothim where each robot will have two neural networks, the critic and the actor.
+
+The actor model will get as input the mentioned state and outputs two actions: the angle and the velocity.
+
+The robot will learn to  move towards the goal by adjusting the angle and will use the velocity to learn how to move faster in certain conditions and when not. For example the velocity will
+help him in colision avoidance. If he doesn't detect any robots in front of him  he moves faster, else he slows down.
+
+
+For the critic, he gets as input both the state and the actions, and outputs the q-value which will be used by the actor to choose the suitable actions to take.
+\subsubsection{The learning flow}
+
+It starts by the robot being in a given state, he then takes an action, reacive a reward and transition to a new state.
+
+This informations will be stored in a replay buffer, and once it reach a certain number of experiences the training starts.
+
+
+
+If all robots reach their goal, the simulation is reset and a another formation shape is generated in order to prevent overfiting a certain type of shapes.
+
+And if they collide the simulation is reset allso and the robots tries again to form the desired shape.
+
+This learning flow will continue until the models converge and the robots form the shapes many times respectively.
+
+\subsection{Neural network design}
+Designing the architecture of the neural networks and choosing the right parameters to fit is a crucial part to converge and obtain better performance.
+
+There is a high  number of  parameters to choose from,  hidden layers, number of units, activation functions, weight initlization, regularization ... and each one of them has it's role, and there is no clear rule for the right one to choose, so trial and experimenting is the way to go.
+
+In this section, we will discuss what parameters we choosed and explain the reason behind them.
+
+
+For the actor network, we set for hidden layers where each layer has 400, 300, 128 and 64 units respectively. Each layer is using the relu activation function and was initialized with Xavier Glorot's exepect for the output layers. The output layers have two units, one for the angular velocity and one for the linear velocity. They was initalized with the tanh activation function which give an output bounded beteween -1 and 1. We choose the angular velocity of  the robot to be between $-\Pi$ and $\Pi$ so we multipiled the result of the output layer to get the desired range. Same goes for the linear velocity we have maped the range from -1 and 1 to 0.2 to 0.5. 
+
+And to enable better exploration, we have added the OuNoise to the output of the actor network when taking actions which will sample a range of values from a unifrom distribution.
+
+
+We have also used batch normalization layers \cite{ioffe2015batch} which a  technique for normilizing the output for each layers that have an effect of stabilizing the trainging process and making it converge faster especily if the initial distribution of the input data is varying. It also acts as regulizer so no need for dropout layers.
+
+As For the critic, he gets as input  both the state and actions and outputs the q-value. Firstly, we pass the states and actions into seperate layers 
+with number of units of 512 and 256 respectevely. Then, we concatinate them into one layer and add two other hidden layers with 256 number of units with a dropout of 0.2.
+
+For loss calculation, we will be using target networks like described in the algortihms and updating them using soft update with parameters tau of 0.01
+
+The critic loss, will be between the predicted value of the critic network and y:
+
+ 
+
+     \begin{equation} \label{critic_loss}
+     closs= loss(critic(state,actions),reward+ \gamma*targetcricic(nextstates,nextactions)*(1-dones).
+   \end{equation}
+ 
+where the loss function is the mean squared error.
+
+For the actor, it will be the mean predicted value of the critic network multiplied by - as  he is trying to maximize the q-value.
+
+\begin{equation} \label{actor_loss}
+     aloss= -mean(critic(states,actions))
+   \end{equation}
+   
+We have used the Adam optimizer for both networks with learning rates of 0.01 and 0.001 for the critic and actor respectively. We set the batch size to 128 and the minimun size of the replay buffer before training start to 2500 samples.
+
+ 
+   
+
+
+
+
+    
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.65]{actor_net}
+\caption[actor network]{actor network}
+\end{figure}
+
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.65]{critic_net}
+\caption[critic network]{critic network}
+\end{figure}
+
+
+
+
+
+
+
+
+\pagebreak
+
+
+
+
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.8]{simulation_flow}
+\caption[simulation flow]{simulation low}
+\end{figure}
 
 
 
@@ -539,15 +689,16 @@ Finally, we can add \ref{dist_r}, \ref{angle_r} and \ref{obs_r} to form the fina
 
 
 
+  \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.8]{training_workflow3}
+\caption[training flow]{training flow}
+\end{figure}
 
 
 
 
-
-
-
-
-
+\newpage
 
 
 
@@ -598,10 +749,11 @@ For example: We can have a service that generate goals or reset the simulation.
 
 
 
+
 \subsection{TurtleBot}
 We will be using the turtlebot robot which is developed by open robotics. They same organization behind ros and the gazebo similator.
 
-This robot is used for educational,reaserch and prototyping purpuses, where multiple version have been developed. In this thesis, we will be using the turblebot3-burger version.
+This robot is used for educational,reaserch and prototyping purpuses, where multiple version have been developed. In this thesis, we will be using the turblebot3-burger version.\cite{turtlebot}
 
 \subsubsection{TurtleBot3 components}
 TurtleBot3 is a two wheeled, small size robot composed of many parts that generally robots have like  Gyroscope, Accelerometer and Programmable LEDs ..., and he uses Raspberry Pi as the core computer board.
@@ -618,55 +770,29 @@ The (LDS) was the main source of data to train our neural networks besides the r
    
 
 
- \begin{figure}[h]  
-\centering
-\includegraphics[scale=0.4]{lds.png}
-\caption[Lds]{Lds}
-\end{figure}
+
+\subsection{Gazebo simulator}
+Gazebo is an open source collection of software libraries that have been developed for robotics developers and educationers.
+
+It consists of a simulator that can be used to spawn robots, design  environement , put obstacles , run diffrents expiriments, all this with real  interaction and simulation of the real world   phisics.
+
+
+
 
 
  
   
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.4]{lds.png}
+\caption[Lds]{TurbleBot3 Lds}
+\end{figure}
 
 
 
-\subsection{Talk about how we used diffrent formation from easy one to hard}
 
 
 
-
-
-
-
-
-\subsection{State Of the art}
-\subsection{DQN}
-\subsection{DDPG}
-\subsection{Thier usages in multi agent pros and cons}
-\subsection{problem formulation and solution}
-\subsection{we opt for maddpg decentrilzed excution }
-\subsection{we opt for maddpg for better perfomance and scalability }
-
-
-\subsection{ROS and gazebo}
-
-
-\subsection{Conception of the solution}
-  \subsection{Rewards desgin}
-  \subsection{Networks Desgin}
-  \subsection{talk about how you choose the hyperparameters}
-  \subsection{how you calculeted tha angle and how lds works}
-  
-
-\subsection{implemtation of the solution}
-
-
-\subsection{How other papers algorithms to train the agents }. 
-\subsection{basics of robotics ,turtlebot and equipments}. 
-\subsection{Networks desgin talk in detail whey the paremerrs was choses}. 
-\subsection{shape generation and random}. 
-
-\subsection{Multi agent systems}. 
 
 
 

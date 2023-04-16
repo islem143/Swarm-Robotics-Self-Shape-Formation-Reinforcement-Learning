@@ -75,7 +75,7 @@ class Dqn(Node):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
-        self.ep =450
+        self.ep =1100
         self.test=True
         self.agents = [ACNetwork("robot-1",True, self.ep),
                        ACNetwork("robot-2",True, self.ep),
@@ -94,6 +94,8 @@ class Dqn(Node):
         self.episode_size = 3000
 
         self.train_every=1
+        self.done_counter={"1":0,"2":0,'3':0,'4':0}
+
 
         #self.epsilon = 1
         #self.EPSILON_DECAY = 0.992
@@ -114,7 +116,7 @@ class Dqn(Node):
         self.current_states = [0.0 for _ in range(self.num_agents)]
         self.next_states = [0.0 for _ in range(self.num_agents)]
     
-        self.std_dev=0.27
+        self.std_dev=0.20
         self.std_dev2=0.05
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         self.ou_noise2 = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev2) * np.ones(1))
@@ -202,11 +204,18 @@ class Dqn(Node):
                             # Next state and reward
                             for i in range(self.num_agents):
                                 
-                                self.next_states[i] = future.result(
-                                ).states[i*4:i*4+4]
-                                self.rewards[i] = future.result().rewards[i]
-                                self.returns[i] += self.rewards[i]
+                               
+                                if(not self.dones[i]):
+                                    self.next_states[i] = future.result(
+                                    ).states[i*4:i*4+4]
+                                    self.rewards[i] = future.result().rewards[i]
+                                    self.returns[i] += self.rewards[i]
+
                                 self.dones[i] = future.result().dones[i]
+                                if(self.dones[i]):
+                                    self.done_counter[i]+=1
+                                else:
+                                    self.done_counter[i]=0
                                
                         else:
                             self.get_logger().error(
@@ -215,7 +224,7 @@ class Dqn(Node):
 
                 for index,agent in enumerate(self.agents):
                 
-                        if (not self.test and not self.dones[index]):
+                        if (not self.test and   self.done_counter[index]<=1):
                       
                             agent.update_replay_buffer(
                                 (self.current_states[index], self.rewards[index], actions[index*2:index*2+2], self.next_states[index], self.dones[index]))
@@ -231,40 +240,20 @@ class Dqn(Node):
                        
                         
 
-                    # if (done):
-
-                    #     req = Empty.Request()
-                    #     while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-                    #         self.get_logger().info('service not available, waiting again...')
-
-                    #     self.reset_sim_client.call_async(req)
-                    #     time.sleep(0.5)
-                    #     # done=False
-                    #     break
-
                         time.sleep(0.01)
                
-                # if (i == self.steps_per_episode  and not self.test):
-                   
-                #     done = True
-                #     req = Empty.Request()
-                #     while not self.reset_sim_client.wait_for_service(timeout_sec=1.0):
-                #         self.get_logger().info('service not available, waiting again...')
-
-                #     self.reset_sim_client.call_async(req)
-                #     time.sleep(0.5)
-                # i += 1
+            
 
             
             for index, agent in enumerate(self.agents):
                 print(f"robot -{index+1} rewards", self.returns[index])
-                if(not self.test):
+                if(not self.test and self.done_counter[index]<=1):
                  with summary_writer.as_default():
                      tf.summary.scalar(f'rewards{index+1}', self.returns[index], step=self.ep)
                 if (self.ep % self.save_every == 0 and self.ep!=0) and not self.test:
                     
                     agent.save_data(self.ep,self.rewards[index])
-            if(self.ep%60==0 and self.ep!=0 and self.std_dev>0.01):
+            if(self.ep%50==0 and self.ep!=0 and self.std_dev>0.01):
                self.std_dev-=0.01
                self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))       
             
