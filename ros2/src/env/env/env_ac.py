@@ -24,6 +24,7 @@ class Env(Node):
         self.i=0
         self.cmd_vel_pub = {}
         self.goal_reached_by={}
+        self.ss=False
         for i in range(self.num_agents):
             self.cmd_vel_pub[i] = self.create_publisher(
                 Twist, f'/t{i+1}/cmd_vel', 10)
@@ -251,7 +252,7 @@ class Env(Node):
                 
                 self.init_robots(index)
                 
-               
+                
             response.states = self.get_state()
 
             return response
@@ -380,7 +381,9 @@ class Env(Node):
         self.succeses = [False for _ in range(self.num_agents)]
         self.fails = [False for _ in range(self.num_agents)]
         for index in range(self.num_agents):
-           
+            if(index!=0 and self.ss):
+                    time.sleep(2)
+                    self.ss=False
             norm_angle = (self.goal_angles[index]+3.14)/(3.14+3.14)
             distance = self.get_distance_to_goal(index)
             norm_goal = distance/6.22
@@ -414,13 +417,13 @@ class Env(Node):
                     #     self.fails[index] = True
                     #     self.stop_robots(index) 
                 
-
+                 
             if (self.goal_reached(index)):
-                
-                self.goal_reached_by[index]+=1
-                self.succeses[index] = True
-                self.dones[index] = True
-                self.stop_robots(index)
+                    
+                        self.goal_reached_by[index]+=1
+                        self.succeses[index] = True
+                        self.dones[index] = True
+                        self.stop_robots(index)
                 #self.i+=1
                 #print(index,f"goal reached {self.i}")
                
@@ -443,6 +446,7 @@ class Env(Node):
             if(all(self.succeses)):
                 #self.dones = [False for _ in range(self.num_agents)]
                 self.goal_freq+=1
+                self.ss=True
                 self.generate_goal_pose()
              
                 
