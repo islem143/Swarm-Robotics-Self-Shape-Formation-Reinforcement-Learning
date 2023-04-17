@@ -79,11 +79,11 @@ class Dqn(Node):
         self.test=True
         self.agents = [ACNetwork("robot-1",True, self.ep),
                        ACNetwork("robot-2",True, self.ep),
-                       ACNetwork("robot-3",True, self.ep),
-                       ACNetwork("robot-4",True, self.ep)
+                      # ACNetwork("robot-3",True, self.ep),
+                      # ACNetwork("robot-4",True, self.ep)
                       
                        ]
-        self.num_agents=4
+        self.num_agents=2
    
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
@@ -94,7 +94,8 @@ class Dqn(Node):
         self.episode_size = 3000
 
         self.train_every=1
-        self.done_counter={"1":0,"2":0,'3':0,'4':0}
+        self.done_counter={"0":0,"1":0,'2':0,'3':0}
+
 
 
         #self.epsilon = 1

@@ -28,13 +28,13 @@ def loss_actor(y):
 custom_objects = {"custom_loss_actor": loss_actor}
 keras.utils.get_custom_objects().update(custom_objects)
 class ACNetwork():
-    def __init__(self, name, model_load=False, ep=0,test=False) -> None:
+    def __init__(self, name, model_load=False, ep=0) -> None:
         self.name = name
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         self.upper_bound=np.pi
         self.lower_bound=-np.pi
         # self.critic_lr = 0.001
-        self.test=test
+
         # self.actor_lr = 0.0001
         self.critic_lr = 0.001
         self.actor_lr = 0.0001

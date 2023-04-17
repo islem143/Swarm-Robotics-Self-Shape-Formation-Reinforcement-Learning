@@ -604,6 +604,48 @@ If all robots reach their goal, the simulation is reset and a another formation 
 And if they collide the simulation is reset allso and the robots tries again to form the desired shape.
 
 This learning flow will continue until the models converge and the robots form the shapes many times respectively.
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.8]{simulation_flow}
+\caption[simulation flow]{simulation low}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.9]{training_workflow3}
+\caption[training flow]{training flow}
+\end{figure}
+
+
+\newpage
+\pagebreak
+\hspace{0pt}
+\vfill
+\begin{center}
+\section{Problem formulation And Solution Conception}
+\end{center}
+\vfill
+\hspace{0pt}
+
+\pagebreak
+
+
+
+
+\subsection{Introduction}
+In this section, we will explain how we have implemented the solution , how the neural netwoks are desgined, what frameworks, tools and simulators used to train and test the robots shape formation. 
+
+
+
 
 \subsection{Neural network design}
 Designing the architecture of the neural networks and choosing the right parameters to fit is a crucial part to converge and obtain better performance.
@@ -674,26 +716,7 @@ We have used the Adam optimizer for both networks with learning rates of 0.01 an
 
 
 
- \begin{figure}[h]  
-\centering
-\includegraphics[scale=0.8]{simulation_flow}
-\caption[simulation flow]{simulation low}
-\end{figure}
 
-
-
-
-
-
-
-
-
-
-  \begin{figure}[h]  
-\centering
-\includegraphics[scale=0.8]{training_workflow3}
-\caption[training flow]{training flow}
-\end{figure}
 
 
 
@@ -707,9 +730,8 @@ We have used the Adam optimizer for both networks with learning rates of 0.01 an
 
 
 \subsection{Roboting Operating system}
-
-We will use the roboting operating system (ROS), a collection of open source software and tools, to control the robots.
-ROS will simplify our work by giving us the necessary tools for controlling the robots, determining their positions and angles, gathering sensor data and preparing it for manipulation, and also giving the robots a way to communicate with one another.
+To implement our work and test it, we used the roboting operating system (ROS), which is  a collection of open source software and tools, that 
+ simplifies our work by giving us the necessary tools for controlling the robots, determining their positions and angles, gathering sensor data and preparing it for manipulation, and also giving the robots a way to communicate with one another.
 
 \subsubsection{Ros Basics}
 There are five concepts that ROS is built on that will allow us to implement our solution in  simple and modular way.
@@ -718,8 +740,11 @@ There are five concepts that ROS is built on that will allow us to implement our
  
 
 \begin{itemize}
-\item \textbf{Nodes}: ros is made up of noes where  each node     is responsible for a single giving task like moving the robot, getting sensor data, doing some processing ... \linebreak
+\item \textbf{Nodes}: Ros is made up of nodes where  each node     is responsible for a single giving task like moving the robot, getting sensor data, doing some processing ... \linebreak
 nodes can communicate between the using topics and services.
+
+Each node can subscribe or publish  to one or more topics. It can contains also one or more services which other nodes can request to get a one time information. This aproach used by ros will allow for modularity and more orginized and clean code.
+
      
 
 
@@ -728,12 +753,16 @@ nodes can communicate between the using topics and services.
 
 For example: a node can subscribe to a topic that publish the position of the robot  from another node which is responsible for providing this information.
 
+When defining the topics, we first need to define the exact type of information that work with. For instance, we can define topics to accept only string ,numbers, arrays or we can define our custom data type as we will do later.
 
-\item \textbf{Services}:  They are the same as topics but they differ in that data is received when requested by a client in contrast to topics where there are a stream of data updated continuously.
+
+\item \textbf{Services}:  They are the same as topics but they differ in that data is received when requested by a client in contrast to topics where there are a stream of data updated continuously. This can be helpful in situations where the inforamtion is needed only once or the update frequency of it is low.
+ 
 
 
 For example: We can have a service that generate goals or reset the simulation.
 
+Same as topics, we  must set the data type that the services work with.
 
 
 \end{itemize}
@@ -745,6 +774,12 @@ For example: We can have a service that generate goals or reset the simulation.
 \includegraphics[scale=0.4]{ros}
 \caption[Ros]{Ros}
 \end{figure}
+\pagebreak
+
+Ros support  c,c++ or python as programming languages. in our project, we choosed python. 
+For the operating system, Ros support mainly linux systems, the support for windows was added until recently. We have used ubuntu for the existing support and large ros community .
+
+
 
 
 
@@ -756,31 +791,47 @@ We will be using the turtlebot robot which is developed by open robotics. They s
 This robot is used for educational,reaserch and prototyping purpuses, where multiple version have been developed. In this thesis, we will be using the turblebot3-burger version.\cite{turtlebot}
 
 \subsubsection{TurtleBot3 components}
-TurtleBot3 is a two wheeled, small size robot composed of many parts that generally robots have like  Gyroscope, Accelerometer and Programmable LEDs ..., and he uses Raspberry Pi as the core computer board.
+TurtleBot3 is a two wheeled, small  size  lightweight  robot  equipped with a variety of sensors, including a 360-degree laser rangefinder for obstacle avoidance, and an IMU for navigation and localization. The robot is powered by a Raspberry Pi single-board computer and it is compatible with ROS.
  \begin{figure}[h]  
 \centering
 \includegraphics[scale=0.4]{turtlebot3_burger_components.png}
 \caption[TurtleBot3]{TurtleBot3 [\textbf{ref}:https://emanual.robotis.com/]]}
 \end{figure}
 
+\begin{itemize}
+\item \textbf{LDS}:  LDS, which stands for laser distance sensor. which uses laser to detect the distance between the robot and it's surrounding to allow the robot to navigate in the environment and avoid detected obstacles. The used LDS in this project can  sense object in 360 degree with a maximun length of 3.5 meters.
+ 
 
-But the most important component, and what we will relay on in this project is the Laser Distance Sensor or (LDS) which gives a 360 degree sensing of ob objects  in the environemnt with a maximun distance of 3.5m
+The (LDS) was one  source of data to train our neural networks besides the robots positions. we have used it to detect other robots and to avoid collisions during the navigation. we have minimized the original 360 sample from the LDS as no need for such precision in our project. 
+     
+\item \textbf{IMU}: IMU stands for Inertial Measurement Unit, is a type of electronic sensor that is used to measure the orientation, position, and velocity of a moving object. The IMU combines information from many sensors, such as accelerometers, gyroscopes, and magnetometers, to give a thorough picture of the movement of the object in three dimensions. The position of the robot is calulated relative to a fixed  refrence frame which either define by the system designer like a closed room or factory or by the robot himself in outdoor environement.
 
-The (LDS) was the main source of data to train our neural networks besides the robots positions. we have used it to detect other robots and to avoid collisions during the navigation.  
+
+
+
+
+
+
+\end{itemize}
+
    
 
 
 
-\subsection{Gazebo simulator}
+\subsection{Simulation}
+It's hard , time consuming and  costly to train the robots in real world. For that, simulation is used to train the robots as it allow us to train in a faster repetable way,  let us put the robots and the environement  in different conditions  for faster experimentations.
+
+
+Robotics simulation programs like Gazebo, Webots, V-REP, MATLAB Robotics System Toolbox, and CoppeliaSim are some of the more well-liked ones. each one of them has it's own features from programming language support to cost.
+
+In our project we used the gazebo simulator as it is free, open source and integrete well with Ros.
+
 Gazebo is an open source collection of software libraries that have been developed for robotics developers and educationers.
 
-It consists of a simulator that can be used to spawn robots, design  environement , put obstacles , run diffrents expiriments, all this with real  interaction and simulation of the real world   phisics.
+It allows  to simulate  robotic systems in a virtual environment, providing a safe and cost-effective way to test and refine robot designs before deploying them in the real world. It contains a lot of prebuild models sensors and give the user the ability t build custom one. Gazebo is also able to simulate real world physical phenomena, including physics-based motion, collision detection, and sensor simulation
 
 
 
-
-
- 
   
  \begin{figure}[h]  
 \centering

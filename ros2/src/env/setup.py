@@ -22,7 +22,9 @@ setup(
         'console_scripts': [
              'env = env.env:main',
              'envac = env.env_ac:main',
-             'envac2 = env.env_ac2:main'
+             'envac2 = env.env_ac2:main',
+             'agent = env.agent:main'
+
         ],
     },
 )
