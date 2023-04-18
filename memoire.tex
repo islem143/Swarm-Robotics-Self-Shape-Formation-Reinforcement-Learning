@@ -626,12 +626,13 @@ This learning flow will continue until the models converge and the robots form t
 \end{figure}
 
 
+
 \newpage
 \pagebreak
 \hspace{0pt}
 \vfill
 \begin{center}
-\section{Problem formulation And Solution Conception}
+\section{Implementation}
 \end{center}
 \vfill
 \hspace{0pt}
@@ -647,81 +648,7 @@ In this section, we will explain how we have implemented the solution , how the 
 
 
 
-\subsection{Neural network design}
-Designing the architecture of the neural networks and choosing the right parameters to fit is a crucial part to converge and obtain better performance.
 
-There is a high  number of  parameters to choose from,  hidden layers, number of units, activation functions, weight initlization, regularization ... and each one of them has it's role, and there is no clear rule for the right one to choose, so trial and experimenting is the way to go.
-
-In this section, we will discuss what parameters we choosed and explain the reason behind them.
-
-
-For the actor network, we set for hidden layers where each layer has 400, 300, 128 and 64 units respectively. Each layer is using the relu activation function and was initialized with Xavier Glorot's exepect for the output layers. The output layers have two units, one for the angular velocity and one for the linear velocity. They was initalized with the tanh activation function which give an output bounded beteween -1 and 1. We choose the angular velocity of  the robot to be between $-\Pi$ and $\Pi$ so we multipiled the result of the output layer to get the desired range. Same goes for the linear velocity we have maped the range from -1 and 1 to 0.2 to 0.5. 
-
-And to enable better exploration, we have added the OuNoise to the output of the actor network when taking actions which will sample a range of values from a unifrom distribution.
-
-
-We have also used batch normalization layers \cite{ioffe2015batch} which a  technique for normilizing the output for each layers that have an effect of stabilizing the trainging process and making it converge faster especily if the initial distribution of the input data is varying. It also acts as regulizer so no need for dropout layers.
-
-As For the critic, he gets as input  both the state and actions and outputs the q-value. Firstly, we pass the states and actions into seperate layers 
-with number of units of 512 and 256 respectevely. Then, we concatinate them into one layer and add two other hidden layers with 256 number of units with a dropout of 0.2.
-
-For loss calculation, we will be using target networks like described in the algortihms and updating them using soft update with parameters tau of 0.01
-
-The critic loss, will be between the predicted value of the critic network and y:
-
- 
-
-     \begin{equation} \label{critic_loss}
-     closs= loss(critic(state,actions),reward+ \gamma*targetcricic(nextstates,nextactions)*(1-dones).
-   \end{equation}
- 
-where the loss function is the mean squared error.
-
-For the actor, it will be the mean predicted value of the critic network multiplied by - as  he is trying to maximize the q-value.
-
-\begin{equation} \label{actor_loss}
-     aloss= -mean(critic(states,actions))
-   \end{equation}
-   
-We have used the Adam optimizer for both networks with learning rates of 0.01 and 0.001 for the critic and actor respectively. We set the batch size to 128 and the minimun size of the replay buffer before training start to 2500 samples.
-
- 
-   
-
-
-
-
-    
- \begin{figure}[h]  
-\centering
-\includegraphics[scale=0.65]{actor_net}
-\caption[actor network]{actor network}
-\end{figure}
-
- \begin{figure}[h]  
-\centering
-\includegraphics[scale=0.65]{critic_net}
-\caption[critic network]{critic network}
-\end{figure}
-
-
-
-
-
-
-
-
-\pagebreak
-
-
-
-
-
-
-
-
-
-\newpage
 
 
 
@@ -828,9 +755,7 @@ In our project we used the gazebo simulator as it is free, open source and integ
 
 Gazebo is an open source collection of software libraries that have been developed for robotics developers and educationers.
 
-It allows  to simulate  robotic systems in a virtual environment, providing a safe and cost-effective way to test and refine robot designs before deploying them in the real world. It contains a lot of prebuild models sensors and give the user the ability t build custom one. Gazebo is also able to simulate real world physical phenomena, including physics-based motion, collision detection, and sensor simulation
-
-
+It allows  to simulate  robotic systems in a virtual environment, providing a safe and cost-effective way to test and refine robot designs before deploying them in the real world. It contains a lot of prebuild models sensors and give the user the ability t build custom one. Gazebo is also able to simulate real world physical phenomena, including physics-based motion, collision detection, and sensor simulation.
 
   
  \begin{figure}[h]  
@@ -840,6 +765,94 @@ It allows  to simulate  robotic systems in a virtual environment, providing a sa
 \end{figure}
 
 
+
+
+
+
+ 
+   
+
+
+
+
+    
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.65]{actor_net}
+\caption[actor network]{actor network}
+\end{figure}
+
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.65]{critic_net}
+\caption[critic network]{critic network}
+\end{figure}
+
+
+
+
+
+\subsection{Ros and Neural network Implemantation}
+In this section, we will describe how we have implemented our solution in ros, how we defined the different nodes, topics and services that makes the system.
+
+The work is divided into phases. The first phase is the training and test phase and the second one is the deployment phase.
+
+In the first phase we implemented the solution in ros in a way to facilitate the training process that will require a lot of modifcation of code and simulation replay.
+
+For the second phase, and after the models are trained we will deploy them in each robot and each robot will choose his actions based on his model, and also can communicate with the central robot.
+
+
+
+ 
+
+\subsubsection{Neural network implementation}
+Designing the architecture of the neural networks and choosing the right parameters to fit is a crucial part to converge and obtain better performance.
+
+There is a high  number of  parameters to choose from,  hidden layers, number of units, activation functions, weight initlization, regularization ... and each one of them has it's role, and there is no clear rule for the right one to choose, so trial and experimenting is the way to go.
+
+In this section, we will discuss what parameters we choosed and explain the reason behind them.
+
+
+For the actor network, we set for hidden layers where each layer has 400, 300, 128 and 64 units respectively. Each layer is using the relu activation function and was initialized with Xavier Glorot's exepect for the output layers. The output layers have two units, one for the angular velocity and one for the linear velocity. They was initalized with the tanh activation function which give an output bounded beteween -1 and 1. We choose the angular velocity of  the robot to be between $-\Pi$ and $\Pi$ so we multipiled the result of the output layer to get the desired range. Same goes for the linear velocity we have maped the range from -1 and 1 to 0.2 to 0.5. 
+
+And to enable better exploration, we have added the OuNoise to the output of the actor network when taking actions which will sample a range of values from a unifrom distribution.
+
+
+We have also used batch normalization layers \cite{ioffe2015batch} which a  technique for normilizing the output for each layers that have an effect of stabilizing the trainging process and making it converge faster especily if the initial distribution of the input data is varying. It also acts as regulizer so no need for dropout layers.
+
+As For the critic, he gets as input  both the state and actions and outputs the q-value. Firstly, we pass the states and actions into seperate layers 
+with number of units of 512 and 256 respectevely. Then, we concatinate them into one layer and add two other hidden layers with 256 number of units with a dropout of 0.2.
+
+For loss calculation, we will be using target networks like described in the algortihms and updating them using soft update with parameters tau of 0.01
+
+The critic loss, will be between the predicted value of the critic network and y:
+
+ 
+
+     \begin{equation} \label{critic_loss}
+     closs= loss(critic(state,actions),reward+ \gamma*targetcricic(nextstates,nextactions)*(1-dones).
+   \end{equation}
+ 
+where the loss function is the mean squared error.
+
+For the actor, it will be the mean predicted value of the critic network multiplied by - as  he is trying to maximize the q-value.
+
+\begin{equation} \label{actor_loss}
+     aloss= -mean(critic(states,actions))
+   \end{equation}
+   
+We have used the Adam optimizer for both networks with learning rates of 0.01 and 0.001 for the critic and actor respectively. We set the batch size to 128 and the minimun size of the replay buffer before training start to 2500 samples.
+
+\subsubsection{Ros implemation: Training phase}
+We have followed the openai gym implemation of diffrent rl problms.
+In the training phase, we have defined three nodes. The first node  interact with gazebo and allows us to reset the simulation for example.
+
+The second node is the environemnt node which will collect data from the simulated sensors of gazebo and get the positions of the robots. He is also 
+responsible of detecting collision and goal reaching in order to reset the simulation if needed and setting the rewards. 
+
+Finally, the third node is reponsible for getting state and rewards from the environement then passing them to the models to be trained. 
+
+For the models, they were implemented in a seperate python class.
 
 
 
