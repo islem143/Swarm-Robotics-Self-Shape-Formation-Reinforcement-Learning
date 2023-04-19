@@ -792,20 +792,13 @@ It allows  to simulate  robotic systems in a virtual environment, providing a sa
 
 
 
-\subsection{Ros and Neural network Implemantation}
-In this section, we will describe how we have implemented our solution in ros, how we defined the different nodes, topics and services that makes the system.
 
-The work is divided into phases. The first phase is the training and test phase and the second one is the deployment phase.
-
-In the first phase we implemented the solution in ros in a way to facilitate the training process that will require a lot of modifcation of code and simulation replay.
-
-For the second phase, and after the models are trained we will deploy them in each robot and each robot will choose his actions based on his model, and also can communicate with the central robot.
 
 
 
  
 
-\subsubsection{Neural network implementation}
+\subsection{Neural network implementation}
 Designing the architecture of the neural networks and choosing the right parameters to fit is a crucial part to converge and obtain better performance.
 
 There is a high  number of  parameters to choose from,  hidden layers, number of units, activation functions, weight initlization, regularization ... and each one of them has it's role, and there is no clear rule for the right one to choose, so trial and experimenting is the way to go.
@@ -843,19 +836,56 @@ For the actor, it will be the mean predicted value of the critic network multipl
    
 We have used the Adam optimizer for both networks with learning rates of 0.01 and 0.001 for the critic and actor respectively. We set the batch size to 128 and the minimun size of the replay buffer before training start to 2500 samples.
 
-\subsubsection{Ros implemation: Training phase}
-We have followed the openai gym implemation of diffrent rl problms.
-In the training phase, we have defined three nodes. The first node  interact with gazebo and allows us to reset the simulation for example.
+\subsection{Ros implemation}
+In this section, we will describe how we have implemented our solution in ros, how we defined the different nodes, topics and services that makes the system.
 
-The second node is the environemnt node which will collect data from the simulated sensors of gazebo and get the positions of the robots. He is also 
-responsible of detecting collision and goal reaching in order to reset the simulation if needed and setting the rewards. 
+The work is divided into phases. The first phase is the training and test phase and the second one is the deployment phase.
 
-Finally, the third node is reponsible for getting state and rewards from the environement then passing them to the models to be trained. 
+In the first phase we implemented the solution in ros in a way to facilitate the training process that will require a lot of modifcation of code and simulation replay.
 
-For the models, they were implemented in a seperate python class.
+For the second phase, and after the models are trained we will deploy them in each robot and each robot will choose his actions based on his model, and also can communicate with the central robot.
+
+\subsection{Ros implemation: Training phase}
+
+
+We have followed the openai gym implemation of diffrent rl problms using the python programming language.
+
+In the training phase, we have defined two nodes and one python class for the model.
+ 
+
+The first node is the environemnt node. This node is responsible for getting sensor data, postions and command robots to move in the simulation.
+
+The node have one service, subscribe to  two topics and publishing to one. The fisrt topic he subscibe to is the Laser topic which gets the laser mesurments of each robot every step. the data retunred by this topic is an array where each element of it contains the distance of the detected object and the index of this element is the angle of detection.
+
+The second topic he susbcribe to is the positions topic, which will get the x,y cordinates of the robots and also their orientation. For the topic, the node will publish to it insted of subscbing. he will publish him the actions that the robot must take based on the output of the neural network.
+
+The service that this node offer for the main node is  a function that will take that actions that the robots should take , get the states,calculates the rewards and then passing back the response to the main node. 
+
+This node is also responsible for calculating the rewards based on the state.
+
+We called the second node the main node. This node is responsbile to start the main traning loop,getting actions from the models passing them to the environement node in order to reacive the next states and the rewards, he then store these samples in the replay memory and finally train the models.
+The loop will continue until the models converge and the shape is been formed. This node will connect to a python class which contains our models.
+
+
+This python class defines the models and the networks architecture, contains the replay memory and describes the trainnig process.  
 
 
 
+
+
+
+
+
+
+
+
+
+
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.65]{training}
+\caption[training phase]{training}
+\end{figure}
 
 
 

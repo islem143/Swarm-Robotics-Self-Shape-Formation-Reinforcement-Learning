@@ -13,6 +13,7 @@ from rclpy.qos import QoSProfile
 from std_srvs.srv import Empty
 
 from dqn_msg.srv import Mac
+from dqn_msg.srv import Reach
 from dqn_msg.msg import Goal
 import time
 import threading
@@ -30,7 +31,7 @@ class Agent(Node):
         
         self.get_laser = self.create_subscription(
             LaserScan, f"/t{self.id}/scan", self.get_lds, 10)
-        self.agent=ACNetwork(f"robot-{self.id}",True,1100)
+        self.agent=ACNetwork(f"robot-{self.id}",True,850)
              
         self.position=[0.0,0.0]
         self.goal_position=[0.0,0.0]
@@ -38,55 +39,124 @@ class Agent(Node):
         self.goal_angle=0.0
         self.min_lds_angle=0.0
         self.min_lds_dist=3.5
+        self.task_finished=False
         if(self.id==1):
             self.goal_publisher=self.create_publisher(Goal,"generate_goa",10) 
-            msg = Goal()                                               
-            msg.goal = [0.0,0.0,1.5,-np.pi/2,1.5,180.0,1.5,90.0]        
-            self.goal_publisher.publish(msg)
-            #self.start()
+            self.reached_service=self.create_service(Reach,"reach_goal",self.goal_reached)
+            
+            self.create_timer(2,self.pub_goal)
+            self.start()
             
            
             
         else:
-            print(self.id)
+            #self.position_leader=[0.0,0.0]
             self.create_subscription(
-            Goal, "generate_goa", self.get_goal, 10)   
+            Goal, "generate_goa", self.get_goal, 10)  
+           # self.get_odom_leader = self.create_subscription(
+            #Odometry, f"/t1/odom", self.get_current_position_leader, 10)
+           # self.goal_position=[0.0,1.5] 
+            #self.create_timer(0.2,self.cc)
+            self.reached_client = self.create_client(Reach, "reach_goal")
             self.start()
-        
-        
-        
+            
+           # print(self.goal_cords)
+           
       
         
         
+    # def get_current_position_leader(self,msg):
+        
+
+    #     self.position_leader = [
+    #         msg.pose.pose.position.x, msg.pose.pose.position.y]
+        
+     
+      
        
+    def pub_goal(self):
+        msg = Goal()                                               
+        msg.goal = [0.0,0.0,1.5,0.0,1.5,180.0,1.5,90.0]        
+        self.goal_publisher.publish(msg)
+
+    # def cc(self):
+    #         deg=45
+    #         if(self.id==3):
+    #             deg=180.0
+    #         x=np.sin(deg)
+    #         y=np.cos(deg) 
+    #         if(self.id==3):
+    #             print(x,y)
+    #         self.goal_position=[self.position_leader[0]+x,self.position_leader[1]+y]      
+        
+    def goal_reached(self,request,response):
+
+        print("goal reached by request id",request.id)
+        response.ack=True
+        return response   
+    
     def start(self):
          while rclpy.ok():
-       
+           
             rclpy.spin_once(self)
-       
-           # print(self.get_state())
-            self.move_robots()
+            
+            state=self.get_state()
+            
+            
+            result=self.agent.policy(state, 0,0)
+            
+            self.move_robots(float(result[0]),float(result[1]))
+            if(self.get_distance(self.position,self.goal_position)<0.20):
+                print("goal reached")
+                if(self.id!=1):
+                   
+                    self.send_task()
+                self.stop_robot()    
+                break
+            #time.sleep(0.05)
 
-            time.sleep(0.01)
-
-    
+    def send_task(self):
+        req = Reach.Request()
+        req.id = self.id
+        future = self.reached_client.call_async(req)
+        while rclpy.ok():
+            rclpy.spin_once(self)
+            if future.done():
+                if future.result() is not None:
+                    
+                
+                        res = future.result(
+                        ).ack
+                        print("ack",res)
+                        
+                else:
+                    self.get_logger().error(
+                        'Exception while calling service: {0}'.format(future.exception()))
+                break
     def get_state(self):
         
         l = list()
        
-        print(self.position)
+        
         l.append(float(self.get_distance(self.position,self.goal_position)))
         l.append(float(self.goal_angle))
         l.append(float(self.min_lds_dist))
         l.append(float(self.min_lds_angle))
+
+    
+           
+
+
         return l
 
-    def move_robots(self):
+    def move_robots(self,ang,velo):
         twist = Twist()
-        twist.linear.x = 0.5
-        twist.angular.z = 0.0
+        twist.linear.x = velo
+        twist.angular.z = ang
         self.cmd_vel_pub.publish(twist)
 
+    def stop_robot(self):
+        self.cmd_vel_pub.publish(Twist())
     def get_goal(self,msg):
          d,theta=msg.goal[self.id:self.id+2]
          x=d*np.sin(theta)
@@ -99,7 +169,7 @@ class Agent(Node):
             p1[1]-p2[1])+np.square(p1[0]-p2[0])))
       
     def get_lds(self, msg):
-        print("llslsls")
+        
         self.min_lds_dist = np.min(msg.ranges)
         if (self.min_lds_dist == np.Inf):
             self.min_lds_dist = float(3.5)
@@ -107,7 +177,7 @@ class Agent(Node):
 
     def get_current_position(self, msg):
         
-        print("sdsds")
+        
         
         self.position = [
             msg.pose.pose.position.x, msg.pose.pose.position.y]

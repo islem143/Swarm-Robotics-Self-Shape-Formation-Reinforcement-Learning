@@ -49,6 +49,6 @@
 \contentsline {subsection}{\numberline {5.3}TurtleBot}{27}{subsection.5.3}%
 \contentsline {subsubsection}{\numberline {5.3.1}TurtleBot3 components}{27}{subsubsection.5.3.1}%
 \contentsline {subsection}{\numberline {5.4}Simulation}{28}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Ros and Neural network Implemantation}{28}{subsection.5.5}%
-\contentsline {subsubsection}{\numberline {5.5.1}Neural network implementation}{28}{subsubsection.5.5.1}%
-\contentsline {subsubsection}{\numberline {5.5.2}Ros implemation: Training phase}{30}{subsubsection.5.5.2}%
+\contentsline {subsection}{\numberline {5.5}Neural network implementation}{28}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Ros implemation}{29}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Ros implemation: Training phase}{30}{subsection.5.7}%

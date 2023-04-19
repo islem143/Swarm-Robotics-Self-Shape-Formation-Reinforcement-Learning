@@ -13,12 +13,12 @@ import os
 from copy import copy
 
 from rclpy.node import Node
-# physical_devices = tf.config.list_physical_devices('GPU')
-# try:
-#     tf.config.experimental.set_memory_growth(physical_devices[0], True)
-# except:
-#     # Invalid device or cannot modify virtual devices once initialized.
-#     pass
+physical_devices = tf.config.list_physical_devices('GPU')
+try:
+    tf.config.experimental.set_memory_growth(physical_devices[0], True)
+except:
+    # Invalid device or cannot modify virtual devices once initialized.
+    pass
 summary_writer = tf.summary.create_file_writer('logs')
 
 loss_function = keras.losses.MeanSquaredError()
@@ -163,7 +163,7 @@ class ACNetwork():
         return model
 
     def policy(self,state, noise,noise2):
-        
+        state=tf.expand_dims(tf.convert_to_tensor(state), 0)
         sampled_actions = tf.squeeze(self.actor_model(state))
         angular=sampled_actions[0]
         velocity=sampled_actions[1]
