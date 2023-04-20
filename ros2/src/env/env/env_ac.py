@@ -20,11 +20,9 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents=2
-        self.i=0
+        self.num_agents=4
         self.cmd_vel_pub = {}
         self.goal_reached_by={}
-        self.ss=False
         for i in range(self.num_agents):
             self.cmd_vel_pub[i] = self.create_publisher(
                 Twist, f'/t{i+1}/cmd_vel', 10)
@@ -45,7 +43,7 @@ class Env(Node):
             Odometry, "/t4/odom", self.get_current_position4, 10)
         self.get_laser4 = self.create_subscription(
             LaserScan, "/t4/scan", self.get_lds3, 10)
-        self.test=True
+        self.test=False
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
         # self.env_goal_service = self.create_service(
@@ -64,8 +62,7 @@ class Env(Node):
 
         }
 
-        #self.goal_cords = self.shapes["line"]
-        self.goal_cords=[[0.0,-1.0],[0.0,0.0]]
+        self.goal_cords = self.shapes["line"]
         self.goal_freq=0
         self.dones = [False for _ in range(self.num_agents)]
 
@@ -80,27 +77,9 @@ class Env(Node):
         self.goal_angles = [0.0 for _ in range(self.num_agents)]
         self.init_positions = [[0, 0] for _ in range(self.num_agents)]
         self.global_steps=0
-        self.start()
-        self.create_subscription(
-            Goal, "generate_goal", self.get_goal, 10)
-        self.create_timer(0.2,self.cc)
-        
-        
         
        
-    def cc(self):
-            x=np.sin(0.0)
-            y=np.cos(0.0) 
-            self.goal_cords[1]=[self.positions[0][0]+x,self.positions[0][1]+y]  
-           # print(self.goal_cords)
-    
-    def start(self):
-
-        msg = Goal()                                               
-        msg.goal = [0.0,0.0,1.5,0.0,1.5,180.0,1.5,90.0]        
-        self.goal_publisher.publish(msg)
-    def get_goal(self,msg):
-        print("msg",msg)
+ 
 
     def get_current_position(self, msg):
         self.positions[0] = [
@@ -116,9 +95,7 @@ class Env(Node):
             self.goal_angles[0] -= 2*np.pi
         elif (self.goal_angles[0] < -np.pi):
             self.goal_angles[0] += 2*np.pi
-        #d=self.get_distance(self.positions[0],)    
-        
-        #print(self.goal_cords[1]) 
+
         
         
 
@@ -203,7 +180,6 @@ class Env(Node):
         self.cmd_vel_pub[index].publish(twist)
 
     def move_robots(self, actions, index):
-        
         twist = Twist()
         twist.linear.x = actions[1]
         twist.angular.z = actions[0]
@@ -249,10 +225,9 @@ class Env(Node):
             self.dones = [False for _ in range(self.num_agents)]
             for index in range(self.num_agents):
                 self.init_positions[index] = self.positions[index]
-                
+
                 self.init_robots(index)
-                
-                
+                print(self.goal_cords)
             response.states = self.get_state()
 
             return response
@@ -261,9 +236,9 @@ class Env(Node):
        
         #self.dones = [False for _ in range(self.num_agents)]
         actions = request.actions
-        
+    
         for index in range(self.num_agents):
-            
+           
             angular = actions[index*2]
             velocity=actions[index*2+1]
             actionss=[angular,velocity]
@@ -296,19 +271,16 @@ class Env(Node):
         #xx=[2.0,0.5,1.5,0.0,-2.0]
         #yy=[2.0,0.5,1.5,0.0,-2.0]
 
-        #if(self.goal_freq==1):
-            # a=["line","trianlge","square","line2","trianlge2","line3"]
-            # #a=["test"]
-            # chosen=random.choice(a)
-            # self.goal_cords=self.shapes[chosen]
-            # random.shuffle(self.goal_cords)
-           
-            # self.goal_freq=0
-            # print("chosen shape",chosen)
-            # print(self.goal_cords)
-            a=[[1.0,1.0],[-2.0,-2.0],[3.0,1.0],[-1.0,1.0]]
+        if(self.goal_freq==1):
+            a=["line","trianlge","square","line2","trianlge2","line3"]
+            #a=["test"]
             chosen=random.choice(a)
-            self.goal_cords[0]=chosen
+            self.goal_cords=self.shapes[chosen]
+            random.shuffle(self.goal_cords)
+           
+            self.goal_freq=0
+            print("chosen shape",chosen)
+            print(self.goal_cords)
         
         # for i in range(self.num_agents):
         #     #x=np.random.choice(xx)
@@ -381,9 +353,7 @@ class Env(Node):
         self.succeses = [False for _ in range(self.num_agents)]
         self.fails = [False for _ in range(self.num_agents)]
         for index in range(self.num_agents):
-            if(index!=0 and self.ss):
-                    time.sleep(2)
-                    self.ss=False
+            
             norm_angle = (self.goal_angles[index]+3.14)/(3.14+3.14)
             distance = self.get_distance_to_goal(index)
             norm_goal = distance/6.22
@@ -394,14 +364,11 @@ class Env(Node):
             # l.append(float(norm_angle))
             # l.append(float(norm_lds))
             # l.append(float(norm_lds_angle))
-           
+            
             l.append(float(self.get_distance_to_goal(index)))
             l.append(float(self.goal_angles[index]))
             l.append(float(self.min_ldss_dist[index]))
             l.append(float(self.min_ldss_angle[index]))
-            if(index==1):
-               print(self.dones)
-               
             if (self.crashs(index)):
                  if(self.test):
                      self.dones = [True for _ in range(self.num_agents)]
@@ -417,15 +384,12 @@ class Env(Node):
                     #     self.fails[index] = True
                     #     self.stop_robots(index) 
                 
-                 
+
             if (self.goal_reached(index)):
-                    
-                        self.goal_reached_by[index]+=1
-                        self.succeses[index] = True
-                        self.dones[index] = True
-                        self.stop_robots(index)
-                #self.i+=1
-                #print(index,f"goal reached {self.i}")
+                self.goal_reached_by[index]+=1
+                self.succeses[index] = True
+                self.dones[index] = True
+                self.stop_robots(index)
                
 
             if (self.steps == 700 and not self.test):
@@ -438,19 +402,13 @@ class Env(Node):
             
 
         if (all(self.dones)):
-            
-            #for index in range(self.num_agents):
-                #self.stop_robots(index)
-            if(all(self.fails)):
-              self.call_reset_sim()
+            for index in range(self.num_agents):
+                self.stop_robots(index)
+           
+            self.call_reset_sim()
             if(all(self.succeses)):
-                #self.dones = [False for _ in range(self.num_agents)]
                 self.goal_freq+=1
-                self.ss=True
                 self.generate_goal_pose()
-             
-                
-               
         self.steps += 1
      
       

@@ -76,14 +76,14 @@ class Dqn(Node):
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
         self.ep =1100
-        self.test=True
+        self.test=False
         self.agents = [ACNetwork("robot-1",True, self.ep),
                        ACNetwork("robot-2",True, self.ep),
-                      # ACNetwork("robot-3",True, self.ep),
-                      # ACNetwork("robot-4",True, self.ep)
+                       ACNetwork("robot-3",True, self.ep),
+                       ACNetwork("robot-4",True, self.ep)
                       
                        ]
-        self.num_agents=2
+        self.num_agents=4
    
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5

@@ -31,10 +31,13 @@ class Agent(Node):
         
         self.get_laser = self.create_subscription(
             LaserScan, f"/t{self.id}/scan", self.get_lds, 10)
-        self.agent=ACNetwork(f"robot-{self.id}",True,850)
-             
+       
+
+        self.agent=ACNetwork(f"robot-{self.id}",True,1100)
+        if(self.id==4):
+            self.agent=ACNetwork(f"robot-1",True,1100)
         self.position=[0.0,0.0]
-        self.goal_position=[0.0,0.0]
+        self.goal_position=[-1.0,-1.0]
         self.angle=0.0
         self.goal_angle=0.0
         self.min_lds_angle=0.0
@@ -76,7 +79,7 @@ class Agent(Node):
        
     def pub_goal(self):
         msg = Goal()                                               
-        msg.goal = [0.0,0.0,1.5,0.0,1.5,180.0,1.5,90.0]        
+        msg.goal = [self.goal_position[0],self.goal_position[1],1.5,np.pi/2,1.5,-np.pi/4,1.5,np.pi]        
         self.goal_publisher.publish(msg)
 
     # def cc(self):
@@ -101,7 +104,7 @@ class Agent(Node):
             rclpy.spin_once(self)
             
             state=self.get_state()
-            
+         
             
             result=self.agent.policy(state, 0,0)
             
@@ -158,10 +161,15 @@ class Agent(Node):
     def stop_robot(self):
         self.cmd_vel_pub.publish(Twist())
     def get_goal(self,msg):
-         d,theta=msg.goal[self.id:self.id+2]
+         d,theta=msg.goal[2*(self.id-1):2*(self.id-1)+2]
          x=d*np.sin(theta)
          y=d*np.cos(theta)
-         self.goal_position=[x,y]
+         
+         self.goal_position=[msg.goal[0]+x,msg.goal[1]+y]
+         if(self.id==4):
+             print(self.goal_position)
+    
+         print(self.id,d,theta)
          
          
     def get_distance(self, p1, p2):

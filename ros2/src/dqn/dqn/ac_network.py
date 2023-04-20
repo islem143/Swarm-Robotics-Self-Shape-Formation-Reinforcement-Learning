@@ -163,7 +163,7 @@ class ACNetwork():
         return model
 
     def policy(self,state, noise,noise2):
-        state=tf.expand_dims(tf.convert_to_tensor(state), 0)
+        #state=tf.expand_dims(tf.convert_to_tensor(state), 0)
         sampled_actions = tf.squeeze(self.actor_model(state))
         angular=sampled_actions[0]
         velocity=sampled_actions[1]
