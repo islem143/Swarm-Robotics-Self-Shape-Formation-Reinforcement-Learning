@@ -33,9 +33,9 @@ class Agent(Node):
             LaserScan, f"/t{self.id}/scan", self.get_lds, 10)
        
 
-        self.agent=ACNetwork(f"robot-{self.id}",True,1100)
+        self.agent=ACNetwork(f"robot-{self.id}",True,1000)
         if(self.id==4):
-            self.agent=ACNetwork(f"robot-1",True,1100)
+            self.agent=ACNetwork(f"robot-1",True,1000)
         self.position=[0.0,0.0]
         self.goal_position=[-1.0,-1.0]
         self.angle=0.0
@@ -47,19 +47,19 @@ class Agent(Node):
             self.goal_publisher=self.create_publisher(Goal,"generate_goa",10) 
             self.reached_service=self.create_service(Reach,"reach_goal",self.goal_reached)
             
-            self.create_timer(2,self.pub_goal)
+            #self.create_timer(2,self.pub_goal)
             self.start()
             
            
             
         else:
-            #self.position_leader=[0.0,0.0]
-            self.create_subscription(
-            Goal, "generate_goa", self.get_goal, 10)  
-           # self.get_odom_leader = self.create_subscription(
-            #Odometry, f"/t1/odom", self.get_current_position_leader, 10)
+            self.position_leader=[0.0,0.0]
+            #self.create_subscription(
+            #Goal, "generate_goa", self.get_goal, 10)  
+            self.get_odom_leader = self.create_subscription(
+            Odometry, f"/t1/odom", self.get_current_position_leader, 10)
            # self.goal_position=[0.0,1.5] 
-            #self.create_timer(0.2,self.cc)
+            self.create_timer(0.2,self.cc)
             self.reached_client = self.create_client(Reach, "reach_goal")
             self.start()
             
@@ -68,29 +68,32 @@ class Agent(Node):
       
         
         
-    # def get_current_position_leader(self,msg):
+    def get_current_position_leader(self,msg):
         
 
-    #     self.position_leader = [
-    #         msg.pose.pose.position.x, msg.pose.pose.position.y]
+        self.position_leader = [
+            msg.pose.pose.position.x, msg.pose.pose.position.y]
         
      
       
        
     def pub_goal(self):
         msg = Goal()                                               
-        msg.goal = [self.goal_position[0],self.goal_position[1],1.5,np.pi/2,1.5,-np.pi/4,1.5,np.pi]        
+        msg.goal = [self.goal_position[0],self.goal_position[1],1.5,0.0,3.0,0.0,1.5,np.pi]        
         self.goal_publisher.publish(msg)
 
-    # def cc(self):
-    #         deg=45
-    #         if(self.id==3):
-    #             deg=180.0
-    #         x=np.sin(deg)
-    #         y=np.cos(deg) 
-    #         if(self.id==3):
-    #             print(x,y)
-    #         self.goal_position=[self.position_leader[0]+x,self.position_leader[1]+y]      
+    def cc(self):
+            deg=45
+            if(self.id==3):
+                deg=220.0
+            if(self.id==2):
+                deg=120.0
+
+            x=1.5*np.sin(deg)
+            y=1.5*np.cos(deg) 
+            if(self.id==3):
+                print(x,y)
+            self.goal_position=[self.position_leader[0]+x,self.position_leader[1]+y]      
         
     def goal_reached(self,request,response):
 

@@ -566,12 +566,12 @@ Finally, we can add \ref{dist_r}, \ref{angle_r} and \ref{obs_r} to form the fina
 
 \subsubsection{Explanation}
 
-The first robot will choose a random position and place himself in it. Then he broadcast a msg containing his position and the target positions to other robots in order to form the shape by using the distance and the angle.
+The first robot will choose a random position and place himself in it. Then he broadcast a message containing his position and the target positions to other robots in order to form the shape by using the distance and the angle.
 
-Once the message reacived by other robots, each one of them will try to reach the target goal autonomously by avoiding colision with other robots.
+Once the message received by other robots, each one of them will try to reach the target goal autonomously by avoiding collision with other robots.
 And once they reach their goal they will inform the central robot with their task completion.
 
-Finally, and if all robots are in place, the central robot will check  the state of the formation a and declare the task  as complete if all the shape is formed correclty .
+Finally, and if all robots are in place, the central robot will check  the state of the formation and declare the task  as complete if  the shape is formed correctly .
 
 
 
@@ -595,13 +595,13 @@ For the critic, he gets as input both the state and the actions, and outputs the
 
 It starts by the robot being in a given state, he then takes an action, reacive a reward and transition to a new state.
 
-This informations will be stored in a replay buffer, and once it reach a certain number of experiences the training starts.
+This information will be stored in a replay buffer, and once it reach a certain number of experiences the training starts.
 
 
 
-If all robots reach their goal, the simulation is reset and a another formation shape is generated in order to prevent overfiting a certain type of shapes.
+If all robots reach their goal, the simulation is reset and a another formation shape is generated in order to prevent overfitting a certain type of shapes.
 
-And if they collide the simulation is reset allso and the robots tries again to form the desired shape.
+And if they collide the simulation is reset also and the robots tries again to form the desired shape.
 
 This learning flow will continue until the models converge and the robots form the shapes many times respectively.
  \begin{figure}[h]  
@@ -643,7 +643,7 @@ This learning flow will continue until the models converge and the robots form t
 
 
 \subsection{Introduction}
-In this section, we will explain how we have implemented the solution , how the neural netwoks are desgined, what frameworks, tools and simulators used to train and test the robots shape formation. 
+In this section, we will explain how we have implemented the solution , how the neural networks are designed, what frameworks, tools and simulators used to train and test the robots shape formation. 
 
 
 
@@ -667,20 +667,20 @@ There are five concepts that ROS is built on that will allow us to implement our
  
 
 \begin{itemize}
-\item \textbf{Nodes}: Ros is made up of nodes where  each node     is responsible for a single giving task like moving the robot, getting sensor data, doing some processing ... \linebreak
-nodes can communicate between the using topics and services.
+\item \textbf{Nodes}: Ros is made up of nodes where  each node     is responsible for a single giving task like moving the robot, getting sensor data, doing some processing ... 
+nodes can communicate between each other using topics and services.
 
-Each node can subscribe or publish  to one or more topics. It can contains also one or more services which other nodes can request to get a one time information. This aproach used by ros will allow for modularity and more orginized and clean code.
+Each node can subscribe or publish  to one or more topics. he can contains also one or more services which other nodes can request to get a one time information. This approach used by ros will allow for modularity and more organized and clean code.
 
      
 
 
 
-\item \textbf{Topics}: topics are a way for nodes to communicate between them. Each node can either subscribe to a topic thus reaciving informations from other nodes, or publish to some topic to send information to other nodes.
+\item \textbf{Topics}: ttopics are a way for nodes to communicate between them. Each node can either subscribe to a topic thus reaciving informations from other nodes, or publish to some topic to send information to other nodes.
 
 For example: a node can subscribe to a topic that publish the position of the robot  from another node which is responsible for providing this information.
 
-When defining the topics, we first need to define the exact type of information that work with. For instance, we can define topics to accept only string ,numbers, arrays or we can define our custom data type as we will do later.
+When defining the topics, we first need to define the exact type of information that they will receive. For instance, we can define topics to accept only string ,numbers, arrays or we can define our custom data type..
 
 
 \item \textbf{Services}:  They are the same as topics but they differ in that data is received when requested by a client in contrast to topics where there are a stream of data updated continuously. This can be helpful in situations where the inforamtion is needed only once or the update frequency of it is low.
@@ -713,9 +713,9 @@ For the operating system, Ros support mainly linux systems, the support for wind
 
 
 \subsection{TurtleBot}
-We will be using the turtlebot robot which is developed by open robotics. They same organization behind ros and the gazebo similator.
+We will be using the turtlebot robot which is developed by open robotics. The same organization behind ros and the gazebo simulator.
 
-This robot is used for educational,reaserch and prototyping purpuses, where multiple version have been developed. In this thesis, we will be using the turblebot3-burger version.\cite{turtlebot}
+This robot is used for educational,research and prototyping purposes, where multiple version have been developed. In this thesis, we will be using the turblebot3-burger version.\cite{turtlebot}
 
 \subsubsection{TurtleBot3 components}
 TurtleBot3 is a two wheeled, small  size  lightweight  robot  equipped with a variety of sensors, including a 360-degree laser rangefinder for obstacle avoidance, and an IMU for navigation and localization. The robot is powered by a Raspberry Pi single-board computer and it is compatible with ROS.
@@ -726,12 +726,12 @@ TurtleBot3 is a two wheeled, small  size  lightweight  robot  equipped with a va
 \end{figure}
 
 \begin{itemize}
-\item \textbf{LDS}:  LDS, which stands for laser distance sensor. which uses laser to detect the distance between the robot and it's surrounding to allow the robot to navigate in the environment and avoid detected obstacles. The used LDS in this project can  sense object in 360 degree with a maximun length of 3.5 meters.
+\item \textbf{LDS}:  LDS, which stands for laser distance sensor. which uses laser to detect the distance between the robot and it's surrounding to allow the robot to navigate in the environment and avoid detected obstacles. The used LDS in this project can  sense object in 360 degree with a maximum length of 3.5 meters.
  
+The (LDS) was one of the data  source to train our neural networks besides the robots positions. we have used it to detect other robots and to avoid collisions during the navigation. we have minimized the original 360 sample from the LDS as no need for such precision in our project. 
 
-The (LDS) was one  source of data to train our neural networks besides the robots positions. we have used it to detect other robots and to avoid collisions during the navigation. we have minimized the original 360 sample from the LDS as no need for such precision in our project. 
      
-\item \textbf{IMU}: IMU stands for Inertial Measurement Unit, is a type of electronic sensor that is used to measure the orientation, position, and velocity of a moving object. The IMU combines information from many sensors, such as accelerometers, gyroscopes, and magnetometers, to give a thorough picture of the movement of the object in three dimensions. The position of the robot is calulated relative to a fixed  refrence frame which either define by the system designer like a closed room or factory or by the robot himself in outdoor environement.
+\item \textbf{IMU}: IMU stands for Inertial Measurement Unit, is a type of electronic sensor that is used to measure the orientation, position, and velocity of a moving object. The IMU combines information from many sensors, such as accelerometers, gyroscopes, and magnetometers, to give a thorough picture of the movement of the object in three dimensions. The position of the robot is calculated relative to a fixed  reference frame which either define by the system designer like a closed room or factory or by the robot himself in outdoor environment.
 
 
 
@@ -746,16 +746,16 @@ The (LDS) was one  source of data to train our neural networks besides the robot
 
 
 \subsection{Simulation}
-It's hard , time consuming and  costly to train the robots in real world. For that, simulation is used to train the robots as it allow us to train in a faster repetable way,  let us put the robots and the environement  in different conditions  for faster experimentations.
+It's hard , time consuming and  costly to train the robots in real world. For that, simulation is used to train the robots as it allow us to train in a faster repeatable way,  let us put the robots and the environment  in different conditions  for faster experimentation.
 
 
-Robotics simulation programs like Gazebo, Webots, V-REP, MATLAB Robotics System Toolbox, and CoppeliaSim are some of the more well-liked ones. each one of them has it's own features from programming language support to cost.
+Robotics simulation programs like Gazebo, Webots, V-REP, MATLAB Robotics System Toolbox, and CoppeliaSim are some of the more well-liked ones. each one of them has it's own features from programming language support to cost fee.
 
-In our project we used the gazebo simulator as it is free, open source and integrete well with Ros.
+In our project we used the gazebo simulator as it is free, open source and integrate well with Ros.
 
-Gazebo is an open source collection of software libraries that have been developed for robotics developers and educationers.
+Gazebo is an open source collection of software libraries that have been developed for robotics developers and educationist.
 
-It allows  to simulate  robotic systems in a virtual environment, providing a safe and cost-effective way to test and refine robot designs before deploying them in the real world. It contains a lot of prebuild models sensors and give the user the ability t build custom one. Gazebo is also able to simulate real world physical phenomena, including physics-based motion, collision detection, and sensor simulation.
+It allows  to simulate  robotic systems in a virtual environment, providing a safe and cost-effective way to test and refine robot designs before deploying them in the real world. It contains a lot of prebuild models sensors and give the user the ability to build custom ones. Gazebo is also able to simulate real world physical phenomena, including physics-based motion, collision detection, and sensor simulation.
 
   
  \begin{figure}[h]  
@@ -798,20 +798,86 @@ It allows  to simulate  robotic systems in a virtual environment, providing a sa
 
  
 
+\subsection{Ros implemation}
+In this section, we will describe how we have implemented our solution in ros, how we defined the different nodes, topics and services that makes up the system.
+
+The work is divided into phases. The first phase is the training and test phase and the second one is the deployment phase.
+
+In the first phase we implemented the solution in ros in a way to facilitate the training process that will require a lot of modification of code and simulation replay. In this phase   we haven't set the networking between the robot as we assume that each robot knows his target positions and we assume that we can access the global state.  as this is will l....
+
+
+For the second phase, and after the models are trained we will deploy them in each robot and each robot will choose his actions based on his model, and also will communicate with the central robot for coordination.
+
+
+\subsection{Ros implemation: Training phase}
+
+We have followed the openai gym implementation of  rl problems using the python programming language.
+
+In the training phase, we have defined two nodes and one python class for the neural networks.
+ 
+
+The first node is the environment node. This node is responsible for getting sensor data, positions and command robots to move in the simulation.
+
+This node have one service, subscribe to  two topics and publish to one. The first topic he subscribe to is the Laser topic which gets the laser measurements of each robot every step. the data returned   by this topic is an array where each element of it contains the distance of the detected object and the index of this element is the angle of detection.
+
+
+The second topic he subscribes to is the positions topic, which will get the x,y coordinates of the robots and also their orientation. For the topic, the node will publish to it instead of subscribing. he will publish the actions that the robot must take based on the output of the neural network.
+
+The service that this node offer for the main node is  a function that will take that actions that the robots should take , get the states,calculates the rewards and then passing back the response to the main node. 
+
+This node is also responsible for calculating the rewards based on the state.
+
+We called the second node the main node. This node is responsible of starting the main training loop,getting actions from the models passing them to the environment node in order to reactive the next states and the rewards, he then store these samples in the replay memory and finally train the models.
+The loop will continue until the models converge and the shapes are been formed. This node will connect to a python class which contains our models.
+
+
+This python class defines the models and the networks architecture, contains the replay memory and describes the training process.  
+
+
+\subsection{Ros implemation: Test phase}
+In this phase, and after the training of the models is done, we will deploy  just the actor models on each robot (no need for the critic as no training is happening)  in order to him to take actions based on the input state.
+
+We have set a node for each robot, therefore the communication will take place  between this nodes by defining custom topics. Each node will get input state and pass them to the actor network to predict the actions to take.
+
+We have defined one topic called the goals topic in which the central robot will publish the goal positions and the others subscribe to it. We have also defined a service in the central robot that the others 
+
+
+
+
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=1]{deployment}
+\caption[deployment]{deployment}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
 \subsection{Neural network implementation}
 Designing the architecture of the neural networks and choosing the right parameters to fit is a crucial part to converge and obtain better performance.
 
 There is a high  number of  parameters to choose from,  hidden layers, number of units, activation functions, weight initlization, regularization ... and each one of them has it's role, and there is no clear rule for the right one to choose, so trial and experimenting is the way to go.
 
-In this section, we will discuss what parameters we choosed and explain the reason behind them.
+In this section, we will discuss what parameters we chooses and explain the reason behind them.
+
+For the actor network, we set four hidden layers where each layer has 400, 300, 128 and 64 units respectively. Each layer is using the relu activation function and was initialized with Xavier Glorot's expect for the output layers. where they were initialized using a uniform distribution. The output layers have two units, one for the angular velocity and one for the linear velocity. They was initalized with the tanh activation function which give an output bounded beteween -1 and 1. We choose the angular velocity of  the robot to be between $-\Pi$ and $\Pi$ so we multipiled the result of the output layer to get the desired range. Same goes for the linear velocity we have maped the range from -1 and 1 to 0.2 to 0.5. 
+
+And to enable better exploration, we have added the OuNoise to the output of the actor network when taking actions which will sample a range of values from a uniform distribution.
 
 
-For the actor network, we set for hidden layers where each layer has 400, 300, 128 and 64 units respectively. Each layer is using the relu activation function and was initialized with Xavier Glorot's exepect for the output layers. The output layers have two units, one for the angular velocity and one for the linear velocity. They was initalized with the tanh activation function which give an output bounded beteween -1 and 1. We choose the angular velocity of  the robot to be between $-\Pi$ and $\Pi$ so we multipiled the result of the output layer to get the desired range. Same goes for the linear velocity we have maped the range from -1 and 1 to 0.2 to 0.5. 
-
-And to enable better exploration, we have added the OuNoise to the output of the actor network when taking actions which will sample a range of values from a unifrom distribution.
-
-
-We have also used batch normalization layers \cite{ioffe2015batch} which a  technique for normilizing the output for each layers that have an effect of stabilizing the trainging process and making it converge faster especily if the initial distribution of the input data is varying. It also acts as regulizer so no need for dropout layers.
+We have also used batch normalization layers \cite{ioffe2015batch} which a  technique for normalizing the output for each layers that have an effect of stabilizing the training process and making it converge faster especially if the initial distribution of the input data is varying. It also acts as regularize so no need for dropout layers.
 
 As For the critic, he gets as input  both the state and actions and outputs the q-value. Firstly, we pass the states and actions into seperate layers 
 with number of units of 512 and 256 respectevely. Then, we concatinate them into one layer and add two other hidden layers with 256 number of units with a dropout of 0.2.
@@ -834,45 +900,7 @@ For the actor, it will be the mean predicted value of the critic network multipl
      aloss= -mean(critic(states,actions))
    \end{equation}
    
-We have used the Adam optimizer for both networks with learning rates of 0.01 and 0.001 for the critic and actor respectively. We set the batch size to 128 and the minimun size of the replay buffer before training start to 2500 samples.
-
-\subsection{Ros implemation}
-In this section, we will describe how we have implemented our solution in ros, how we defined the different nodes, topics and services that makes the system.
-
-The work is divided into phases. The first phase is the training and test phase and the second one is the deployment phase.
-
-In the first phase we implemented the solution in ros in a way to facilitate the training process that will require a lot of modifcation of code and simulation replay.
-
-For the second phase, and after the models are trained we will deploy them in each robot and each robot will choose his actions based on his model, and also can communicate with the central robot.
-
-\subsection{Ros implemation: Training phase}
-
-
-We have followed the openai gym implemation of diffrent rl problms using the python programming language.
-
-In the training phase, we have defined two nodes and one python class for the model.
- 
-
-The first node is the environemnt node. This node is responsible for getting sensor data, postions and command robots to move in the simulation.
-
-The node have one service, subscribe to  two topics and publishing to one. The fisrt topic he subscibe to is the Laser topic which gets the laser mesurments of each robot every step. the data retunred by this topic is an array where each element of it contains the distance of the detected object and the index of this element is the angle of detection.
-
-The second topic he susbcribe to is the positions topic, which will get the x,y cordinates of the robots and also their orientation. For the topic, the node will publish to it insted of subscbing. he will publish him the actions that the robot must take based on the output of the neural network.
-
-The service that this node offer for the main node is  a function that will take that actions that the robots should take , get the states,calculates the rewards and then passing back the response to the main node. 
-
-This node is also responsible for calculating the rewards based on the state.
-
-We called the second node the main node. This node is responsbile to start the main traning loop,getting actions from the models passing them to the environement node in order to reacive the next states and the rewards, he then store these samples in the replay memory and finally train the models.
-The loop will continue until the models converge and the shape is been formed. This node will connect to a python class which contains our models.
-
-
-This python class defines the models and the networks architecture, contains the replay memory and describes the trainnig process.  
-
-
-
-
-
+We have used the Adam optimizer for both networks with learning rates of 0.01 and 0.001 for the critic and actor respectively. We set the batch size to 128 and the minimum size of the replay buffer before training start to 2500 samples.
 
 
 
@@ -892,10 +920,47 @@ This python class defines the models and the networks architecture, contains the
 
 
 
+\newpage
+\pagebreak
+\hspace{0pt}
+\vfill
+\begin{center}
+\section{Result and analysis}
+\end{center}
+\vfill
+\hspace{0pt}
+
+\pagebreak
+
+\subsection{Introdution}
+
+In this last section, we will describe the results that we get from our experiment and discuss them.
 
 
 
+\begin{figure}[h]  
 
+\includegraphics[scale=0.40]{robot1}
+\caption[robot1]{robot1}
+\end{figure}
+
+\begin{figure}[h]  
+
+\includegraphics[scale=0.40]{robot2}
+\caption[robot2]{robot2}
+\end{figure}
+
+\begin{figure}[h]  
+
+\includegraphics[scale=0.40]{robot3}
+\caption[robot3]{robot3}
+\end{figure}
+
+\begin{figure}[h]  
+
+\includegraphics[scale=0.40]{robot4}
+\caption[robot4]{robot4}
+\end{figure}
 
  
 

@@ -1,5 +1,8 @@
 import numpy as np
-x=1*np.sin(np.pi/2)
-y=1*np.cos(np.pi/2)
 
-print(x,y)
+
+a=np.array([1,2,3,4,5,6,7,8,9,10])
+
+
+b=np.concatenate((a[0:2],a[-2:]))
+print(np.min(b))

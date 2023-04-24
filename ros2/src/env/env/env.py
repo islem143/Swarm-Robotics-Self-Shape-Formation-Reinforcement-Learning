@@ -127,6 +127,7 @@ class Env(Node):
             self.min_ldss_dist[0] = float(4)
         self.min_ldss_angle[0] = np.argmin(msg.ranges)
         
+        
 
     def get_lds2(self, msg):
 

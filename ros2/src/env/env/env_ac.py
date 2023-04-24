@@ -42,7 +42,7 @@ class Env(Node):
         self.get_odom4 = self.create_subscription(
             Odometry, "/t4/odom", self.get_current_position4, 10)
         self.get_laser4 = self.create_subscription(
-            LaserScan, "/t4/scan", self.get_lds3, 10)
+            LaserScan, "/t4/scan", self.get_lds4, 10)
         self.test=False
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
@@ -141,11 +141,14 @@ class Env(Node):
             self.goal_angles[3] += 2*np.pi   
 
     def get_lds(self, msg):
-
+ 
+       
         self.min_ldss_dist[0] = np.min(msg.ranges)
+
         if (self.min_ldss_dist[0] == np.Inf):
             self.min_ldss_dist[0] = float(4)
         self.min_ldss_angle[0] = np.argmin(msg.ranges)
+
        
         
         
@@ -271,7 +274,7 @@ class Env(Node):
         #xx=[2.0,0.5,1.5,0.0,-2.0]
         #yy=[2.0,0.5,1.5,0.0,-2.0]
 
-        if(self.goal_freq==1):
+        if(self.goal_freq==2):
             a=["line","trianlge","square","line2","trianlge2","line3"]
             #a=["test"]
             chosen=random.choice(a)
@@ -336,7 +339,7 @@ class Env(Node):
 
             rewards[index] += -np.abs(self.goal_angles[index])+0.1
             
-            if (self.min_ldss_dist[index] < 0.60):
+            if (self.min_ldss_dist[index] < 0.60 and self.min_ldss_angle[index] in [0,1,2,3,4,5,6,79,78,77,76,75,74]):
                 rewards[index] -= 10
         
             if self.succeses[index]:
