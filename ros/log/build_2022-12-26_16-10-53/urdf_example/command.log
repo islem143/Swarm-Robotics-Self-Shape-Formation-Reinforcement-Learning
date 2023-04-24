@@ -1,6 +1,0 @@
-Invoking command in '/home/islem/Documents/PFE/ros/build/urdf_example': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/islem/Documents/PFE/ros/src/urdf_example -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/islem/Documents/PFE/ros/install/urdf_example
-Invoked command in '/home/islem/Documents/PFE/ros/build/urdf_example' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/islem/Documents/PFE/ros/src/urdf_example -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/islem/Documents/PFE/ros/install/urdf_example
-Invoking command in '/home/islem/Documents/PFE/ros/build/urdf_example': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/islem/Documents/PFE/ros/build/urdf_example -- -j12 -l12
-Invoked command in '/home/islem/Documents/PFE/ros/build/urdf_example' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/islem/Documents/PFE/ros/build/urdf_example -- -j12 -l12
-Invoking command in '/home/islem/Documents/PFE/ros/build/urdf_example': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/islem/Documents/PFE/ros/build/urdf_example
-Invoked command in '/home/islem/Documents/PFE/ros/build/urdf_example' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/islem/Documents/PFE/ros/build/urdf_example
