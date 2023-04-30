@@ -85,14 +85,13 @@ class Agent(Node):
     def cc(self):
             deg=45
             if(self.id==3):
-                deg=220.0
+                deg=90.0
             if(self.id==2):
                 deg=120.0
 
             x=1.5*np.sin(deg)
             y=1.5*np.cos(deg) 
-            if(self.id==3):
-                print(x,y)
+            
             self.goal_position=[self.position_leader[0]+x,self.position_leader[1]+y]      
         
     def goal_reached(self,request,response):
@@ -169,8 +168,7 @@ class Agent(Node):
          y=d*np.cos(theta)
          
          self.goal_position=[msg.goal[0]+x,msg.goal[1]+y]
-         if(self.id==4):
-             print(self.goal_position)
+     
     
          print(self.id,d,theta)
          

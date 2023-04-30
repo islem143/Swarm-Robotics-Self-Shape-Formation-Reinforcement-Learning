@@ -38,7 +38,7 @@ class Network:
         self.state_size = 3
         self.discout_factor = 0.99
         self.minbatch_size = 256
-        self.MIN_REPLAY_MEMORY_SIZE = 1000
+        self.MIN_REPLAY_MEMORY_SIZE = 10000
 
         self.target_update_counter = 0
 
@@ -47,7 +47,7 @@ class Network:
 
         # initializer2 = tf.keras.initializers.GlorotNormal()
 
-        inputs = keras.layers.Input(shape=(4,))
+        inputs = keras.layers.Input(shape=(5,))
 
         out = keras.layers.Dense(
             128, activation="relu", kernel_initializer='glorot_normal')(inputs)

@@ -17,13 +17,13 @@ from dqn_msg.srv import Mdqn
 from dqn_msg.srv import Goal
 import math
 import time
-
+import random
 
 class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents = 4
+        self.num_agents = 1
 
         self.cmd_vel_pub = {}
 
@@ -54,7 +54,21 @@ class Env(Node):
             Goal, "goal_pose", self.generate_goal_pose)
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
 
-        self.goal_cords = [[0.0,-1.5],[0.0, 1.5], [1.5,0.0],[0.0, 0.0]]
+        self.shapes={
+            "line":[[-1.0,-1.0],[0.0,0.0] ,[0.0,-1.0],[0.0,0.0]],
+            "line2":[[-1.0,1.5],[2.0,0.0] ,[-1.0,0.0],[-2.0,0.0]],
+            "trianlge":[[-1.0,1.0],[0.0,1.2] ,[0.0,-1.2],[1.2,0.0]],
+           "trianlge2":[[-1.0,0.0],[0.0,0.0] ,[0.0,-1.2],[1.5,0.0]],
+            "square":[[-1.3,-1.0],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
+            #"line3":[[2.5,2.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
+            #"test":[[3.2,3.3],[2.0,-1.6] ,[0.0,-3.2],[-2.3,2.3]],
+           
+
+        }
+        
+
+        self.goal_cords = self.shapes["line"]
+        self.goal_freq=0
         self.dones = [False for _ in range(self.num_agents)]
 
         self.steps = 0
@@ -66,6 +80,7 @@ class Env(Node):
         self.min_ldss_angle = [0.0 for _ in range(self.num_agents)]
         self.angles = [0.0 for _ in range(self.num_agents)]
         self.goal_angles = [0.0 for _ in range(self.num_agents)]
+        self.goal_angles2 = [0.0 for _ in range(self.num_agents)]
         self.init_positions = [[0, 0] for _ in range(self.num_agents)]
 
     def get_current_position(self, msg):
@@ -76,12 +91,13 @@ class Env(Node):
         #self.goal_angles[0] = self.get_goal_angle(0)
 
         self.goal_angles[0] = (np.arctan2(self.goal_cords[0][1]-self.positions[0]
-                               [1], self.goal_cords[0][0]-self.positions[0][0]))-(self.angles[0])
+                              [1], self.goal_cords[0][0]-self.positions[0][0]))-(self.angles[0])
 
         if (self.goal_angles[0] > np.pi):
-            self.goal_angles[0] -= 2*np.pi
+           self.goal_angles[0] -= 2*np.pi
         elif (self.goal_angles[0] < -np.pi):
-            self.goal_angles[0] += 2*np.pi
+           self.goal_angles[0] += 2*np.pi
+        self.goal_angles2[0]=np.arctan2(self.positions[0][1]-self.goal_cords[0][1],self.positions[0][0]-self.goal_cords[0][0])
 
     def get_current_position2(self, msg):
         self.positions[1] = [
@@ -244,12 +260,7 @@ class Env(Node):
     def get_distance_to_goal(self, index):
         return float(np.sqrt(np.square(self.positions[index][1]-self.goal_cords[index][1])+np.square(self.positions[index][0]-self.goal_cords[index][0])))
 
-    def generate_goal_pose(self):
-        x = float(np.random.randint(-4, 4))
-        y = float(np.random.randint(-4, 4))
-        self.goal_x = x
-        self.goal_y = y
-        return x, y
+   
 
     def crashs(self, index):
 
@@ -257,11 +268,27 @@ class Env(Node):
 
             return True
         return False
+    def generate_goal_pose(self):
+        
+      
+
+        if(self.goal_freq==1):
+            a=["line",'line2','trianlge','trianlge','square']
+            #a=["test"]
+            chosen=random.choice(a)
+            self.goal_cords=self.shapes[chosen]
+        
+           
+            self.goal_freq=0
+            print("chosen shape",chosen)
+            print(self.goal_cords)
+        
+        
 
     def goal_reached(self, index):
-        distance = self.get_distance_to_goal(index)
+        distance = np.abs(self.get_distance_to_goal(index)-1.0)
 
-        if (distance < 0.20):
+        if (distance < 0.20 and np.abs(self.goal_angles2[0])<0.15):
 
             return True
         return False
@@ -273,15 +300,15 @@ class Env(Node):
     def get_reward(self):
         rewards = [0 for _ in range(self.num_agents)]
         for index in range(self.num_agents):
-            distance = self.get_distance_to_goal(index)
-            rewards[index] += -(distance/self.get_abs_distance_to_goal(index))+1
+            distance = np.abs(self.get_distance_to_goal(index)-1.0)
+            rewards[index] += -distance
 
-            rewards[index] += -2*np.abs(self.goal_angles[index])
+            rewards[index] += -np.abs(self.goal_angles2[index])+0.1
             # if (self.get_distance(self.positions[0], self.positions[1]) < 0.45):
                 #rewards[index] -= 10
             # if (self.goal_angles[index] < 0.40):
             #     rewards[index] += 5
-            if (self.min_ldss_dist[index] < 0.80 ):
+            if (self.min_ldss_dist[index] < 0.40 ):
                 rewards[index] -= 10
             # else:
             #     rewards[index] += 0.1
@@ -293,7 +320,7 @@ class Env(Node):
                 rewards[index] += 500
             elif self.fails[index]:
                 rewards[index] -= 500
-        print(rewards)
+       
         return rewards
 
     def get_state(self):
@@ -303,33 +330,43 @@ class Env(Node):
         self.fails = [False for _ in range(self.num_agents)]
         for index in range(self.num_agents):
 
-            l.append(self.get_distance_to_goal(index))
+            l.append(self.get_distance_to_goal(index)-1.0)
             l.append(float(self.min_ldss_dist[index]))
             l.append(float(self.min_ldss_angle[index]))
             l.append(float(self.goal_angles[index]))
+            l.append(float(self.goal_angles2[index]))
             #l.append(self.get_distance(self.positions[0], self.positions[1]))
 
             if (self.crashs(index)):
-                print(f"get reward of -10 {index}")
+               
                 self.dones = [True for _ in range(self.num_agents)]
                 self.fails[index] = True
                 self.steps = 0
-                self.call_reset_sim()
+               
 
             if (self.goal_reached(index)):
                 self.stop_robots(index)
                 self.succeses[index] = True
                 self.dones[index] = True
 
-            if (self.steps == 550):
+            if (self.steps == 1000):
                 self.dones = [True for _ in range(self.num_agents)]
                 self.fails = [True for _ in range(self.num_agents)]
+                
                 if self.succeses[index]:
                     self.fails[index] = False
                 self.steps = 0
+               
 
+        if (all(self.dones)):
+            for index in range(self.num_agents):
+                self.stop_robots(index)
+           
+            self.call_reset_sim()
+            if(all(self.succeses)):
+                self.goal_freq+=1
+                self.generate_goal_pose()
         self.steps += 1
-        #if (all(self.dones)):
             
 
         return l

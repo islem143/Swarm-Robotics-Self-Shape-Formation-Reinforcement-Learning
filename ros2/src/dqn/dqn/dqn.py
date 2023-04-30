@@ -72,11 +72,11 @@ class Dqn(Node):
     def __init__(self):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.ep = 810
+        self.ep = 0
         self.test =False
-        self.num_agents = 4
-        self.agents = [Network("robot-1", True, self.ep),
-                       Network("robot-1", True, self.ep),Network("robot-1", True, self.ep),Network("robot-1", True, self.ep)]
+        self.num_agents = 1
+        self.agents = [Network("robot-1",False, self.ep),
+                      ]
         self.epsilon = self.agents[0].get_epsilon()
 
         self.actions = [-np.pi, -np.pi/2, 0, np.pi/2, np.pi]
@@ -92,9 +92,9 @@ class Dqn(Node):
         self.next_states = [0.0 for _ in range(self.num_agents)]
         #self.epsilon = 1
         #self.EPSILON_DECAY = 0.992
-        self.EPSILON_DECAY = 0.996
+        self.EPSILON_DECAY = 0.997
         self.MIN_EPSILON = 0.1
-        self.MIN_REPLAY_MEMORY_SIZE = 3000
+        self.MIN_REPLAY_MEMORY_SIZE = 5000
         self.env_result_client = self.create_client(Mdqn, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = False
@@ -117,7 +117,7 @@ class Dqn(Node):
                     # Next state and reward
                     for i in range(self.num_agents):
                         self.current_states[i] = future.result(
-                        ).states[i*4:i*4+4]
+                        ).states[i*5:i*5+5]
 
                 else:
                     self.get_logger().error(
@@ -136,7 +136,7 @@ class Dqn(Node):
             print("ep=", self.ep)
             self.rewards = [0.0 for _ in range(len(self.agents))]
             self.returns = [0.0 for _ in range(len(self.agents))]
-
+            print(self.dones)
             print(self.epsilon)
             while not all(self.dones):
 
@@ -179,7 +179,7 @@ class Dqn(Node):
                             for i in range(self.num_agents):
 
                                 self.next_states[i] = future.result(
-                                ).states[i*4:i*4+4]
+                                ).states[i*5:i*5+5]
                                 self.rewards[i] = future.result().rewards[i]
                                 self.returns[i] += self.rewards[i]
                                 self.dones[i] = future.result().dones[i]
@@ -206,7 +206,7 @@ class Dqn(Node):
 
             for index, agent in enumerate(self.agents):
                 print(f"robot -{index+1} return", self.returns[index])
-                if (self.ep % 30 == 0 and self.ep != 0) and not self.test:
+                if (self.ep % 20 == 0 and self.ep != 0) and not self.test:
                     agent.save_data(self.ep, self.epsilon, self.rewards[index])
 
             # if not self.ep % AGGREGATE_STATS_EVERY or self.ep == 1:

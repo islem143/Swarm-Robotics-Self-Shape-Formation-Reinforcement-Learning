@@ -75,15 +75,15 @@ class Dqn(Node):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
-        self.ep =1880
-        self.test=True
+        self.ep =400
+        self.test=False
         self.agents = [ACNetwork("robot-1",True, self.ep),
-                      #ACNetwork("robot-2",True, self.ep),
-                      # ACNetwork("robot-3",True, self.ep),
-                      # ACNetwork("robot-4",True, self.ep)
+                       ACNetwork("robot-2",True, self.ep),
+                       ACNetwork("robot-3",True, self.ep),
+                       ACNetwork("robot-4",True, self.ep)
                       
                        ]
-        self.num_agents=1
+        self.num_agents=4
    
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
@@ -106,7 +106,7 @@ class Dqn(Node):
         self.env_result_client = self.create_client(Mac, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = True
-        self.save_every=20
+        self.save_every=50
         #std_dev = 0.2
         
  
@@ -117,7 +117,7 @@ class Dqn(Node):
         self.current_states = [0.0 for _ in range(self.num_agents)]
         self.next_states = [0.0 for _ in range(self.num_agents)]
     
-        self.std_dev=0.20
+        self.std_dev=0.32
         self.std_dev2=0.05
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         self.ou_noise2 = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev2) * np.ones(1))
@@ -140,7 +140,7 @@ class Dqn(Node):
                     
                     for i in range(self.num_agents):
                         self.current_states[i] = future.result(
-                        ).states[i*7:i*7+7]
+                        ).states[i*4:i*4+4]
                         
                 else:
                     self.get_logger().error(
@@ -208,7 +208,7 @@ class Dqn(Node):
                                
                                 if(not self.dones[i]):
                                     self.next_states[i] = future.result(
-                                    ).states[i*7:i*7+7]
+                                    ).states[i*4:i*4+4]
                                     self.rewards[i] = future.result().rewards[i]
                                     self.returns[i] += self.rewards[i]
 
@@ -254,9 +254,9 @@ class Dqn(Node):
                 if (self.ep % self.save_every == 0 and self.ep!=0) and not self.test:
                     
                     agent.save_data(self.ep,self.rewards[index])
-            #if(self.ep%40==0 and self.ep!=0 and self.std_dev>0.01):
-               #self.std_dev-=0.01
-              # self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))       
+            if(self.ep%50==0 and self.ep!=0 and self.std_dev>0.01):
+               self.std_dev-=0.01
+               self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))       
             
             print("self.std",self.std_dev)       
 
