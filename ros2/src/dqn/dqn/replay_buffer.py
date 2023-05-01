@@ -22,19 +22,21 @@ class ReplayBuffer():
     
     def add_record(self, states,next_states,rewards,dones,actor_states,actor_next_states,actor_actions):
     
-       
+        
         index = self.buffer_counter % self.buffer_capacity
         self.states[index]=states 
         self.next_states[index]=next_states
         #self.actions[index]=actions
         self.rewards[index]=rewards
         self.dones[index]=dones
-        
+
+
         for i in range(self.num_agents):
 
             self.actor_states[i][index]=np.array(actor_states[i])
             self.actor_next_states[i][index]=np.array(actor_next_states[i])
-            self.actor_actions[i][index]=np.array(actor_actions[i])
+            self.actor_actions[i][index]=np.array(actor_actions[i*2:i*2+2])
+           
                 
      
       

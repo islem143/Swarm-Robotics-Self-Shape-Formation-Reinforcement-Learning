@@ -5,11 +5,10 @@ from memory_profiler import profile
 import sys
 import gc
 import numpy as np
-#from tensorflow.keras.callbacks import Callback
-#from tensorflow.keras import backend as k
+
 
 import tensorflow as tf
-from tensorflow import keras
+
 
 
 
@@ -32,18 +31,15 @@ summary_writer = tf.summary.create_file_writer('logs')
 
 
 
-def loss_actor(y):
-    return -tf.math.reduce_mean(y)
 
-critic_loss_function = keras.losses.MeanSquaredError()
 
-custom_objects = {"custom_loss_actor": loss_actor}
+
 class SuperController(Node):
 
     def __init__(self):
         super().__init__('dqn')
-        self.state_size = 4
-        self.action_size = 1
+        self.state_size = 7
+        self.action_size = 2
         self.num_agents =1
         self.test=False
         self.episode_length = 3000
@@ -63,9 +59,13 @@ class SuperController(Node):
             (self.num_agents*self.state_size,), dtype=np.float32)
         self.actions = np.zeros(
             (self.num_agents*self.action_size,), dtype=np.float32)
-        self.std_dev=0.32
+        self.std_dev=0.20
+        self.std_dev2=0.05
+        self.done_counter={"0":0,"1":0,'2':0,'3':0}
+        self.ou_noise2 = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev2) * np.ones(1))
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         self.super_agent.set_noise(self.ou_noise)
+        self.super_agent.set_noise2(self.ou_noise2)
         self.env_result_client = self.create_client(Mac, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.save_every=20
@@ -111,7 +111,7 @@ class SuperController(Node):
                 self.req.init = False
               
                 self.actor_actions=self.super_agent.get_actions(self.current_actor_states)
-                
+               
                
 
                 self.req.actions = self.actor_actions
@@ -126,26 +126,31 @@ class SuperController(Node):
                         if future.result() is not None:
                             # Next state and reward
                             for i in range(self.num_agents):
+                                if(not self.dones[i]):    
+                                    self.next_actor_states[i] = future.result(
+                                    ).states[i*self.state_size:i*self.state_size+self.state_size]
+                                    self.rewards[i] = future.result().rewards[i]
+                                    self.returns[i] += self.rewards[i]
 
-                                self.next_actor_states[i] = future.result(
-                                ).states[i*4:i*4+4]
-                                self.rewards[i] = future.result().rewards[i]
-                                self.returns[i] += self.rewards[i]
                                 self.dones[i] = future.result().dones[i]
+                                if(self.dones[i]):
+                                    self.done_counter[i]+=1
+                                else:
+                                    self.done_counter[i]=0
 
                         else:
                             self.get_logger().error(
                                 'Exception while calling service: {0}'.format(future.exception()))
                         break
                
-
-                states=np.concatenate(self.current_actor_states)
-                next_states=np.concatenate(self.next_actor_states)
-               
-                self.super_agent.replay_buffer.add_record(states,next_states,self.rewards,self.dones,self.current_actor_states,self.next_actor_states,self.actor_actions)
-                self.current_actor_states=self.next_actor_states
+                if (not self.test):
+                    states=np.concatenate(self.current_actor_states)
+                    next_states=np.concatenate(self.next_actor_states)
                 
-                self.super_agent.train()
+                    self.super_agent.replay_buffer.add_record(states,next_states,self.rewards,self.dones,self.current_actor_states,self.next_actor_states,self.actor_actions)
+                    
+                    self.super_agent.train(self.done_counter)
+                self.current_actor_states=self.next_actor_states
                 
 
                     
@@ -155,28 +160,19 @@ class SuperController(Node):
 
             for index, agent in enumerate(self.super_agent.agents):
                 print(f"robot -{index+1} rewards", self.returns[index])
-                with summary_writer.as_default():
-                    tf.summary.scalar(
+                if(not self.test and self.done_counter[index]<=1):
+                    with summary_writer.as_default():
+                     tf.summary.scalar(
                         f'rewards{index+1}', self.returns[index], step=self.ep)
-               # if (self.ep % self.save_every == 0 and self.ep != 0) and not self.test:
+                if (self.ep % self.save_every == 0 and self.ep != 0) and not self.test:
 
-                    #agent.save_data(self.ep, self.rewards[index])
-            if (self.ep % 50 == 0 and self.ep != 0 and self.std_dev > 0.01):
-                self.std_dev -= 0.01
-                self.ou_noise = OUActionNoise(mean=np.zeros(
-                    1), std_deviation=float(self.std_dev) * np.ones(1))
-                self.super_agent.set_noise(self.ou_noise)
+                    agent.save_data(self.ep, self.rewards[index])
+           
                 
 
-            print("self.std", self.std_dev)
+       
 
-            # if not self.ep % AGGREGATE_STATS_EVERY or self.ep == 1:
-            #      average_reward = sum(
-            #        ep_rewards[-AGGREGATE_STATS_EVERY:])/len(ep_rewards[-AGGREGATE_STATS_EVERY:])
-            #      min_reward = min(ep_rewards[-AGGREGATE_STATS_EVERY:])
-            #      max_reward = max(ep_rewards[-AGGREGATE_STATS_EVERY:])
-            #      self.tensorboard.update_stats(
-            #       reward_avg=average_reward, reward_min=min_reward, reward_max=max_reward, epsilon=self.epsilon)
+  
 
 
 def main(args=None):

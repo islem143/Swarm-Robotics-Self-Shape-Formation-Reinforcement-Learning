@@ -13,12 +13,12 @@ import os
 from copy import copy
 
 from rclpy.node import Node
-# physical_devices = tf.config.list_physical_devices('GPU')
-# try:
-#     tf.config.experimental.set_memory_growth(physical_devices[0], True)
-# except:
-#     # Invalid device or cannot modify virtual devices once initialized.
-#     pass
+physical_devices = tf.config.list_physical_devices('GPU')
+try:
+    tf.config.experimental.set_memory_growth(physical_devices[0], True)
+except:
+    # Invalid device or cannot modify virtual devices once initialized.
+    pass
 summary_writer = tf.summary.create_file_writer('logs')
 
 loss_function = keras.losses.MeanSquaredError()
@@ -97,14 +97,21 @@ class Agent():
     def create_actor_model(self):
         # Initialize weights between -3e-3 and 3-e3
         last_init = tf.random_uniform_initializer(minval=-0.003, maxval=0.003)
+        last_init2 = tf.random_uniform_initializer(minval=-0.0003, maxval=0.0003)
 
 
         inputs = keras.layers.Input(shape=(self.state_size,))
         out = keras.layers.Dense(400, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(inputs)
-        out=keras.layers.Dropout(0.5)(out)
+        #out=keras.layers.Dropout(0.5)(out)
         out = keras.layers.BatchNormalization()(out)
         out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        out=keras.layers.Dropout(0.5)(out)
+        #out=keras.layers.Dropout(0.5)(out)
+        out = keras.layers.BatchNormalization()(out)
+        out = keras.layers.Dense(256, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+       # out=keras.layers.Dropout(0.2)(out)
+        out = keras.layers.BatchNormalization()(out)
+        out = keras.layers.Dense(256, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+       # out=keras.layers.Dropout(0.2)(out)
         out = keras.layers.BatchNormalization()(out)
      
         # out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
@@ -114,41 +121,42 @@ class Agent():
         # out=keras.layers.Dropout(0.2)(out)
         # out = keras.layers.BatchNormalization()(out)
         outputs = keras.layers.Dense(1, activation="tanh",kernel_initializer=last_init
-   
+        
+)(out)
+        outputs2 = keras.layers.Dense(1, activation="tanh",kernel_initializer=last_init2
+    
 )(out)
 
         
         outputs = outputs * self.upper_bound
-        model = tf.keras.Model(inputs, outputs)
+        outputs2=(outputs2+1)*0.15+0.2
+        model = tf.keras.Model(inputs, [outputs,outputs2])
         return model
     
     def create_critic_model(self):
         state_input = keras.layers.Input(shape=(self.state_size*self.num_agents))
-        state_out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_input)
+        state_out = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_input)
         #state_out = keras.layers.BatchNormalization()(state_out)
-        #state_out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_out)
+        # state_out = keras.layers.Dense(32, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_out)
         # state_out = keras.layers.BatchNormalization()(state_out)
 
             # Action as input
         action_input = keras.layers.Input(shape=(self.action_size*self.num_agents))
-        action_out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(action_input)
-        #action_out =  keras.layers.BatchNormalization()(action_out)
+        action_out = keras.layers.Dense(256, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(action_input)
+      #  action_out =  keras.layers.BatchNormalization()(action_out)
             # Both are passed through seperate layer before concatenating
         concat = keras.layers.Concatenate()([state_out, action_out])
 
-        out = keras.layers.Dense(400, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(concat)
-        out=keras.layers.Dropout(0.5)(out)
+        out = keras.layers.Dense(1024, kernel_regularizer=keras.regularizers.l2(0.01),activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(concat)
+        out=keras.layers.Dropout(0.2)(out)
        # out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        out=keras.layers.Dropout(0.5)(out)
-        #added
-        # out = keras.layers.Dense(256, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        # out=keras.layers.Dropout(0.3)(out)
-       # out = keras.layers.BatchNormalization()(out)
-        # = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        #out=keras.layers.Dropout(0.3)(out)
-       # out = keras.layers.BatchNormalization()(out)
-        # out = keras.layers.Dense(126, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        out = keras.layers.Dense(1024, activation="relu",kernel_regularizer=keras.regularizers.l2(0.01),kernel_initializer=keras.initializers.GlorotNormal())(out)
+        out=keras.layers.Dropout(0.2)(out)
+        #out = keras.layers.BatchNormalization()(out)
+        #out= keras.layers.Dense(256, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        #out=keras.layers.Dropout(0.2)(out)
+        #out = keras.layers.BatchNormalization()(out)
+        # out = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
         # out=keras.layers.Dropout(0.2)(out)
         # out = keras.layers.BatchNormalization()(out)
         outputs = keras.layers.Dense(1)(out)
@@ -158,18 +166,23 @@ class Agent():
 
         return model
 
-    def policy(self,state, noise):
-       
-        state = tf.expand_dims(tf.convert_to_tensor(state), 0)
+    def policy(self,state, noise,noise2):
+        state=tf.expand_dims(tf.convert_to_tensor(state), 0)
         sampled_actions = tf.squeeze(self.actor_model(state))
-       
+        angular=sampled_actions[0]
+        velocity=sampled_actions[1]
+        #print("samlple",sampled_actions)
+        
        
         # Adding noise to action
-        sampled_actions = sampled_actions.numpy() + noise
-         
+        angular = angular.numpy() + noise
+        velocity=velocity.numpy() + noise2
         # We make sure action is within bounds
-        legal_action = np.clip(sampled_actions, self.lower_bound, self.upper_bound)
-        return [np.squeeze(legal_action)][0]
+        angular = np.clip(angular, self.lower_bound, self.upper_bound)
+        velocity = np.clip(velocity, 0.2, 0.5)
+        #print(legal_action)
+
+        return [np.squeeze(angular),np.squeeze(velocity)]
     
    
 

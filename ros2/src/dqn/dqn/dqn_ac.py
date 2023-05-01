@@ -75,9 +75,9 @@ class Dqn(Node):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
-        self.ep =950
+        self.ep =2050 #1800 works well and using 2 2 3
         self.test=False
-        self.agents = [ACNetwork("robot-1",True, self.ep),
+        self.agents = [ACNetwork("robot-1",True, self.ep), 
                       ACNetwork("robot-2",True, self.ep),
                        ACNetwork("robot-3",True, self.ep),
                       # ACNetwork("robot-4",True, self.ep)
@@ -251,9 +251,9 @@ class Dqn(Node):
                 if(not self.test and self.done_counter[index]<=1):
                  with summary_writer.as_default():
                      tf.summary.scalar(f'rewards{index+1}', self.returns[index], step=self.ep)
-                if (self.ep % self.save_every == 0 and self.ep!=0) and not self.test:
+                #if (self.ep % self.save_every == 0 and self.ep!=0) and not self.test:
                     
-                    agent.save_data(self.ep,self.rewards[index])
+                   # agent.save_data(self.ep,self.rewards[index])
             #if(self.ep%40==0 and self.ep!=0 and self.std_dev>0.01):
                #self.std_dev-=0.01
               # self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))       

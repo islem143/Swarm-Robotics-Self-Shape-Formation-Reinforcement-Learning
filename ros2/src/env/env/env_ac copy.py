@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents=4
+        self.num_agents=3
         self.cmd_vel_pub = {}
         self.goal_reached_by={}
         for i in range(self.num_agents):
@@ -51,19 +51,21 @@ class Env(Node):
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.goal_publisher=self.create_publisher(Goal,"generate_goal",10) 
         self.shapes={
-            "line":[[0.0,1.0],[0.0,2.0] ,[0.0,-1.0],[0.0,0.0]],
-            "line2":[[1.0,0.0],[2.0,0.0] ,[-1.0,0.0],[-2.0,0.0]],
-            "trianlge":[[0.0,0.0],[0.0,1.2] ,[0.0,-1.2],[1.2,0.0]],
-            "trianlge2":[[0.0,1.5],[0.0,0.0] ,[0.0,-1.2],[1.5,0.0]],
-            "square":[[-1.2,-1.2],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
-            "line3":[[2.5,2.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
-            #"test":[[3.2,3.3],[2.0,-1.6] ,[0.0,-3.2],[-2.3,2.3]],
-           
+            "line":[[-1.0,0.0],[-1.0,1.5] ,[-1.0,-1.5]],
+            "line2":[[-1.0,0.0],[0.0,1.0] ,[0.0,-1.0]],
+            "trianlge":[[0.5,0.0], [-1.0,1.5],[-1.0,-1.5]],
+            "line3":[[-1.0,0.0],[0.0,1.5] ,[0.0,-1.5]],
+            # "square":[[-1.3,-1.0],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
+            # "line3":[[-0.5,-0.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
+            # "test":[[-0.5,-0.5],[2.0,-1.6] ,[0.0,-3.2],[-2.3,2.3]],
+             "test2":[[0.0,1.6],[0.0,-1.8] ,[0.0,0.0],[-2.3,2.3]],# works good 1800
 
         }
+        
 
-        self.goal_cords = self.shapes["line"]
+        self.goal_cords = self.shapes["test2"]
         self.goal_freq=0
+        self.goal_re=15
         self.dones = [False for _ in range(self.num_agents)]
 
         self.steps = 0
@@ -75,8 +77,11 @@ class Env(Node):
         self.min_ldss_angle = [3.5 for _ in range(self.num_agents)]
         self.angles = [3.5 for _ in range(self.num_agents)]
         self.goal_angles = [0.0 for _ in range(self.num_agents)]
-        self.init_positions = [[0, 0] for _ in range(self.num_agents)]
+        self.goal_angles2 = [0.0 for _ in range(self.num_agents)]
+        self.init_positions = [[-1.5, -1.5] for _ in range(self.num_agents)]
         self.global_steps=0
+        self.current_angulars=[0.0  for _ in range(self.num_agents)]
+        self.current_velocities=[0.0  for _ in range(self.num_agents)]
         
        
  
@@ -95,6 +100,16 @@ class Env(Node):
             self.goal_angles[0] -= 2*np.pi
         elif (self.goal_angles[0] < -np.pi):
             self.goal_angles[0] += 2*np.pi
+        self.goal_angles2[0]=np.arctan2(self.positions[0][1]-self.goal_cords[0][1],self.positions[0][0]-self.goal_cords[0][0])
+        # reward=0.0
+        # distance = np.abs(self.get_distance_to_goal(0)-1.0)
+        #     #rewards[index] += -(distance/self.get_abs_distance_to_goal(index))+1
+        # reward+=-distance
+        # reward += -np.abs(self.goal_angles2[0])+0.1
+        # print(reward)
+
+
+
 
         
         
@@ -114,7 +129,8 @@ class Env(Node):
             self.goal_angles[1] -= 2*np.pi
         elif (self.goal_angles[1] < -np.pi):
             self.goal_angles[1] += 2*np.pi
-          
+        self.goal_angles2[1]=np.arctan2(self.positions[1][1]-self.goal_cords[1][1],self.positions[1][0]-self.goal_cords[1][0])    
+      
     def get_current_position3(self, msg):
         self.positions[2] = [
             msg.pose.pose.position.x, msg.pose.pose.position.y]
@@ -127,6 +143,8 @@ class Env(Node):
             self.goal_angles[2] -= 2*np.pi
         elif (self.goal_angles[2] < -np.pi):
             self.goal_angles[2] += 2*np.pi
+        self.goal_angles2[2]=np.arctan2(self.positions[2][1]-self.goal_cords[2][1],self.positions[2][0]-self.goal_cords[2][0])    
+        
     def get_current_position4(self, msg):
         self.positions[3] = [
             msg.pose.pose.position.x, msg.pose.pose.position.y]
@@ -139,7 +157,8 @@ class Env(Node):
             self.goal_angles[3] -= 2*np.pi
         elif (self.goal_angles[3] < -np.pi):
             self.goal_angles[3] += 2*np.pi   
-
+        self.goal_angles2[3]=np.arctan2(self.positions[0][1]-self.goal_cords[0][1],self.positions[0][0]-self.goal_cords[0][0])    
+  
     def get_lds(self, msg):
  
        
@@ -241,7 +260,10 @@ class Env(Node):
         actions = request.actions
     
         for index in range(self.num_agents):
-           
+            self.current_angulars[index]=actions[index*2]
+            self.current_velocities[index]=actions[index*2+1]
+     
+            
             angular = actions[index*2]
             velocity=actions[index*2+1]
             actionss=[angular,velocity]
@@ -273,13 +295,14 @@ class Env(Node):
 
         #xx=[2.0,0.5,1.5,0.0,-2.0]
         #yy=[2.0,0.5,1.5,0.0,-2.0]
-
-        if(self.goal_freq==2):
-            a=["line","trianlge","square","line2","trianlge2","line3"]
-            #a=["test"]
+        self.goal_re+=1  
+        if(self.goal_freq==1):
+            a=["line",'line2','line3','trianlge']
+           
             chosen=random.choice(a)
             self.goal_cords=self.shapes[chosen]
-            random.shuffle(self.goal_cords)
+            if(self.goal_re>=10):
+             random.shuffle(self.goal_cords)
            
             self.goal_freq=0
             print("chosen shape",chosen)
@@ -319,9 +342,10 @@ class Env(Node):
         return float(np.sqrt(np.square(self.init_positions[index][1]-self.goal_cords[index][1])+np.square(self.init_positions[index][0]-self.goal_cords[index][0])))
 
     def goal_reached(self, index):
-        distance = self.get_distance_to_goal(index)
+        distance = np.abs(self.get_distance_to_goal(index)-1)
+   
 
-        if (distance < 0.2):
+        if (distance < 0.2 and np.abs(self.goal_angles2[index])<0.15):
 
             return True
         return False
@@ -334,19 +358,19 @@ class Env(Node):
     def get_reward(self):
         rewards = [0 for _ in range(self.num_agents)]
         for index in range(self.num_agents):
-            distance = self.get_distance_to_goal(index)
-            rewards[index] += -(distance/self.get_abs_distance_to_goal(index))+1
-
-            rewards[index] += -np.abs(self.goal_angles[index])+0.1
+            distance = np.abs(self.get_distance_to_goal(index)-1)
+            #rewards[index] += -(distance/self.get_abs_distance_to_goal(index))+1
+            rewards[index]+=-distance
+            rewards[index] += -np.abs((self.goal_angles2[index]))+0.1
             
-            if (self.min_ldss_dist[index] < 0.60 and self.min_ldss_angle[index] in [0,1,2,3,4,5,6,79,78,77,76,75,74]):
+            if (self.min_ldss_dist[index] < 0.60):
                 rewards[index] -= 10
         
             if self.succeses[index]:
                 rewards[index] += 500
             elif self.fails[index]:
                 rewards[index] -= 500
-    
+        
         return rewards
        
 
@@ -358,19 +382,25 @@ class Env(Node):
         for index in range(self.num_agents):
             
             norm_angle = (self.goal_angles[index]+3.14)/(3.14+3.14)
-            distance = self.get_distance_to_goal(index)
-            norm_goal = distance/6.22
+            norm_angle2 = (self.goal_angles2[index]+3.14)/(3.14+3.14)
+            norm_angular=self.current_angulars[index]+np.pi/(np.pi+np.pi)
+            norm_velo=self.current_velocities[index]-0.2/(0.5-0.2)
+            distance = np.abs(self.get_distance_to_goal(index)/9.6873629022557-0.10322726732650331)
             norm_lds = (self.min_ldss_dist[index]-0)/(3.5)
-            norm_lds_angle = self.min_ldss_angle[index]
+            # norm_lds_angle = self.min_ldss_angle[index]
            
             # l.append(float(norm_goal))
             # l.append(float(norm_angle))
             # l.append(float(norm_lds))
             # l.append(float(norm_lds_angle))
-            
-            l.append(float(self.get_distance_to_goal(index)))
-            l.append(float(self.goal_angles[index]))
-            l.append(float(self.min_ldss_dist[index]))
+          
+            l.append(float(distance))
+            l.append(float(norm_angle))
+            l.append(float(norm_angle2))
+            l.append(float(norm_angular))
+            l.append(float(norm_velo))
+            #l.append(float(self.angles[index]))
+            l.append(float(norm_lds))
             l.append(float(self.min_ldss_angle[index]))
             if (self.crashs(index)):
                  if(self.test):

@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents=3
+        self.num_agents=1
         self.cmd_vel_pub = {}
         self.goal_reached_by={}
         for i in range(self.num_agents):
@@ -58,7 +58,7 @@ class Env(Node):
             # "square":[[-1.3,-1.0],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
             # "line3":[[-0.5,-0.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
             # "test":[[-0.5,-0.5],[2.0,-1.6] ,[0.0,-3.2],[-2.3,2.3]],
-            # "test2":[[0.0,0.0],[2.0,-1.6] ,[0.0,-3.2],[-2.3,2.3]],
+             #"test2":[[0.0,1.6],[0.0,-1.8] ,[0.0,0.0],[-2.3,2.3]],# works good 1800
 
         }
         
