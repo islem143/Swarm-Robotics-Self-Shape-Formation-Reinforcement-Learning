@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents=1
+        self.num_agents=3
         self.cmd_vel_pub = {}
         self.goal_reached_by={}
         for i in range(self.num_agents):
@@ -360,7 +360,9 @@ class Env(Node):
         for index in range(self.num_agents):
             distance = np.abs(self.get_distance_to_goal(index)-1)
             #rewards[index] += -(distance/self.get_abs_distance_to_goal(index))+1
-            rewards[index]+=-distance
+            #rewards[index]+=-distance
+            rewards[index]=1-np.exp(distance)
+            
             rewards[index] += -np.abs((self.goal_angles2[index]))+0.1
             
             if (self.min_ldss_dist[index] < 0.60):
@@ -370,7 +372,7 @@ class Env(Node):
                 rewards[index] += 500
             elif self.fails[index]:
                 rewards[index] -= 500
-        
+            
         return rewards
        
 

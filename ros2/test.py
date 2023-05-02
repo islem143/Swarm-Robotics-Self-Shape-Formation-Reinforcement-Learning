@@ -1,4 +1,3 @@
-d={"0":1,"4":2}
-
-print(list(d.values()))
-
+import numpy as np
+d=0
+print(1-np.exp(d))
