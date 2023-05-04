@@ -38,7 +38,7 @@ class Network:
         self.state_size = 3
         self.discout_factor = 0.99
         self.minbatch_size = 256
-        self.MIN_REPLAY_MEMORY_SIZE = 10000
+        self.MIN_REPLAY_MEMORY_SIZE = 3000
 
         self.target_update_counter = 0
 

@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents=3
+        self.num_agents=4
         self.cmd_vel_pub = {}
         self.goal_reached_by={}
         for i in range(self.num_agents):
@@ -43,7 +43,7 @@ class Env(Node):
             Odometry, "/t4/odom", self.get_current_position4, 10)
         self.get_laser4 = self.create_subscription(
             LaserScan, "/t4/scan", self.get_lds4, 10)
-        self.test=False
+        self.test=True
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
         # self.env_goal_service = self.create_service(
@@ -58,7 +58,7 @@ class Env(Node):
             # "square":[[-1.3,-1.0],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
             # "line3":[[-0.5,-0.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
             # "test":[[-0.5,-0.5],[2.0,-1.6] ,[0.0,-3.2],[-2.3,2.3]],
-             "test2":[[0.0,1.6],[0.0,-1.8] ,[0.0,0.0],[-2.3,2.3]],# works good 1800
+             "test2":[[0.0,-1.5],[1.0,1.0] ,[-1.0,-0.5],[-1.5,1.0]],# works good 1800
 
         }
         
@@ -157,7 +157,7 @@ class Env(Node):
             self.goal_angles[3] -= 2*np.pi
         elif (self.goal_angles[3] < -np.pi):
             self.goal_angles[3] += 2*np.pi   
-        self.goal_angles2[3]=np.arctan2(self.positions[0][1]-self.goal_cords[0][1],self.positions[0][0]-self.goal_cords[0][0])    
+        self.goal_angles2[3]=np.arctan2(self.positions[3][1]-self.goal_cords[3][1],self.positions[3][0]-self.goal_cords[3][0])    
   
     def get_lds(self, msg):
  
@@ -167,6 +167,7 @@ class Env(Node):
         if (self.min_ldss_dist[0] == np.Inf):
             self.min_ldss_dist[0] = float(4)
         self.min_ldss_angle[0] = np.argmin(msg.ranges)
+        
 
        
         
@@ -297,7 +298,7 @@ class Env(Node):
         #yy=[2.0,0.5,1.5,0.0,-2.0]
         self.goal_re+=1  
         if(self.goal_freq==1):
-            a=["line",'line2','line3','trianlge']
+            a=["test2"]
            
             chosen=random.choice(a)
             self.goal_cords=self.shapes[chosen]
@@ -342,11 +343,11 @@ class Env(Node):
         return float(np.sqrt(np.square(self.init_positions[index][1]-self.goal_cords[index][1])+np.square(self.init_positions[index][0]-self.goal_cords[index][0])))
 
     def goal_reached(self, index):
-        distance = np.abs(self.get_distance_to_goal(index)-1)
+        distance = np.abs(self.get_distance_to_goal(index)-0.5)
    
 
         if (distance < 0.2 and np.abs(self.goal_angles2[index])<0.15):
-
+          
             return True
         return False
     def get_distance(self, p1, p2):
@@ -358,7 +359,7 @@ class Env(Node):
     def get_reward(self):
         rewards = [0 for _ in range(self.num_agents)]
         for index in range(self.num_agents):
-            distance = np.abs(self.get_distance_to_goal(index)-1)
+            distance = np.abs(self.get_distance_to_goal(index)-0.5)
             #rewards[index] += -(distance/self.get_abs_distance_to_goal(index))+1
             rewards[index]+=-distance
             rewards[index] += -np.abs((self.goal_angles2[index]))+0.1
@@ -385,7 +386,7 @@ class Env(Node):
             norm_angle2 = (self.goal_angles2[index]+3.14)/(3.14+3.14)
             norm_angular=self.current_angulars[index]+np.pi/(np.pi+np.pi)
             norm_velo=self.current_velocities[index]-0.2/(0.5-0.2)
-            distance = np.abs(self.get_distance_to_goal(index)/9.6873629022557-0.10322726732650331)
+            distance = np.abs(self.get_distance_to_goal(index)/9.6873629022557-0.051613633663251654)
             norm_lds = (self.min_ldss_dist[index]-0)/(3.5)
             # norm_lds_angle = self.min_ldss_angle[index]
            
@@ -437,7 +438,7 @@ class Env(Node):
         if (all(self.dones)):
             for index in range(self.num_agents):
                 self.stop_robots(index)
-           
+            
             self.call_reset_sim()
             if(all(self.succeses)):
                 self.goal_freq+=1

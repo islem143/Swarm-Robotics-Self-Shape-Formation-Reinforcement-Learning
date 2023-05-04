@@ -42,11 +42,11 @@ class ACNetwork():
         self.actor_optimizer = tf.keras.optimizers.Adam(learning_rate=self.actor_lr)
         self.buffer_counter=0
         self.buffer_capacity=100_0000
-        self.state_size = 7
-        self.state_buffer = np.zeros((self.buffer_capacity, 7))
+        self.state_size =6
+        self.state_buffer = np.zeros((self.buffer_capacity, 6))
         self.action_buffer = np.zeros((self.buffer_capacity,2))
         self.reward_buffer = np.zeros((self.buffer_capacity, 1))
-        self.next_state_buffer = np.zeros((self.buffer_capacity,7))
+        self.next_state_buffer = np.zeros((self.buffer_capacity,6))
         self.dones = np.zeros((self.buffer_capacity,1))
         if (model_load):
             self.ep = ep
@@ -66,10 +66,10 @@ class ACNetwork():
             
             # Instead of list of tuples as the exp.replay concept go
             # We use different np.arrays for each tuple element
-            self.state_buffer = np.zeros((self.buffer_capacity, 7))
+            self.state_buffer = np.zeros((self.buffer_capacity, 6))
             self.action_buffer = np.zeros((self.buffer_capacity,2))
             self.reward_buffer = np.zeros((self.buffer_capacity, 1))
-            self.next_state_buffer = np.zeros((self.buffer_capacity,7))
+            self.next_state_buffer = np.zeros((self.buffer_capacity,6))
             self.dones = np.zeros((self.buffer_capacity,1))
             self.ep = ep
             
@@ -97,26 +97,20 @@ class ACNetwork():
         last_init2 = tf.random_uniform_initializer(minval=-0.0003, maxval=0.0003)
 
 
-        inputs = keras.layers.Input(shape=(7,))
+        inputs = keras.layers.Input(shape=(6,))
         out = keras.layers.Dense(400, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(inputs)
-        #out=keras.layers.Dropout(0.5)(out)
+        out=keras.layers.Dropout(0.3)(out)
         out = keras.layers.BatchNormalization()(out)
         out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        #out=keras.layers.Dropout(0.5)(out)
+        out=keras.layers.Dropout(0.3)(out)
         out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(256, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-       # out=keras.layers.Dropout(0.2)(out)
+        out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        #out=keras.layers.Dropout(0.2)(out)
         out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(256, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
        # out=keras.layers.Dropout(0.2)(out)
         out = keras.layers.BatchNormalization()(out)
      
-        # out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        # out=keras.layers.Dropout(0.2)(out)
-        # out = keras.layers.BatchNormalization()(out)
-        # out = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        # out=keras.layers.Dropout(0.2)(out)
-        # out = keras.layers.BatchNormalization()(out)
         outputs = keras.layers.Dense(1, activation="tanh",kernel_initializer=last_init
         
 )(out)
@@ -131,7 +125,7 @@ class ACNetwork():
         return model
     
     def create_critic_model(self):
-        state_input = keras.layers.Input(shape=(7))
+        state_input = keras.layers.Input(shape=(6))
         state_out = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_input)
         #state_out = keras.layers.BatchNormalization()(state_out)
         # state_out = keras.layers.Dense(32, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_out)

@@ -75,12 +75,12 @@ class Dqn(Node):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
-        self.ep =0 #1800 works well and using 2 2 3
+        self.ep =850 #1800 works well and using 2 2 3
         self.test=False
-        self.agents = [ACNetwork("robot-1",False, self.ep), 
-                      ACNetwork("robot-2",False, self.ep),
-                       ACNetwork("robot-3",False, self.ep),
-                      # ACNetwork("robot-4",True, self.ep)
+        self.agents = [ACNetwork("robot-1",True, self.ep),  #850 works great 
+                      ACNetwork("robot-2",True, self.ep),
+                       ACNetwork("robot-3",True, self.ep),
+                       #ACNetwork("robot-2",True, self.ep)
                       
                        ]
         self.num_agents=3
@@ -91,7 +91,7 @@ class Dqn(Node):
         self.episode_length = 10_000
         self.steps_per_episode = 700
         
-        self.episode_size = 3000
+        self.episode_size = 3500
 
         self.train_every=1
         self.done_counter={"0":0,"1":0,'2':0,'3':0}
@@ -140,7 +140,7 @@ class Dqn(Node):
                     
                     for i in range(self.num_agents):
                         self.current_states[i] = future.result(
-                        ).states[i*7:i*7+7]
+                        ).states[i*6:i*6+6]
                         
                 else:
                     self.get_logger().error(
@@ -182,6 +182,8 @@ class Dqn(Node):
                     else:
                         noise=0
                         noise2=0
+                        #noise = self.ou_noise()
+                        #noise2 = np.abs(self.ou_noise2())
                     state = tf.expand_dims(tf.convert_to_tensor(self.current_states[index]), 0)
                     result=agent.policy(state, noise,noise2)
                     actions[index*2] =float(result[0])
@@ -208,7 +210,7 @@ class Dqn(Node):
                                
                                 if(not self.dones[i]):
                                     self.next_states[i] = future.result(
-                                    ).states[i*7:i*7+7]
+                                    ).states[i*6:i*6+6]
                                     self.rewards[i] = future.result().rewards[i]
                                     self.returns[i] += self.rewards[i]
 
