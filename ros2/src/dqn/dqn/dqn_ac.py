@@ -75,15 +75,15 @@ class Dqn(Node):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
-        self.ep =850 #1800 works well and using 2 2 3
+        self.ep =100 #1800 works well and using 2 2 3
         self.test=False
         self.agents = [ACNetwork("robot-1",True, self.ep),  #850 works great 
-                      ACNetwork("robot-2",True, self.ep),
-                       ACNetwork("robot-3",True, self.ep),
+                      #ACNetwork("robot-2",True, self.ep),
+                       #ACNetwork("robot-3",True, self.ep),
                        #ACNetwork("robot-2",True, self.ep)
                       
                        ]
-        self.num_agents=3
+        self.num_agents=1
    
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
@@ -140,7 +140,7 @@ class Dqn(Node):
                     
                     for i in range(self.num_agents):
                         self.current_states[i] = future.result(
-                        ).states[i*6:i*6+6]
+                        ).states[i*24:i*24+24]
                         
                 else:
                     self.get_logger().error(
@@ -210,7 +210,7 @@ class Dqn(Node):
                                
                                 if(not self.dones[i]):
                                     self.next_states[i] = future.result(
-                                    ).states[i*6:i*6+6]
+                                    ).states[i*24:i*24+24]
                                     self.rewards[i] = future.result().rewards[i]
                                     self.returns[i] += self.rewards[i]
 

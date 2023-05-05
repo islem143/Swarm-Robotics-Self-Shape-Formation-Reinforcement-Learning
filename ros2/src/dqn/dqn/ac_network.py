@@ -43,10 +43,10 @@ class ACNetwork():
         self.buffer_counter=0
         self.buffer_capacity=100_0000
         self.state_size =6
-        self.state_buffer = np.zeros((self.buffer_capacity, 6))
+        self.state_buffer = np.zeros((self.buffer_capacity, 24))
         self.action_buffer = np.zeros((self.buffer_capacity,2))
         self.reward_buffer = np.zeros((self.buffer_capacity, 1))
-        self.next_state_buffer = np.zeros((self.buffer_capacity,6))
+        self.next_state_buffer = np.zeros((self.buffer_capacity,24))
         self.dones = np.zeros((self.buffer_capacity,1))
         if (model_load):
             self.ep = ep
@@ -66,10 +66,10 @@ class ACNetwork():
             
             # Instead of list of tuples as the exp.replay concept go
             # We use different np.arrays for each tuple element
-            self.state_buffer = np.zeros((self.buffer_capacity, 6))
+            self.state_buffer = np.zeros((self.buffer_capacity, 24))
             self.action_buffer = np.zeros((self.buffer_capacity,2))
             self.reward_buffer = np.zeros((self.buffer_capacity, 1))
-            self.next_state_buffer = np.zeros((self.buffer_capacity,6))
+            self.next_state_buffer = np.zeros((self.buffer_capacity,24))
             self.dones = np.zeros((self.buffer_capacity,1))
             self.ep = ep
             
@@ -97,17 +97,17 @@ class ACNetwork():
         last_init2 = tf.random_uniform_initializer(minval=-0.0003, maxval=0.0003)
 
 
-        inputs = keras.layers.Input(shape=(6,))
+        inputs = keras.layers.Input(shape=(24,))
         out = keras.layers.Dense(400, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(inputs)
         out=keras.layers.Dropout(0.3)(out)
         out = keras.layers.BatchNormalization()(out)
         out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
         out=keras.layers.Dropout(0.3)(out)
         out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        out = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
         #out=keras.layers.Dropout(0.2)(out)
         out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        out = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
        # out=keras.layers.Dropout(0.2)(out)
         out = keras.layers.BatchNormalization()(out)
      
@@ -125,10 +125,11 @@ class ACNetwork():
         return model
     
     def create_critic_model(self):
-        state_input = keras.layers.Input(shape=(6))
+        state_input = keras.layers.Input(shape=(24))
         state_out = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_input)
+        state_out=keras.layers.Dropout(0.2)(state_out)
         #state_out = keras.layers.BatchNormalization()(state_out)
-        # state_out = keras.layers.Dense(32, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_out)
+        state_out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_out)
         # state_out = keras.layers.BatchNormalization()(state_out)
 
             # Action as input
@@ -138,14 +139,14 @@ class ACNetwork():
             # Both are passed through seperate layer before concatenating
         concat = keras.layers.Concatenate()([state_out, action_out])
 
-        out = keras.layers.Dense(1024, kernel_regularizer=keras.regularizers.l2(0.01),activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(concat)
+        out = keras.layers.Dense(512, kernel_regularizer=keras.regularizers.l2(0.01),activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(concat)
         out=keras.layers.Dropout(0.2)(out)
        # out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(1024, activation="relu",kernel_regularizer=keras.regularizers.l2(0.01),kernel_initializer=keras.initializers.GlorotNormal())(out)
+        out = keras.layers.Dense(512, activation="relu",kernel_regularizer=keras.regularizers.l2(0.01),kernel_initializer=keras.initializers.GlorotNormal())(out)
         out=keras.layers.Dropout(0.2)(out)
         #out = keras.layers.BatchNormalization()(out)
-        #out= keras.layers.Dense(256, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        #out=keras.layers.Dropout(0.2)(out)
+        out= keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        out=keras.layers.Dropout(0.2)(out)
         #out = keras.layers.BatchNormalization()(out)
         # out = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
         # out=keras.layers.Dropout(0.2)(out)

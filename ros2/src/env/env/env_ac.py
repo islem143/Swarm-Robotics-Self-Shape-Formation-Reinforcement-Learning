@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents = 3
+        self.num_agents = 1
         self.cmd_vel_pub = {}
         self.goal_reached_by = {}
         for i in range(self.num_agents):
@@ -53,41 +53,30 @@ class Env(Node):
         self.shapes={
             "line":[[0.0,1.0],[0.0,2.0] ,[0.0,-1.0],[0.0,0.0]],
             "line2":[[1.0,0.0],[2.0,0.0] ,[-1.0,0.0],[-2.0,0.0]],
-            "trianlge":[[0.0,0.0],[0.0,1.2] ,[0.0,-1.2],[1.2,0.0]],
+            "trianlge":[[0.0,-1.0],[0.0,1.2] ,[0.0,-1.2],[1.2,0.0]],
             "trianlge2":[[0.0,1.5],[0.0,0.0] ,[0.0,-1.2],[1.5,0.0]],
-            "square":[[-1.2,-1.2],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
-            "line3":[[2.5,2.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
+            "square":[[-2.0,-2.0],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
+            #"line3":[[2.5,2.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
             #"test":[[1.5,1.5],[-1.5,-1.5] ,[1.5,-1.5],[-1.5,1.5]],
            
 
         }
-        #self.shapes = {
-       #     "line": [[0.0, 0.0], [0.0, 1.5], [0.0, -1.5]],
-       #     "line2": [[-2.0,1.5], [-2.0, 0.0], [-2.3, -1.5]],
-       #     "trianlge": [[1.5, 0.0], [0.0, 1.5], [0.0, -1.5]],
-        #"line3": [[-1.0, 0.0], [0.0, 1.5], [0.0, -1.5]],
-            # "square":[[-1.3,-1.0],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
-            # "line3":[[-0.5,-0.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
-            # "test":[[-0.5,-0.5],[2.0,-1.6] ,[0.0,-3.2],[-2.3,2.3]],
-            # works good 1800
-            #"test2": [[0.0, 0.0], [0.0, 0.0], [-1.0, 0.0], [-1.5, 1.0]],
+       
+        self.goal_cords = self.shapes["square"]
+        # self.shapes={
+        #     "line":[[0.0,1.0],[0.0,2.0] ,[0.0,-1.0],[0.0,0.0]],
+        #     "line2":[[1.0,0.0],[2.0,0.0] ,[-1.0,0.0],[-2.0,0.0]],
+        #     "trianlge":[[0.0,0.0],[0.0,1.2] ,[0.0,-1.2],[1.2,0.0]],
+        #     "trianlge2":[[0.0,1.5],[0.0,0.0] ,[0.0,-1.2],[1.5,0.0]],
+        #     "square":[[-1.2,-1.2],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
+        #     #"line3":[[2.5,2.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
+        #     #"test":[[1.5,1.5],[-1.5,-1.5] ,[1.5,-1.5],[-1.5,1.5]],
+           
 
-        #}
-        # self.test_shapes={
-        #     "horizantal line":[[0.0,0.0],[0.0,1.2],[0.0,-1.2]],
-        #     "vertical line":[[0.0,0.0],[1.2,0.0],[-1.2,0.0]],
-        #     "diagonal line":[[0.0,0.0],[1.2,1.2],[-1.2,-1.2]],
-
-        #     }
-
-        self.goal_cords = self.shapes["line"]
-        #self.goals = [[[0.0, 0.0]],[[1.0, 1.0]], [[-1.0, -1.0]],[[-1.5, -2.0]],[[-1.5, 2.0]]]
-        # self.current_angles=[0.0,np.pi,np.pi/2,np.pi/4,-np.pi/4,-np.pi/2]
-        # self.current_angle=self.current_angles[0]
-        #self.goal_cords = self.goals[0]
+        # }
 
         self.goal_freq = 0
-        self.goal_re = 15
+        self.goal_re = 0
         self.dones = [False for _ in range(self.num_agents)]
 
         self.steps = 0
@@ -104,6 +93,7 @@ class Env(Node):
         self.global_steps = 0
         self.current_angulars = [0.0 for _ in range(self.num_agents)]
         self.current_velocities = [0.0 for _ in range(self.num_agents)]
+        self.ldss=[[] for _ in range(self.num_agents)]
 
     def get_current_position(self, msg):
         self.positions[0] = [
@@ -178,26 +168,41 @@ class Env(Node):
             self.goal_angles[3] += 2*np.pi
       
     def get_lds(self, msg):
+        a=msg.ranges[0:10]
+        b=msg.ranges[-10:]
+        c=a+b
+        self.ldss[0]=c
+        for i in range(20):
+            if(self.ldss[0][i]==np.Inf):
+                self.ldss[0][i]=3.5
+            
+       
+        # self.min_ldss_dist[0] = np.min(msg.ranges)
 
-        self.min_ldss_dist[0] = np.min(msg.ranges)
-
-        if (self.min_ldss_dist[0] == np.Inf):
-            self.min_ldss_dist[0] = float(3.5)
-        self.min_ldss_angle[0] = np.argmin(msg.ranges)
-
+        # if (self.min_ldss_dist[0] == np.Inf):
+        #     self.min_ldss_dist[0] = float(3.5)
+        # self.min_ldss_angle[0] = np.argmin(msg.ranges)
+        #print(self.min_ldss_dist[0],self.min_ldss_angle[0])
     def get_lds2(self, msg):
 
-        self.min_ldss_dist[1] = np.min(msg.ranges)
-        if (self.min_ldss_dist[1] == np.Inf):
-            self.min_ldss_dist[1] = float(3.5)
-        self.min_ldss_angle[1] = np.argmin(msg.ranges)
+        a=msg.ranges[0:10]
+        b=msg.ranges[-10:]
+        c=a+b
+        self.ldss[1]=c
+        for i in range(20):
+            if(self.ldss[1][i]==np.Inf):
+                self.ldss[1][i]=3.5
+   
 
     def get_lds3(self, msg):
 
-        self.min_ldss_dist[2] = np.min(msg.ranges)
-        if (self.min_ldss_dist[2] == np.Inf):
-            self.min_ldss_dist[2] = float(3.5)
-        self.min_ldss_angle[2] = np.argmin(msg.ranges)
+        a=msg.ranges[0:10]
+        b=msg.ranges[-10:]
+        c=a+b
+        self.ldss[2]=c
+        for i in range(20):
+            if(self.ldss[2][i]==np.Inf):
+                self.ldss[2][i]=3.5
 
     def get_lds4(self, msg):
 
@@ -267,6 +272,7 @@ class Env(Node):
 
         #self.dones = [False for _ in range(self.num_agents)]
         actions = request.actions
+        
 
         for index in range(self.num_agents):
             self.current_angulars[index] = actions[index*2]
@@ -300,7 +306,7 @@ class Env(Node):
 
         self.goal_re+=1  
         if(self.goal_freq==1):
-            a=["line","line2","trianlge","trianlge2","square", "line3"]
+            a=["line","line2","trianlge","trianlge2","square"]
          
            
             chosen=random.choice(a)
@@ -316,7 +322,7 @@ class Env(Node):
 
     def crashs(self, index):
 
-        if (self.min_ldss_dist[index] < 0.13):
+        if (any(a<0.22 for a in self.ldss[index])):
 
             return True
         return False
@@ -345,7 +351,9 @@ class Env(Node):
             rewards[index] = -distance-angle_to_goal
       
 
-            if (self.min_ldss_dist[index] < 0.60):
+            #if (self.min_ldss_dist[index] < 0.60):
+             #   rewards[index] -= 10
+            if(any(a<0.40 for a in self.ldss[index])):
                 rewards[index] -= 10
 
             if self.succeses[index]:
@@ -382,8 +390,10 @@ class Env(Node):
             l.append(float(norm_angular))
             l.append(float(norm_velo))
             # l.append(float(self.angles[index]))
-            l.append(float(norm_lds))
-            l.append(float(self.min_ldss_angle[index]))
+            for a in self.ldss[index]:
+                  l.append(a)
+            #l.append(float(norm_lds))
+            #l.append(float(self.min_ldss_angle[index]))
             if (self.crashs(index)):
                 if (self.test):
                     self.dones = [True for _ in range(self.num_agents)]

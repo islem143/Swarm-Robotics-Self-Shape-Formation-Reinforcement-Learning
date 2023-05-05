@@ -25,7 +25,7 @@
 \onehalfspacing
 
 \usepackage{pdfpages}
-
+\usepackage{afterpage}
 
 \usepackage[acronym]{glossaries}
 \newacronym{ny}{NY}{New York}
@@ -364,7 +364,7 @@ Finnaly, in \cite{dong2020mobile},\cite{gong2022efficient} and \cite{quiroga2022
 \subsection{Introduction}
  In this section, we'll go into  detail about the objective that needs to be accomplished by our robots, the difficulties they must overcome, and then our suggested solution.
  
-\subsection{Goal defintion}:
+\subsection{Goal defintion}
 Our objective in this thesis is to make multi robots  form geometric patterns like lines, circles, squares, and triangles while avoiding collisions and moving toward their destination in a quick and efficient manner. 
 
 
@@ -374,15 +374,12 @@ Our objective in this thesis is to make multi robots  form geometric patterns li
 
 \subsubsection{Environement}
 
-We will describe our multi robot environemnt as an MDP where $S$ are the set of states that each robot will reacive. $A$ are the set of actions that it can take (left,right,towords ...). and $R$ are the set of Rewards that each robot will get during each episode.
-The  goal of each robot is to  maximize his return by reaching the goal target and avoiding collisons with the wall and other  robots.
-.
-We will use the DDPG alrorithm to controll the robots in a contius manner
+We will describe our multi robot environemnt as an MDP where $S$ are the set of states that each robot will reacive. $A$ are the set of actions that it can take , and $R$ are the set of rewards that each robot will get during each episode. The  goal of each robot is to  maximize his return by reaching the goal target and avoiding collisons with the wall and other  robots. We will use the DDPG alrorithm to controll the robots in a contious manner.
 
 
 
 
-For the environemnt, we will Consider a scenario in which there are n ($n >  2$) robots moving in a 2D environment. Assuming that every robot is aware of a central point that they must form shapes around or along it.
+For the environemnt, we will Consider a scenario in which there are n ($n >  2$) robots moving in a 2D environment. Each robot will try to reach his target position which is descibed by the homogeneous coordinates (x,y)  that is be set by the  central robot.
 
 
  
@@ -392,32 +389,55 @@ For the environemnt, we will Consider a scenario in which there are n ($n >  2$)
 \caption[formation]{formation}
 \end{figure}
 
-We'll utilize the polar coordinates (R,$\Phi$), where R and $\Phi$ are the radius and angle from the central point , respectively. After assigning each robot a goal position, we will convert it to homogeneous coordinates so  it may be reached  by them. The desired shapes will be formed by defining the distance and the angle  from the center of the formation and by using each robot id to generate unique goal for it .
 \pagebreak
 \subsubsection{Shape generation}
-
-In order to form the different shapes, each robot will have an $id=(1...n)$ 
-where n is the number of robots, and he will get assigned a goal based on it
-using the radious and the distance from the central point. So if the target shape is a triangle the target goals will be as follow:
-
-           $d_{i}=R$ and 
-           $\Phi_{i}=\Phi$
-
-where $d_{i}$ and  $\Phi_{i}$ are the distance and the angle from the central point respectively. So if they want to form triangles ,squares, or circles this will be their positions:
+In order to form the different shapes, The central or leader robot will first go to a point in the space and from it , he will inform  other robot with the desired shape to be formed by giving them their target position relative to his position by being at a certain distance and angle.
 
 
- 			$d_{i}=R$
 
-			$\Phi_{i}=2\Pi/id$
+\subsubsection{Shape formation Algorithm}
 
-For lines
 
-$d_{i}=R*id$
-$\Phi_{i}=0$
+\begin{algorithm}[H]
+\caption{Shape Formation Algorithm}
+\label{alg:ddpg}
+\begin{algorithmic}[1]
 
-and we can keep modifying the distance and angle for each robot to get any shape.
+\State Initialize $n=N$ number of robots.
+\State Initialize $c=0$ goal counter.
+\State Assign each robot an id starting from $id=1...N$
 
-And to simplify the job for the robot, we will transform the cordinates from polar to homogonous in order to calculate the distance between the robot and their target goal. 
+\State Set the central robot with $id=1$.
+\State The central robot  chooses a random postion and stay on it.
+
+\State The central robot broadcasts a message containing his position with the desired shape by using generaing a set of cooardinates that each robot must reach.
+\While{$c!=N$}
+\For{robot in robots}
+\State Take an action.
+\State Inform the central robot with his current postions every $t seconds$.
+\If{target position reached} 
+    \State Stop the robot and inform the central robot.
+    \State $c++$ 
+
+\EndIf 
+
+\EndFor
+
+\EndWhile
+
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Explanation}
+
+The first robot will choose a random position and place himself in it. Then he broadcast a message containing his position and the target positions to other robots in order to form the shape by using the distance and the angle.
+
+Once the message is received by other robots, each one of them will try to reach the target goal autonomously by avoiding collision with other robots.
+And once they reach their goal they will inform the central robot with their task completion.
+
+Finally, and if all robots are in place, the central robot will check  the state of the formation and declare the task  as complete if  the shape is formed correctly .
+
+
 
 
 
@@ -430,13 +450,13 @@ The state and reward function must be well designed in order to generate the des
 
 
 \subsubsection{State Representation}
-State  are the inputs to our neural network. They are the inputs for our neural network and  based on them, we can  calulate  the rewards that the robot will get when acting in the environement.
+The state of the robots will be  the inputs for our neural networks and  based on them, we can  calulate  the rewards that the robot will get when acting in the environement.
 
-In our implementation we have defined four kind  of state information, the distance to goal, angle to goal, the minimun detected object distance and it's angle for collision avoidance.
+In our implementation we have defined six kind  of state information, the distance to goal, angle to goal, angular velocity,linear velocity ,the minimun detected object distance and it's angle for collision avoidance.
 
 
 
-\pagebreak
+
 \begin{itemize}
 \item \textbf{The distance to goal}: 
 The first component in our state representation is the distance to goal, which will be calculated using the euclidean distance  between the robot and the goal .
@@ -454,25 +474,27 @@ The second component  is the angle  to goal. And to find it we need to calculate
 
 
 \item \textbf{The minimum detected distance}: 
-In order to detect other robots and avoid collision, we use an  LDS (we will talk about it later when we describe the robot equipment )  which gives us an array of 24 elements where each value is the minimum distance detected and each index is the angle of detection.
+In order to detect other robots and avoid collision, we use an  LDS   which gives us an array of elements where each value is the minimum distance detected and each index is the angle of detection.
 
 
 \item \textbf{The angle of detection}: 
 It is is the angle of the detected object relative to the robot lds.
 
+\item \textbf{The angular veloctiy}: 
+It is the angular or rotational mouvement of the robot, and it's between 
+$ -\Pi $ and $\Pi$.
 
+\item \textbf{The linear veloctiy}: 
+it  is the linear speed of the robot . and we have set it between 0.2 and 0.5 m/s.
 
 \end{itemize}
 
-This is a common state representation used  to control a moving robot towards the goal target,as they have provide a very clear guidance for it. 
-\cite{quiroga2022position} \cite{gong2022efficient}
-
-In the next part, we will talk how we calculate the rewards of each robot to guide it in a efficent manner  towards it goal based on the state input  .
- 
+These information will help the robot to make decesion when expoloring the environemnt and each one of them has it's importance and purpuse.
 
 
 
-\pagebreak
+
+
 
 \subsection{Reward Function Design}
 
@@ -483,32 +505,31 @@ The reward function was designed to engourge and reward the robot  more, when he
 The design of the function is based on the state. We have used the distance , the  angle and the LDS to form the final function.
 
 We have   divided  the function into three parts:
-The first part contains with the distance reward. We will give the robot more reward when he aporoches the target goal and less when he doesn't. Formally
-it can be described:
+The first part is  the distance reward. We will give the robot more reward when he aporoches the target goal and less when he doesn't:
    
 \setcounter{equation}{0}
 
        \begin{equation} \label{dist_r}
-     R_{D}=-(D_{goal}-D_{init})+\alpha
+     R_{D}=-D_{goal}
    \end{equation}
-    Where $D_{goal}$  is the changing distance between the robot and the target goal,${D_{init}}$ is the initial distance between the robot and the target goal. and $\alpha$ is a parameter to adjust.
+ Where $D_{goal}$  is the changing distance between the robot and the target goal,
     
 The second part is to the angle of the robot to the goal. formally:
 
 
 
      \begin{equation} \label{angle_r}
-     R_{\theta}=-(\theta_{goal})+ + \beta
+     R_{\theta}=-\theta_{goal}
    \end{equation}
  
- where $\theta_{goal}$  ranges  between $-\pi$  and $\pi$. we added the $\beta$ which add some reward when the  angle aproches zero.
+ where $\theta_{goal}$  ranges  between $-\pi$  and $\pi$.
   
 And For avoiding collion between the robots and the wall, we have set two values. The first one is set  when the robot aproches the object which can lead to a collision. And the second one is when is actualy collide  with it.
 
 
 \begin{equation}  \label{obs_r}
   R_{c}=\begin{cases}
-    -10, & \text{if $mdd< 0.5m$}.\\
+    -10, & \text{if $mdd< 0.6m$}.\\
     -500 , & \text{ if $mdd <0.13m$ (a crash )}.\\
     0 & \text{ else}.
   \end{cases}
@@ -529,58 +550,12 @@ Finally, we can add \ref{dist_r}, \ref{angle_r} and \ref{obs_r} to form the fina
 \pagebreak
 
 
-\subsection{Formation Control Algorithm}
-
-
-\begin{algorithm}[H]
-\caption{Shape Formation Algorithm}
-\label{alg:ddpg}
-\begin{algorithmic}[1]
-
-\State Initialize $n=N$ number of robots.
-\State Initialize $c=0$ goal counter.
-\State Assign each robot an id starting from $id=1...N$
-
-\State Set the central robot with $id=1$.
-\State The central robot will choose a random postion and stay on it.
-
-\State The central broadcast a message containing his position with the desired shape by using the distance $d$ and angle $\theta$ from his position.
-
-\While{$c!=N$}
-\For{robot in robots}
-\State Reacive the message with the target goal.
-\State Reach the target goal.
-\State Inform the central robot with his current postions every $t seconds$.
-\If{target position reached} 
-    \State Stop the robot and inform the central robot.
-    \State $c++$ 
-
-\EndIf 
-
-\EndFor
-
-\EndWhile
-
-\end{algorithmic}
-\end{algorithm}
-
-\subsubsection{Explanation}
-
-The first robot will choose a random position and place himself in it. Then he broadcast a message containing his position and the target positions to other robots in order to form the shape by using the distance and the angle.
-
-Once the message received by other robots, each one of them will try to reach the target goal autonomously by avoiding collision with other robots.
-And once they reach their goal they will inform the central robot with their task completion.
-
-Finally, and if all robots are in place, the central robot will check  the state of the formation and declare the task  as complete if  the shape is formed correctly .
-
-
-
 
 \subsection{Formation and Deep Reinfocement Learing}
 \subsubsection{Introduction}
-Until now, we haven't talk about the role of DRL in this mission.
 
-Each robot will have it's own neural network which will guide him towards the goal positions by avoiding obstacles with other robots.
+
+Each robot will have it's own neural network which will guide him towards the goal positions by avoiding collision with other robots.
 
 As  mentioned earlier, we have used the DDPG algothim where each robot will have two neural networks, the critic and the actor.
 
@@ -591,11 +566,15 @@ help him in colision avoidance. If he doesn't detect any robots in front of him 
 
 
 For the critic, he gets as input both the state and the actions, and outputs the q-value which will be used by the actor to choose the suitable actions to take.
+
+The parameters of both networks will affect how the performance of the robots and the speed of convergence. we will describe in details the parameters that we have chosen to be good for achieving the task.
+
 \subsubsection{The learning flow}
+Here, we will describe the learning flow that the robots will go through to learn how to aproach their goals.
 
-It starts by the robot being in a given state, he then takes an action, reacive a reward and transition to a new state.
+It starts by the robot being in a given state, he then takes an action,  reacive sensor data from the sensors like lds and imu, then based on them we calculate the reward function and finaly the robot transition to a new state.
 
-This information will be stored in a replay buffer, and once it reach a certain number of experiences the training starts.
+This information (state,action,reward,next state) will be stored in a replay buffer to sample from it during the training of the models , and once he reaches a certain number of experiences the training starts.
 
 
 
@@ -604,9 +583,11 @@ If all robots reach their goal, the simulation is reset and a another formation 
 And if they collide the simulation is reset also and the robots tries again to form the desired shape.
 
 This learning flow will continue until the models converge and the robots form the shapes many times respectively.
+
+
  \begin{figure}[h]  
 \centering
-\includegraphics[scale=0.8]{simulation_flow}
+\includegraphics[scale=0.85]{simulation_flow}
 \caption[simulation flow]{simulation low}
 \end{figure}
 
@@ -616,16 +597,14 @@ This learning flow will continue until the models converge and the robots form t
 
 
 
-
-
-
- \begin{figure}[h]  
+ \begin{figure}[h!]  
 \centering
-\includegraphics[scale=0.9]{training_workflow3}
+\includegraphics[scale=1]{training_workflow3}
 \caption[training flow]{training flow}
 \end{figure}
 
 
+\afterpage{\clearpage}
 
 \newpage
 \pagebreak
@@ -701,7 +680,7 @@ Same as topics, we  must set the data type that the services work with.
 \includegraphics[scale=0.4]{ros}
 \caption[Ros]{Ros}
 \end{figure}
-\pagebreak
+
 
 Ros support  c,c++ or python as programming languages. in our project, we choosed python. 
 For the operating system, Ros support mainly linux systems, the support for windows was added until recently. We have used ubuntu for the existing support and large ros community .
@@ -775,20 +754,6 @@ It allows  to simulate  robotic systems in a virtual environment, providing a sa
 
 
 
-    
- \begin{figure}[h]  
-\centering
-\includegraphics[scale=0.65]{actor_net}
-\caption[actor network]{actor network}
-\end{figure}
-
- \begin{figure}[h]  
-\centering
-\includegraphics[scale=0.65]{critic_net}
-\caption[critic network]{critic network}
-\end{figure}
-
-
 
 
 
@@ -833,6 +798,13 @@ The loop will continue until the models converge and the shapes are been formed.
 
 This python class defines the models and the networks architecture, contains the replay memory and describes the training process.  
 
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.6]{training}
+\caption[training phase]{training}
+\end{figure}
+
+\pagebreak
 
 \subsection{Ros implemation: Test phase}
 In this phase, and after the training of the models is done, we will deploy  just the actor models on each robot (no need for the critic as no training is happening)  in order to him to take actions based on the input state.
@@ -844,7 +816,7 @@ We have defined one topic called the goals topic in which the central robot will
 
 
 
- \begin{figure}[h]  
+ \begin{figure}[h!]  
 \centering
 \includegraphics[scale=1]{deployment}
 \caption[deployment]{deployment}
@@ -860,7 +832,7 @@ We have defined one topic called the goals topic in which the central robot will
 
 
  
-
+\newpage
 
 
 
@@ -907,13 +879,22 @@ We have used the Adam optimizer for both networks with learning rates of 0.01 an
 
 
 
-
+    
+ \begin{figure}[t]  
+\centering
+\includegraphics[scale=0.60]{actor_net}
+\caption[actor network]{actor network}
+\end{figure}
 
  \begin{figure}[h]  
 \centering
-\includegraphics[scale=0.65]{training}
-\caption[training phase]{training}
+\includegraphics[scale=0.60]{critic_net}
+\caption[critic network]{critic network}
 \end{figure}
+
+\afterpage{\clearpage}
+
+
 
 
 
