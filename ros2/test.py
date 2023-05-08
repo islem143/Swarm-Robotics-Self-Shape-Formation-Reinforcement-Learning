@@ -1,11 +1,17 @@
-from tensorflow import keras
-import tensorflow as tf
-def loss_actor(y):
-    return -tf.math.reduce_mean(y)
-custom_objects = {"custom_loss_actor": loss_actor}
-keras.utils.get_custom_objects().update(custom_objects)
-# Load the model from the h5 file
-model = keras.models.load_model('my-model-850-actor.h5')
 
-# Print the summary of the model
-model.summary()
+import os 
+
+import pickle
+
+def load_pickle(path):
+        with open(path, 'rb') as file:
+            return pickle.load(file)
+        
+
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+path = os.path.join(dir_path, "my-model-650-action.obj")
+replay_memory = load_pickle(path)
+
+
+print(replay_memory[70500])

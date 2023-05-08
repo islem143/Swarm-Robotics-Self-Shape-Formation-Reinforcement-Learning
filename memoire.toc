@@ -1,57 +1,57 @@
 \babel@toc {english}{}\relax 
 \contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
 \contentsline {subsection}{\numberline {1.1}Introduction}{4}{subsection.1.1}%
-\contentsline {section}{\numberline {2}Swarm Robotics}{5}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Swarm Intelligence and Social animal inspiration}{6}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Swarm robotics and multi robot systems}{6}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Swarm robotics}{6}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}Swarm robotics properties}{7}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}Domain of application}{7}{subsection.2.5}%
-\contentsline {subsubsection}{\numberline {2.5.1}Tasks that cover a region}{8}{subsubsection.2.5.1}%
-\contentsline {subsubsection}{\numberline {2.5.2}Search and rescue missions}{8}{subsubsection.2.5.2}%
-\contentsline {subsubsection}{\numberline {2.5.3}Cleaning of oil speals}{8}{subsubsection.2.5.3}%
-\contentsline {subsubsection}{\numberline {2.5.4}Exploration}{8}{subsubsection.2.5.4}%
-\contentsline {subsubsection}{\numberline {2.5.5}Agriculture}{8}{subsubsection.2.5.5}%
+\contentsline {section}{\numberline {2}Swarm Robotics}{6}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Swarm Intelligence and Social animal inspiration}{7}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Swarm robotics and multi robot systems}{7}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Swarm robotics}{7}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Swarm robotics properties}{8}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Domain of application}{8}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Tasks that cover a region}{9}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {2.5.2}Search and rescue missions}{9}{subsubsection.2.5.2}%
+\contentsline {subsubsection}{\numberline {2.5.3}Cleaning of oil speals}{9}{subsubsection.2.5.3}%
+\contentsline {subsubsection}{\numberline {2.5.4}Exploration}{9}{subsubsection.2.5.4}%
+\contentsline {subsubsection}{\numberline {2.5.5}Agriculture}{9}{subsubsection.2.5.5}%
 \contentsline {subsection}{\numberline {2.6}Swarm robotics basic tasks and problems}{9}{subsection.2.6}%
 \contentsline {subsubsection}{\numberline {2.6.1}Aggregation}{9}{subsubsection.2.6.1}%
-\contentsline {subsubsection}{\numberline {2.6.2}Dispersion}{9}{subsubsection.2.6.2}%
-\contentsline {subsubsection}{\numberline {2.6.3}Pattern formation}{9}{subsubsection.2.6.3}%
-\contentsline {subsubsection}{\numberline {2.6.4}Cordinated movement}{9}{subsubsection.2.6.4}%
-\contentsline {subsubsection}{\numberline {2.6.5}Hole avoidance}{9}{subsubsection.2.6.5}%
-\contentsline {subsubsection}{\numberline {2.6.6}Foraging}{9}{subsubsection.2.6.6}%
-\contentsline {section}{\numberline {3}Deep reinforcement learning}{10}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Introduction}{11}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Machine learning}{11}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Reinforcement learning}{11}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Q learning}{12}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}Deep Q learning}{13}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Deep Deterministic policy gradient }{14}{subsection.3.6}%
-\contentsline {subsection}{\numberline {3.7}Related Work}{15}{subsection.3.7}%
-\contentsline {section}{\numberline {4}Problem formulation And Solution Conception}{17}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Introduction}{18}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Goal defintion}{18}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Problem Formulation}{18}{subsection.4.3}%
-\contentsline {subsubsection}{\numberline {4.3.1}Environement}{18}{subsubsection.4.3.1}%
-\contentsline {subsubsection}{\numberline {4.3.2}Shape generation}{19}{subsubsection.4.3.2}%
-\contentsline {subsubsection}{\numberline {4.3.3}Shape formation Algorithm}{19}{subsubsection.4.3.3}%
-\contentsline {subsubsection}{\numberline {4.3.4}Explanation}{19}{subsubsection.4.3.4}%
-\contentsline {subsection}{\numberline {4.4}State Representationn}{20}{subsection.4.4}%
-\contentsline {subsubsection}{\numberline {4.4.1}Introduction}{20}{subsubsection.4.4.1}%
-\contentsline {subsubsection}{\numberline {4.4.2}State Representation}{20}{subsubsection.4.4.2}%
-\contentsline {subsection}{\numberline {4.5}Reward Function Design}{21}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Formation and Deep Reinfocement Learing}{22}{subsection.4.6}%
-\contentsline {subsubsection}{\numberline {4.6.1}Introduction}{22}{subsubsection.4.6.1}%
-\contentsline {subsubsection}{\numberline {4.6.2}The learning flow}{22}{subsubsection.4.6.2}%
-\contentsline {section}{\numberline {5}Implementation}{25}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Introduction}{26}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Roboting Operating system}{26}{subsection.5.2}%
-\contentsline {subsubsection}{\numberline {5.2.1}Ros Basics}{26}{subsubsection.5.2.1}%
-\contentsline {subsection}{\numberline {5.3}TurtleBot}{27}{subsection.5.3}%
-\contentsline {subsubsection}{\numberline {5.3.1}TurtleBot3 components}{27}{subsubsection.5.3.1}%
-\contentsline {subsection}{\numberline {5.4}Simulation}{28}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Ros implemation}{29}{subsection.5.5}%
-\contentsline {subsection}{\numberline {5.6}Ros implemation: Training phase}{30}{subsection.5.6}%
-\contentsline {subsection}{\numberline {5.7}Ros implemation: Test phase}{31}{subsection.5.7}%
-\contentsline {subsection}{\numberline {5.8}Neural network implementation}{32}{subsection.5.8}%
-\contentsline {section}{\numberline {6}Result and analysis}{35}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Introdution}{36}{subsection.6.1}%
+\contentsline {subsubsection}{\numberline {2.6.2}Dispersion}{10}{subsubsection.2.6.2}%
+\contentsline {subsubsection}{\numberline {2.6.3}Pattern formation}{10}{subsubsection.2.6.3}%
+\contentsline {subsubsection}{\numberline {2.6.4}Cordinated movement}{10}{subsubsection.2.6.4}%
+\contentsline {subsubsection}{\numberline {2.6.5}Hole avoidance}{10}{subsubsection.2.6.5}%
+\contentsline {subsubsection}{\numberline {2.6.6}Foraging}{10}{subsubsection.2.6.6}%
+\contentsline {section}{\numberline {3}Deep reinforcement learning}{11}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Introduction}{12}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Machine learning}{12}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Reinforcement learning}{12}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Q learning}{13}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Deep Q learning}{14}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Deep Deterministic policy gradient }{15}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Related Work}{16}{subsection.3.7}%
+\contentsline {section}{\numberline {4}Problem formulation And Solution Conception}{18}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Introduction}{19}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Goal defintion}{19}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Problem Formulation}{19}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Environement}{19}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}Shape generation}{20}{subsubsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.3}Shape formation Algorithm}{20}{subsubsection.4.3.3}%
+\contentsline {subsubsection}{\numberline {4.3.4}Explanation}{20}{subsubsection.4.3.4}%
+\contentsline {subsection}{\numberline {4.4}State Representationn}{21}{subsection.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.1}Introduction}{21}{subsubsection.4.4.1}%
+\contentsline {subsubsection}{\numberline {4.4.2}State Representation}{21}{subsubsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.5}Reward Function Design}{22}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Formation and Deep Reinfocement Learing}{24}{subsection.4.6}%
+\contentsline {subsubsection}{\numberline {4.6.1}Introduction}{24}{subsubsection.4.6.1}%
+\contentsline {subsubsection}{\numberline {4.6.2}The learning flow}{24}{subsubsection.4.6.2}%
+\contentsline {section}{\numberline {5}Implementation}{27}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Introduction}{28}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Roboting Operating system}{28}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Ros Basics}{28}{subsubsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.3}TurtleBot}{29}{subsection.5.3}%
+\contentsline {subsubsection}{\numberline {5.3.1}TurtleBot3 components}{29}{subsubsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.4}Simulation}{30}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Ros implemation}{31}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Ros implemation: Training phase}{32}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Ros implemation: Test phase}{33}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.8}Neural network implementation}{34}{subsection.5.8}%
+\contentsline {section}{\numberline {6}Result and analysis}{38}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Introdution}{39}{subsection.6.1}%

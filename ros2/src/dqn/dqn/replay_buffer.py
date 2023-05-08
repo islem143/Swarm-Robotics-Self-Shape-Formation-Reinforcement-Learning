@@ -4,7 +4,7 @@ class ReplayBuffer():
     
 
     def __init__(self,state_size=4,num_agents=2,action_size=1) -> None:
-        self.buffer_capacity=500_000
+        self.buffer_capacity=100_000
         self.state_size=state_size
         self.num_agents=num_agents
         self.action_size=action_size
@@ -21,8 +21,8 @@ class ReplayBuffer():
 
     
     def add_record(self, states,next_states,rewards,dones,actor_states,actor_next_states,actor_actions):
-    
         
+      
         index = self.buffer_counter % self.buffer_capacity
         self.states[index]=states 
         self.next_states[index]=next_states
@@ -32,12 +32,11 @@ class ReplayBuffer():
 
 
         for i in range(self.num_agents):
-
-            self.actor_states[i][index]=np.array(actor_states[i])
-            self.actor_next_states[i][index]=np.array(actor_next_states[i])
+            
+            self.actor_states[i][index]=actor_states[i]
+            self.actor_next_states[i][index]=actor_next_states[i]
             self.actor_actions[i][index]=np.array(actor_actions[i*2:i*2+2])
-           
-                
+        
      
       
 

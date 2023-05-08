@@ -33,9 +33,9 @@ class Agent(Node):
             LaserScan, f"/t{self.id}/scan", self.get_lds, 10)
        
 
-        self.agent=ACNetwork(f"robot-{self.id}",True,1000)
-        if(self.id==4):
-            self.agent=ACNetwork(f"robot-1",True,1000)
+        self.agent=ACNetwork(f"robot-{self.id}",True,1750)
+        #if(self.id==4):
+            #self.agent=ACNetwork(f"robot-1",True,1000)
         self.position=[0.0,0.0]
         self.goal_position=[-1.0,-1.0]
         self.angle=0.0

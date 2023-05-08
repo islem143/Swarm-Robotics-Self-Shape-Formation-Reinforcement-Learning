@@ -38,18 +38,19 @@ class SuperController(Node):
 
     def __init__(self):
         super().__init__('dqn')
-        self.state_size = 7
+        self.state_size = 24
         self.action_size = 2
         self.num_agents =1
         self.test=False
         self.episode_length = 3000
         self.ep = 0
-        self.super_agent = SuperAgent(num_agents=self.num_agents)
+        self.super_agent = SuperAgent(num_agents=self.num_agents,state_size=self.state_size,action_size=self.action_size)
         self.current_actor_states = np.zeros(
             (self.num_agents, self.state_size), dtype=np.float32)
         self.next_actor_states = np.zeros(
             (self.num_agents, self.state_size), dtype=np.float32)
-        self.actor_actions = np.zeros((self.num_agents,), dtype=np.float32)
+        # to review
+        self.actor_actions = np.zeros((self.num_agents*self.action_size), dtype=np.float32)
         self.dones = np.zeros((self.num_agents,), dtype=np.float32)
         self.rewards = np.zeros((self.num_agents,), dtype=np.float32)
         self.states = np.zeros(
@@ -57,11 +58,10 @@ class SuperController(Node):
 
         self.next_states = np.zeros(
             (self.num_agents*self.state_size,), dtype=np.float32)
-        self.actions = np.zeros(
-            (self.num_agents*self.action_size,), dtype=np.float32)
+      
         self.std_dev=0.20
         self.std_dev2=0.05
-        self.done_counter={"0":0,"1":0,'2':0,'3':0}
+        self.done_counter={"0":0,"1":0,"2":0,"3":0}
         self.ou_noise2 = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev2) * np.ones(1))
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         self.super_agent.set_noise(self.ou_noise)
@@ -109,7 +109,7 @@ class SuperController(Node):
 
                 self.req = Mac.Request()
                 self.req.init = False
-              
+           
                 self.actor_actions=self.super_agent.get_actions(self.current_actor_states)
                
                
@@ -129,7 +129,9 @@ class SuperController(Node):
                                 if(not self.dones[i]):    
                                     self.next_actor_states[i] = future.result(
                                     ).states[i*self.state_size:i*self.state_size+self.state_size]
+                                    
                                     self.rewards[i] = future.result().rewards[i]
+                                    
                                     self.returns[i] += self.rewards[i]
 
                                 self.dones[i] = future.result().dones[i]
@@ -144,9 +146,11 @@ class SuperController(Node):
                         break
                
                 if (not self.test):
+                  
                     states=np.concatenate(self.current_actor_states)
+             
                     next_states=np.concatenate(self.next_actor_states)
-                
+                 
                     self.super_agent.replay_buffer.add_record(states,next_states,self.rewards,self.dones,self.current_actor_states,self.next_actor_states,self.actor_actions)
                     
                     self.super_agent.train(self.done_counter)
@@ -164,9 +168,9 @@ class SuperController(Node):
                     with summary_writer.as_default():
                      tf.summary.scalar(
                         f'rewards{index+1}', self.returns[index], step=self.ep)
-                if (self.ep % self.save_every == 0 and self.ep != 0) and not self.test:
+                #if (self.ep % self.save_every == 0 and self.ep != 0) and not self.test:
 
-                    agent.save_data(self.ep, self.rewards[index])
+                   # agent.save_data(self.ep, self.rewards[index])
            
                 
 

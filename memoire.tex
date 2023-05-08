@@ -24,6 +24,9 @@
 \graphicspath{{images/}}
 \onehalfspacing
 
+
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{pdfpages}
 \usepackage{afterpage}
 
@@ -54,11 +57,34 @@ These days, mobile robots have taken place in many fields like industry automati
  
 Swarm robotics is relatively a new research topic that has gained more attraction in the last few years. It is about  studying how a large number of simple robots (a swarm) can collaborate and work together to achieve predefined objectives and tasks that are often difficult or impossible to do for a single robot.\cite{bayindir2016review}.
 
-One of the main challgenes that swarm robotics researchs face, is pattern formation. Where the agents (robots) try to form diffrent gemoetric shapes like squeres,trinagles and circles in order to perform a specific task.
+This  feild has mainly focus  on a set of probelms that normaly a swarm of robots face. The mais porblems are: aggregation, dispersion, pattern formation, cordinated mouvement, hole avoidance, foraging.
 
-We can solve this problem using two different aproches. The first one is a Centrelized method where there exist a centel unit  which controles the swarm and give global state access. However,  implementing this apporch  can be coslty and less robust to faillures. The second aproch is a dicentrilzed one, where each robot have uses local commucintion and have access only to his local state.\cite{bayindir2007review}
+The problem that will be studied in this thesis is  the pattern formation. Where the agents (robots) try to form diffrent gemoetric shapes like squeres,trinagles and circles in order to perform a specific task like lifting somthing, encirling some target or for rescue operations.
 
-Our primary objective in this thesis is to implement an RL algorithm in a system made up of a group of robots in order to form some specific geometric patterns using a decentralized  method. Each robot will only have access to its local state and will interact and communicate with its neighbors in order to form the desired shapes.
+
+We can solve this problem using two different aproches. The first one is a completely centrelized method where there exist a centel unit  which controles the swarm in all their actions  and have global state access. However, this can be easy and much simpler but suffer but it is less robust   if the central unit fails. The second aproch is a dicentrilzed one, where each robot have uses local commucintion and have access only to his local state which is much scalable and robust but is more complex and require more time.\cite{bayindir2007review}
+
+Our primary objective in this thesis is to implement an RL algorithm in a system made up of a group of robots  in order to form some specific geometric patterns. we will use not use a complety centrlized method where each robot will move autonomusly but a central robot is needed to monitor and cordinate the others. We will be using deep reinforcement learning algorithms to train the agents to achive their task.
+
+
+This thesis is organised as following:
+In the first chapter we will define swarm robotics, it's domains, application and common probelms it's try to solve.
+
+In the second chapter, we will define reinfocement learning, the most used algorithms in this domain and how they work, finnaly how diffrent papers have appilied these algothims in learing navigating autonomous robots.
+
+\pagebreak
+The thrid chapter will discuss the problem formulation in reinforcement learing and how we have designed  our solution.
+
+The fourch chapter will be about the implemation of our solution in the Ros framwork and the gazebo simulator, and how we set networking between the robots.
+
+Finnaly, the fifth chapter is the   result analysis of our experiments and cite the goals we have achived and the problems that consists.
+
+
+   
+
+
+  
+ 
  
 
 
@@ -123,11 +149,10 @@ The main characters of swarm robotis are:
 \subsection{Swarm robotics properties}
 Swarm robotics have some properties that describe the system's current condition. Bellow are some of these properties:
 
-\textbf{Robustness}: the ability of the swarm to  still function even with the loss of some members of the group or the faillure of some parts of the system.\\
-\textbf{Scalability}: The ability of the system to perform well on smaller or larger group sizes without impacting the performance of the swarm.
+\textbf{Robustness}: The capacity of the swarm to continue operating even if certain group members die or some system components fail.\\
+\textbf{Scalability}: The system's capacity to function successfully in both small and big group sizes without affecting the swarm's performance.
 
-\textbf{Flexibility} It is the capability of the swarm to adapt and manage the new changes that occur in the environment 
-
+\textbf{Flexibility} The swarm's capacity to govern and adapt to environmental changes.
 \textbf{Autonomus}: Implys that there is no central authority controlling the behavior of the swarm and each individual is independent of the others.
 
 \textbf{Local communication} The communication among swarm members is local since they don't have access to  the swarm's overall state.
@@ -137,38 +162,63 @@ Swarm robotics have some properties that describe the system's current condition
 
 \subsection{Domain of application}
 In this section, we will list some of the significant fields domains where swarm robotics fits in, and can impact in solving the domain problem.\newpage
-\subsubsection{Tasks that cover a region}:
-Because of the widespread sensing capabilities that the swarm has, swarm robotics is most suited for tackling problems that cover an area of the space, such monitoring the environment of a lake or  surveillance of a specific area.\cite{csahin2005swarm}\cite{olaronke2020systematic}
+\subsubsection{Tasks that cover a region}
+Swarm robots is most suited for handling issues that encompass an area of the space because of the swarm's extensive sensing capabilities, such as monitoring the environment of a lake or surveillance of a particular region.\cite{csahin2005swarm}\cite{olaronke2020systematic}
 
 \subsubsection{Search and rescue missions}
-In different types of accident or disasters that happen like earthquakes where the human intervention is difficult, swarm robots can be deployed for these type of missions. examples of such robots are: polyobot, swarm bot and M-TRAN.
+Swarm robots can be used for these sorts of tasks in various accidents or catastrophes, such as earthquakes, when human involvement is challenging. These robots include the M-TRAN, Polyobot, and Swarm Bot.
 
 \subsubsection{Cleaning of oil speals}
-A swarm of robots can reduce the cost and time in such incidents. an exemple of robots that were deployed to such tasks is: Seaswarm, which was developed by the senseable group at MIT.
+Such problems may be handled more quickly and affordably with a swarm of robots. Seaswarm, a robot created by the senseable team at MIT, is an example of one used for such activities.
 
 \subsubsection{Exploration}
 To investigate Mars, swarm robots like Marsbees have been created. the same holds true for the CoCoRo swarm, which was employed for in-depth underwater investigation.
 \subsubsection{Agriculture}
-As they can be used to improve the agriculture and monitor the status of crops. 
-\pagebreak
+As they are  used to enhance agriculture and keep an eye on the health of crops. 
+
 \subsection{Swarm robotics basic tasks and problems}
-SR problems can be broken down into fundamental tasks that the swarm frequently carries out in an effort to accomplish its objective.
-this tasks are: aggregation,d ispersion,pattern formation, coordinated
-movement, hole avoidance and foraging\cite{bayindir2007review}\cite{navarro2013introduction}.
+SR tasks may be reduced to simple operations that the swarm often performs in an effort to achieve its goal.
+Aggregation, dispersion, pattern development, coordinated movement, hole avoidance, and foraging are among these activities.\cite{bayindir2007review}\cite{navarro2013introduction}.
 
 \subsubsection{Aggregation}
-Aggregation of the robots is performed in order to accomplish some form or to exchange information. This problem can be easy in a centralized system, but  difficult in a decentralized one.
+The robots are combined in order to complete a task or share information. In a centralized system, this task could be simple, but in a decentralized one, it might be challenging.
 \subsubsection{Dispersion}
-For exploration purposes, sometimes, the swarm must cover a wide range of area without losing the connection between the members, in order to expand the group sensing capabilities. 
-
+Sometimes, in order to increase the group sensing capacities during exploration, the swarm must span a large region without losing contact with its members. 
 \subsubsection{Pattern formation}
-Sometimes, the swarm must form some specific patterns like circles,squares or  lines in order to lift some objects or traverse some ways corridors.
+In order to carry things or navigate hallways, the swarm must sometimes create precise patterns such as circles, squares, or lines.
 \subsubsection{Cordinated movement}
 It is making an effort to coordinate the group movements by maintaining the established pattern between the robots.
 \subsubsection{Hole avoidance}
 As suggested by the name, the group makes an effort to avoid stepping into holes.
 \subsubsection{Foraging}
 The swarm aims to locate objects, pick them up, and position them where needed.
+
+
+
+
+
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{swarmfish}
+  \caption{fish swarm}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{swarmbirds }
+  \caption{birds swarm  }
+  \label{fig:sub2}
+\end{subfigure}
+\caption{swarm animals}
+\label{fig:test}
+\end{figure}
+\textbf{ref}:https://www.nationalgeographic.com/]]
+https://www.researchgate.net/
+
+
+
 
 \newpage
 \pagebreak
@@ -293,6 +343,11 @@ Like in Q-learning and to enable better exploration for the agent, a noise
 is sampled from a process $\eta$  then added to the output of the actor network. It is common to use the Ornstein-Uhlenbeck process to generate temporally correlated values.\cite{lillicrap2015continuous}
 
 
+ \begin{figure}[h] 
+\centering
+\includegraphics[scale=0.45]{ddpg}
+\caption[ddpg]{ddpg \textbf{ref}:https://www.researchgate.net/]]}
+\end{figure}
 
 
 
@@ -320,6 +375,9 @@ is sampled from a process $\eta$  then added to the output of the actor network.
 \EndFor
 \end{algorithmic}
 \end{algorithm}
+
+
+
 
 \subsection{Related Work}
 In this section, we present some of the work that have applied RL algorithms in  training agents and robotics systems.
@@ -472,13 +530,31 @@ The second component  is the angle  to goal. And to find it we need to calculate
 
 \[ \theta(P,G)=yaw-arctan(P/G)  \] 
 
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.8]{equations}
+\caption[equations]{equations}
+\end{figure}
 
-\item \textbf{The minimum detected distance}: 
+
+\item \textbf{The lds  mesurments}: 
 In order to detect other robots and avoid collision, we use an  LDS   which gives us an array of elements where each value is the minimum distance detected and each index is the angle of detection.
 
+The orinal lds take 360deg mesurement all around the robot with a max length of 3.5 meters. But in our problem we don't need such precision as we have constased that  just 40 samples are enough because there are no thin or small object that require such precision. In addition, we also take  just 20 of them  which will presnt the front of the robot.
 
-\item \textbf{The angle of detection}: 
-It is is the angle of the detected object relative to the robot lds.
+
+
+
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.85]{lds3}
+\caption[lds mesurement]{lds mesurements}
+\end{figure}
+
+
+
+
+
 
 \item \textbf{The angular veloctiy}: 
 It is the angular or rotational mouvement of the robot, and it's between 
@@ -489,12 +565,11 @@ it  is the linear speed of the robot . and we have set it between 0.2 and 0.5 m/
 
 \end{itemize}
 
-These information will help the robot to make decesion when expoloring the environemnt and each one of them has it's importance and purpuse.
+So, our final state representation is an array of :
 
+$state=[distance,angle,v_a,v_l,lds]$
 
-
-
-
+where lds is a 20 element array.
 
 \subsection{Reward Function Design}
 
@@ -547,10 +622,6 @@ Finally, we can add \ref{dist_r}, \ref{angle_r} and \ref{obs_r} to form the fina
 
 
 
-\pagebreak
-
-
-
 \subsection{Formation and Deep Reinfocement Learing}
 \subsubsection{Introduction}
 
@@ -583,6 +654,9 @@ If all robots reach their goal, the simulation is reset and a another formation 
 And if they collide the simulation is reset also and the robots tries again to form the desired shape.
 
 This learning flow will continue until the models converge and the robots form the shapes many times respectively.
+
+To provide the robots a notion of what it's like to attain a goal in terms of actions to do and states to be in, and to facilitate exploration, we assign relatively basic objectives to be completed in the beginning, and after our robots are familiar with achieving their destinations, we raise the challenge and randomize the target goals.
+
 
 
  \begin{figure}[h]  
@@ -788,15 +862,17 @@ This node have one service, subscribe to  two topics and publish to one. The fir
 
 The second topic he subscribes to is the positions topic, which will get the x,y coordinates of the robots and also their orientation. For the topic, the node will publish to it instead of subscribing. he will publish the actions that the robot must take based on the output of the neural network.
 
-The service that this node offer for the main node is  a function that will take that actions that the robots should take , get the states,calculates the rewards and then passing back the response to the main node. 
+The service that this node offer for the main node is  a function that will take that actions that the robots should take , get the states, calculates the rewards and then passing back the response to the main node. 
 
 This node is also responsible for calculating the rewards based on the state.
 
-We called the second node the main node. This node is responsible of starting the main training loop,getting actions from the models passing them to the environment node in order to reactive the next states and the rewards, he then store these samples in the replay memory and finally train the models.
+For the second node which is called  the main node, he is responsible of starting the main training loop, getting actions from the models passing them to the environment node in order to reacive the next states and the rewards, he then store these samples in the replay memory and finally train the models.
 The loop will continue until the models converge and the shapes are been formed. This node will connect to a python class which contains our models.
 
 
 This python class defines the models and the networks architecture, contains the replay memory and describes the training process.  
+
+
 
  \begin{figure}[h]  
 \centering
@@ -809,16 +885,16 @@ This python class defines the models and the networks architecture, contains the
 \subsection{Ros implemation: Test phase}
 In this phase, and after the training of the models is done, we will deploy  just the actor models on each robot (no need for the critic as no training is happening)  in order to him to take actions based on the input state.
 
-We have set a node for each robot, therefore the communication will take place  between this nodes by defining custom topics. Each node will get input state and pass them to the actor network to predict the actions to take.
+We have set a node for each robot, therefore the communication will take place  between these nodes by defining custom topics. Each node will get input state and pass them to the actor model to predict the actions to take.
 
-We have defined one topic called the goals topic in which the central robot will publish the goal positions and the others subscribe to it. We have also defined a service in the central robot that the others 
+We have defined one topic called the goals topic in which the central robot  publish the goals positions and  others subscribe to it. We have also defined a service in the central robot that  others will send request to  either  inform him about their current position  or if they have reached the target goal in order for the central robot to monitor the state of the formation.
 
 
 
 
  \begin{figure}[h!]  
 \centering
-\includegraphics[scale=1]{deployment}
+\includegraphics[scale=1.2]{deployment}
 \caption[deployment]{deployment}
 \end{figure}
 
@@ -842,17 +918,40 @@ Designing the architecture of the neural networks and choosing the right paramet
 
 There is a high  number of  parameters to choose from,  hidden layers, number of units, activation functions, weight initlization, regularization ... and each one of them has it's role, and there is no clear rule for the right one to choose, so trial and experimenting is the way to go.
 
-In this section, we will discuss what parameters we chooses and explain the reason behind them.
+In this section, we will discuss what parameters we choose and explain the reason behind them.
 
-For the actor network, we set four hidden layers where each layer has 400, 300, 128 and 64 units respectively. Each layer is using the relu activation function and was initialized with Xavier Glorot's expect for the output layers. where they were initialized using a uniform distribution. The output layers have two units, one for the angular velocity and one for the linear velocity. They was initalized with the tanh activation function which give an output bounded beteween -1 and 1. We choose the angular velocity of  the robot to be between $-\Pi$ and $\Pi$ so we multipiled the result of the output layer to get the desired range. Same goes for the linear velocity we have maped the range from -1 and 1 to 0.2 to 0.5. 
+The first thing we have done is normalizing the input data, to achievce better convergne and stability of our models.
+We have nomilized our data to be between 0 and 1 for all the inputs:
+\pagebreak
+Distance normalization:
+
+  \begin{equation} \label{dist_norm}
+     norm_d=distance/dist_{diagonale} 
+   \end{equation}
+   
+where $dist_{diagonale}$ is the diagonal distance of the environemnt which is the maximun distance.
+
+Angular velocity and angle to goal normalization:
+\begin{equation} \label{angle_norm}
+     norm_\theta=angle+\Pi/2\Pi
+   \end{equation}
+
+And finnaly the lds mesurements:
+
+ \begin{equation} \label{angle_norm}
+     norm_{lds}=lds/3.5 
+   \end{equation}
+  Where 3.5m is the max length of the lidar sensor.
+   
+For the actor network, we set four hidden layers where each layer has 400, 300, 128 and 128 units respectively with dropout of 0.3 in the first two layers. Each layer is using the relu activation function and was initialized with Xavier Glorot's expect for the output layers, where they were initialized using a uniform distribution. The output layers have two units, one for the angular velocity and one for the linear velocity. They was initalized with the tanh activation function which gives an output bounded beteween -1 and 1. We choose the angular velocity of  the robot to be between $-\Pi$ and $\Pi$ so we multipiled the result of the output layer to get the desired range. Same goes for the linear velocity we have maped the range from -1 and 1 to 0.2 to 0.5. 
 
 And to enable better exploration, we have added the OuNoise to the output of the actor network when taking actions which will sample a range of values from a uniform distribution.
 
 
-We have also used batch normalization layers \cite{ioffe2015batch} which a  technique for normalizing the output for each layers that have an effect of stabilizing the training process and making it converge faster especially if the initial distribution of the input data is varying. It also acts as regularize so no need for dropout layers.
+We have also used batch normalization layers \cite{ioffe2015batch} which a  technique for normalizing the output for each layers that have an effect of stabilizing the training process and making it converge faster especially if the initial distribution of the input data is varying.
 
 As For the critic, he gets as input  both the state and actions and outputs the q-value. Firstly, we pass the states and actions into seperate layers 
-with number of units of 512 and 256 respectevely. Then, we concatinate them into one layer and add two other hidden layers with 256 number of units with a dropout of 0.2.
+with number of units of 512 and 256 respectevely. Then, we concatinate them into one layer and add two other hidden layers with 1024 number of units with a dropout of 0.2 and l2 regularization of 0.01.
 
 For loss calculation, we will be using target networks like described in the algortihms and updating them using soft update with parameters tau of 0.01
 
@@ -872,7 +971,7 @@ For the actor, it will be the mean predicted value of the critic network multipl
      aloss= -mean(critic(states,actions))
    \end{equation}
    
-We have used the Adam optimizer for both networks with learning rates of 0.01 and 0.001 for the critic and actor respectively. We set the batch size to 128 and the minimum size of the replay buffer before training start to 2500 samples.
+We have used the Adam optimizer for both networks with learning rates of 0.01 and 0.001 for the critic and actor respectively. We set the batch size to 128 and the minimum size of the replay buffer before training start to 3500 samples.
 
 
 
@@ -921,27 +1020,23 @@ In this last section, we will describe the results that we get from our experime
 
 \begin{figure}[h]  
 
-\includegraphics[scale=0.40]{robot1}
+\includegraphics[scale=0.35]{robot1}
 \caption[robot1]{robot1}
 \end{figure}
 
 \begin{figure}[h]  
 
-\includegraphics[scale=0.40]{robot2}
+\includegraphics[scale=0.35]{robot2}
 \caption[robot2]{robot2}
 \end{figure}
 
 \begin{figure}[h]  
 
-\includegraphics[scale=0.40]{robot3}
+\includegraphics[scale=0.35]{robot3}
 \caption[robot3]{robot3}
 \end{figure}
 
-\begin{figure}[h]  
 
-\includegraphics[scale=0.40]{robot4}
-\caption[robot4]{robot4}
-\end{figure}
 
  
 
