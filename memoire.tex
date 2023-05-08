@@ -840,9 +840,9 @@ It allows  to simulate  robotic systems in a virtual environment, providing a sa
 \subsection{Ros implemation}
 In this section, we will describe how we have implemented our solution in ros, how we defined the different nodes, topics and services that makes up the system.
 
-The work is divided into phases. The first phase is the training and test phase and the second one is the deployment phase.
+The work is divided in two phases. The first is the training and test phase  and   the second  is the deployment phase.
 
-In the first phase we implemented the solution in ros in a way to facilitate the training process that will require a lot of modification of code and simulation replay. In this phase   we haven't set the networking between the robot as we assume that each robot knows his target positions and we assume that we can access the global state.  as this is will l....
+In the first phase we implemented the solution in ros in a way to facilitate the training process that will require a lot of modification of code and simulation replay. In this phase, we haven't set the networking between the robot as we assume that each robot knows his target position and we assume that we can access the global state.
 
 
 For the second phase, and after the models are trained we will deploy them in each robot and each robot will choose his actions based on his model, and also will communicate with the central robot for coordination.
@@ -857,20 +857,25 @@ In the training phase, we have defined two nodes and one python class for the ne
 
 The first node is the environment node. This node is responsible for getting sensor data, positions and command robots to move in the simulation.
 
-This node have one service, subscribe to  two topics and publish to one. The first topic he subscribe to is the Laser topic which gets the laser measurements of each robot every step. the data returned   by this topic is an array where each element of it contains the distance of the detected object and the index of this element is the angle of detection.
+This node have one service, subscribe to  two topics and publish to one. The first topic he subscribe to is the Laser topic which gets the laser measurements of each robot every step. The data returned   by this topic is an array where each element of it contains the distance of the detected object and the index of this element is the angle of detection.
 
 
-The second topic he subscribes to is the positions topic, which will get the x,y coordinates of the robots and also their orientation. For the topic, the node will publish to it instead of subscribing. he will publish the actions that the robot must take based on the output of the neural network.
+The second topic he subscribes to is the Odometry topic, which will get the x,y coordinates of the robots and also their orientation. For sending actions to be excuted by the robots, this node will publish to a ROS defined topic called "cmd vel" which accepts a message that contains the linear and angular velocity of the robot.
 
-The service that this node offer for the main node is  a function that will take that actions that the robots should take , get the states, calculates the rewards and then passing back the response to the main node. 
 
-This node is also responsible for calculating the rewards based on the state.
+The service that this node offers for the main node is  a function that will take those actions that the robots should take , get the states, calculates the rewards and then passing   back the response to the main node. 
 
-For the second node which is called  the main node, he is responsible of starting the main training loop, getting actions from the models passing them to the environment node in order to reacive the next states and the rewards, he then store these samples in the replay memory and finally train the models.
+
+
+The second node we defined  is called  the main node. This node   is responsible of starting the main training loop, getting actions from the models passing them to the environment node in order to reacive the next states and the rewards, he then store these samples in the replay memory and finally train the models.
 The loop will continue until the models converge and the shapes are been formed. This node will connect to a python class which contains our models.
 
 
 This python class defines the models and the networks architecture, contains the replay memory and describes the training process.  
+
+
+
+
 
 
 
@@ -881,18 +886,20 @@ This python class defines the models and the networks architecture, contains the
 \end{figure}
 
 \pagebreak
-
 \subsection{Ros implemation: Test phase}
-In this phase, and after the training of the models is done, we will deploy  just the actor models on each robot (no need for the critic as no training is happening)  in order to him to take actions based on the input state.
+In this phase, and after the training of the models is done, we will deploy  just the actor models on each robot (no need for the critic as no training is happening)  in order to predict  actions based on the input state.
 
 We have set a node for each robot, therefore the communication will take place  between these nodes by defining custom topics. Each node will get input state and pass them to the actor model to predict the actions to take.
 
 We have defined one topic called the goals topic in which the central robot  publish the goals positions and  others subscribe to it. We have also defined a service in the central robot that  others will send request to  either  inform him about their current position  or if they have reached the target goal in order for the central robot to monitor the state of the formation.
 
+Once all robots are in place, the central robot can then check if the  shape is properly formed to declare finally that the task is done by broadcasting a message to other robots in the team.
+
+  
 
 
 
- \begin{figure}[h!]  
+ \begin{figure}[h]  
 \centering
 \includegraphics[scale=1.2]{deployment}
 \caption[deployment]{deployment}
@@ -974,27 +981,46 @@ For the actor, it will be the mean predicted value of the critic network multipl
 We have used the Adam optimizer for both networks with learning rates of 0.01 and 0.001 for the critic and actor respectively. We set the batch size to 128 and the minimum size of the replay buffer before training start to 3500 samples.
 
 
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.35]{actor_model}
+\caption[Actor model]{Actor Model}
+\end{figure}
+
+
+
+
+
+ \begin{figure}[h]  
+\centering
+\includegraphics[scale=0.30]{critic_model}
+\caption[Critic model]{Critic Model}
+\end{figure}
+
 
 
 
 
     
- \begin{figure}[t]  
-\centering
-\includegraphics[scale=0.60]{actor_net}
-\caption[actor network]{actor network}
-\end{figure}
-
  \begin{figure}[h]  
 \centering
-\includegraphics[scale=0.60]{critic_net}
-\caption[critic network]{critic network}
+\includegraphics[scale=0.35]{critic_training}
+\caption[Critic Training]{Critic Training}
 \end{figure}
 
+
+
+
+   
+ \begin{figure}[t]  
+\centering
+\includegraphics[scale=0.35]{actor_training}
+\caption[Actor Training]{Actor Training}
+\end{figure}
+
+
+
 \afterpage{\clearpage}
-
-
-
 
 
 

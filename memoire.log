@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.3.11)  7 MAY 2023 18:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.3.11)  8 MAY 2023 14:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -879,10 +879,10 @@ Package pdftex.def Info: images//lds.png  used on input line 816.
 <images//training.png, id=520, 776.9025pt x 393.8715pt>
 File: images//training.png Graphic file (type png)
 <use images//training.png>
-Package pdftex.def Info: images//training.png  used on input line 879.
+Package pdftex.def Info: images//training.png  used on input line 884.
 (pdftex.def)             Requested size: 466.14508pt x 236.3247pt.
 
-Overfull \hbox (39.75252pt too wide) in paragraph at lines 879--880
+Overfull \hbox (39.75252pt too wide) in paragraph at lines 884--885
  [][] 
  []
 
@@ -893,18 +893,18 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 <images//deployment.png, id=525, 375.804pt x 279.444pt>
 File: images//deployment.png Graphic file (type png)
 <use images//deployment.png>
-Package pdftex.def Info: images//deployment.png  used on input line 897.
+Package pdftex.def Info: images//deployment.png  used on input line 904.
 (pdftex.def)             Requested size: 450.96255pt x 335.33112pt.
 
-Overfull \hbox (24.56999pt too wide) in paragraph at lines 897--898
+Overfull \hbox (24.56999pt too wide) in paragraph at lines 904--905
  [][] 
  []
 
 
-LaTeX Warning: `!h' float specifier changed to `!ht'.
+LaTeX Warning: `h' float specifier changed to `ht'.
 
 [33 <./images//training.png>] [34 <./images//deployment.png>]
-Overfull \hbox (64.4931pt too wide) detected at line 964
+Overfull \hbox (64.4931pt too wide) detected at line 971
 [][]\OML/cmm/m/it/12 closs \OT1/cmr/m/n/12 = \OML/cmm/m/it/12 loss\OT1/cmr/m/n/
 12 (\OML/cmm/m/it/12 critic\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 state; actions\OT1
 /cmr/m/n/12 )\OML/cmm/m/it/12 ; reward \OT1/cmr/m/n/12 + \OML/cmm/m/it/12 ^^M \
@@ -915,59 +915,78 @@ OMS/cmtt/m/n/12 ^^C \OML/cmm/m/it/12 targetcricic\OT1/cmr/m/n/12 (\OML/cmm/m/it
  []
 
 [35]
-<images//actor_net.png, id=547, 751.30687pt x 493.0922pt>
-File: images//actor_net.png Graphic file (type png)
-<use images//actor_net.png>
-Package pdftex.def Info: images//actor_net.png  used on input line 984.
-(pdftex.def)             Requested size: 450.7876pt x 295.85759pt.
+<images//actor_model.png, id=547, 1402.23875pt x 610.28pt>
+File: images//actor_model.png Graphic file (type png)
+<use images//actor_model.png>
+Package pdftex.def Info: images//actor_model.png  used on input line 986.
+(pdftex.def)             Requested size: 490.79092pt x 213.6012pt.
 
-Overfull \hbox (24.39503pt too wide) in paragraph at lines 984--985
+Overfull \hbox (64.39836pt too wide) in paragraph at lines 986--987
  [][] 
  []
 
-<images//critic_net.png, id=548, 726.46407pt x 511.15968pt>
-File: images//critic_net.png Graphic file (type png)
-<use images//critic_net.png>
-Package pdftex.def Info: images//critic_net.png  used on input line 990.
-(pdftex.def)             Requested size: 435.8818pt x 306.69817pt.
+<images//critic_model.png, id=548, 1404.24625pt x 660.4675pt>
+File: images//critic_model.png Graphic file (type png)
+<use images//critic_model.png>
+Package pdftex.def Info: images//critic_model.png  used on input line 996.
+(pdftex.def)             Requested size: 421.27713pt x 198.14177pt.
 
-Overfull \hbox (9.48924pt too wide) in paragraph at lines 990--991
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<images//critic_training.png, id=549, 1247.66125pt x 617.30624pt>
+File: images//critic_training.png Graphic file (type png)
+<use images//critic_training.png>
+Package pdftex.def Info: images//critic_training.png  used on input line 1007.
+(pdftex.def)             Requested size: 436.68797pt x 216.06041pt.
+
+Overfull \hbox (10.29541pt too wide) in paragraph at lines 1007--1008
  [][] 
  []
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[36 <./images//actor_net.png>] [37 <./images//critic_net.png>] [38
+<images//actor_training.png, id=550, 1224.575pt x 429.605pt>
+File: images//actor_training.png Graphic file (type png)
+<use images//actor_training.png>
+Package pdftex.def Info: images//actor_training.png  used on input line 1017.
+(pdftex.def)             Requested size: 428.60768pt x 150.364pt.
+
+Overfull \hbox (2.21512pt too wide) in paragraph at lines 1017--1018
+ [][] 
+ []
+
+[36 <./images//actor_model.png>] [37 <./images//critic_model.png> <./images//cr
+itic_training.png> <./images//actor_training.png>] [38
 
 ]
-<images//robot1.png, id=569, 1454.43375pt x 460.72125pt>
+<images//robot1.png, id=575, 1454.43375pt x 460.72125pt>
 File: images//robot1.png Graphic file (type png)
 <use images//robot1.png>
-Package pdftex.def Info: images//robot1.png  used on input line 1023.
+Package pdftex.def Info: images//robot1.png  used on input line 1049.
 (pdftex.def)             Requested size: 509.05945pt x 161.25485pt.
 
-Overfull \hbox (82.66689pt too wide) in paragraph at lines 1023--1024
+Overfull \hbox (82.66689pt too wide) in paragraph at lines 1049--1050
 [][] 
  []
 
-<images//robot2.png, id=570, 1454.43375pt x 460.72125pt>
+<images//robot2.png, id=576, 1454.43375pt x 460.72125pt>
 File: images//robot2.png Graphic file (type png)
 <use images//robot2.png>
-Package pdftex.def Info: images//robot2.png  used on input line 1029.
+Package pdftex.def Info: images//robot2.png  used on input line 1055.
 (pdftex.def)             Requested size: 509.05945pt x 161.25485pt.
 
-Overfull \hbox (82.66689pt too wide) in paragraph at lines 1029--1030
+Overfull \hbox (82.66689pt too wide) in paragraph at lines 1055--1056
 [][] 
  []
 
-<images//robot3.png, id=571, 1454.43375pt x 460.72125pt>
+<images//robot3.png, id=577, 1454.43375pt x 460.72125pt>
 File: images//robot3.png Graphic file (type png)
 <use images//robot3.png>
-Package pdftex.def Info: images//robot3.png  used on input line 1035.
+Package pdftex.def Info: images//robot3.png  used on input line 1061.
 (pdftex.def)             Requested size: 509.05945pt x 161.25485pt.
 
-Overfull \hbox (82.66689pt too wide) in paragraph at lines 1035--1036
+Overfull \hbox (82.66689pt too wide) in paragraph at lines 1061--1062
 [][] 
  []
 
@@ -986,10 +1005,10 @@ Package rerunfilecheck Info: File `memoire.out' has not changed.
 (rerunfilecheck)             Checksum: B13DCBB6E19957121B580282E21A794C;8975.
  ) 
 Here is how much of TeX's memory you used:
- 20926 strings out of 480129
- 367313 string characters out of 5893409
+ 20950 strings out of 480129
+ 368020 string characters out of 5893409
  719539 words of memory out of 5000000
- 38410 multiletter control sequences out of 15000+600000
+ 38432 multiletter control sequences out of 15000+600000
  475567 words of font info for 50 fonts, out of 8000000 for 9000
  81 hyphenation exceptions out of 8191
  91i,15n,91p,1145b,635s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1006,10 +1025,10 @@ msfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
 s/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
 sy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on memoire.pdf (42 pages, 1025115 bytes).
+Output written on memoire.pdf (42 pages, 1323078 bytes).
 PDF statistics:
- 693 PDF objects out of 1000 (max. 8388607)
- 584 compressed objects within 6 object streams
- 151 named destinations out of 1000 (max. 500000)
- 539 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 699 PDF objects out of 1000 (max. 8388607)
+ 586 compressed objects within 6 object streams
+ 153 named destinations out of 1000 (max. 500000)
+ 549 words of extra memory for PDF output out of 10000 (max. 10000000)
 

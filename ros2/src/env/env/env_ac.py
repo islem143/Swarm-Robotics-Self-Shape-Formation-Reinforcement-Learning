@@ -44,7 +44,7 @@ class Env(Node):
             Odometry, "/t4/odom", self.get_current_position4, 10)
         self.get_laser4 = self.create_subscription(
             LaserScan, "/t4/scan", self.get_lds4, 10)
-        self.test =True
+        self.test =False
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
         # self.env_goal_service = self.create_service(
@@ -66,7 +66,7 @@ class Env(Node):
 
         }
        
-        self.goal_cords = self.shapes["t1"]
+        self.goal_cords = self.shapes["line"]
     #    self.shapes={
     #         "line":[[0.0,1.0],[0.0,2.0] ,[0.0,-1.0],[0.0,0.0]],
     #         "line2":[[1.0,0.0],[2.0,0.0] ,[-1.0,0.0],[-2.0,0.0]],
@@ -173,11 +173,11 @@ class Env(Node):
             self.goal_angles[3] += 2*np.pi
       
     def get_lds(self, msg):
-        a=msg.ranges[0:10]
-        b=msg.ranges[-10:]
+        a=msg.ranges[0:15]
+        b=msg.ranges[-15:]
         c=a+b
         self.ldss[0]=c
-        for i in range(20):
+        for i in range(30):
             if(self.ldss[0][i]==np.Inf):
                 self.ldss[0][i]=3.5        
        
@@ -186,17 +186,18 @@ class Env(Node):
         if (self.min_ldss_dist[0] == np.Inf):
             self.min_ldss_dist[0] = float(3.5)
         self.min_ldss_angle[0] = np.argmin(msg.ranges)
+        
       
     
       
         #print(self.min_ldss_dist[0],self.min_ldss_angle[0])
     def get_lds2(self, msg):
 
-        a=msg.ranges[0:10]
-        b=msg.ranges[-10:]
+        a=msg.ranges[0:15]
+        b=msg.ranges[-15:]
         c=a+b
         self.ldss[1]=c
-        for i in range(20):
+        for i in range(30):
             if(self.ldss[1][i]==np.Inf):
                 self.ldss[1][i]=3.5
         self.min_ldss_dist[1] = np.min(msg.ranges)
@@ -208,11 +209,11 @@ class Env(Node):
 
     def get_lds3(self, msg):
 
-        a=msg.ranges[0:10]
-        b=msg.ranges[-10:]
+        a=msg.ranges[0:15]
+        b=msg.ranges[-15:]
         c=a+b
         self.ldss[2]=c
-        for i in range(20):
+        for i in range(30):
             if(self.ldss[2][i]==np.Inf):
                 self.ldss[2][i]=3.5
         self.min_ldss_dist[2] = np.min(msg.ranges)
@@ -224,11 +225,11 @@ class Env(Node):
 
     def get_lds4(self, msg):
 
-        a=msg.ranges[0:10]
-        b=msg.ranges[-10:]
+        a=msg.ranges[0:15]
+        b=msg.ranges[-15:]
         c=a+b
         self.ldss[3]=c
-        for i in range(20):
+        for i in range(30):
             if(self.ldss[3][i]==np.Inf):
                 self.ldss[3][i]=3.5
         self.min_ldss_dist[3] = np.min(msg.ranges)
@@ -245,7 +246,7 @@ class Env(Node):
 
     def move_robots(self, actions, index):
         twist = Twist()
-        twist.linear.x = 0.3
+        twist.linear.x =actions[1]
         twist.angular.z = actions[0]
         self.cmd_vel_pub[index].publish(twist)
 
@@ -348,7 +349,7 @@ class Env(Node):
 
     def crashs(self, index):
 
-        if(any(a<0.21 for a in self.ldss[index])):
+        if(any(a<0.20 for a in self.ldss[index])):
 
             return True
         return False
@@ -379,7 +380,7 @@ class Env(Node):
 
             #if (self.min_ldss_dist[index] < 0.60):
              #   rewards[index] -= 10
-            if(any(a<0.75 for a in self.ldss[index])):
+            if(any(a<0.70 for a in self.ldss[index])):
                 rewards[index] -= 10
 
             if self.succeses[index]:
