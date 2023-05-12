@@ -432,12 +432,12 @@ Our objective in this thesis is to make multi robots  form geometric patterns li
 
 \subsubsection{Environement}
 
-We will describe our multi robot environemnt as an MDP where $S$ are the set of states that each robot will reacive. $A$ are the set of actions that it can take , and $R$ are the set of rewards that each robot will get during each episode. The  goal of each robot is to  maximize his return by reaching the goal target and avoiding collisons with the wall and other  robots. We will use the DDPG alrorithm to controll the robots in a contious manner.
+We will describe our multi robot environment as an MDP where $S$ are the set of states that each robot will receive. $A$ are the set of actions that it can take , and $R$ are the set of rewards that each robot will get during each episode. The  goal of each robot is to  maximize his return by reaching the goal target and avoiding collisions with the wall and other  robots. We will use the DDPG algorithm to  control the robots in a continuous manner.
 
 
 
 
-For the environemnt, we will Consider a scenario in which there are n ($n >  2$) robots moving in a 2D environment. Each robot will try to reach his target position which is descibed by the homogeneous coordinates (x,y)  that is be set by the  central robot.
+For the environment, we will Consider a scenario in which there are n ($n >  2$) robots moving in a 2D environment. Each robot will try to reach his target position which is  described by the homogeneous coordinates (x,y)  that is be set by the  central robot.
 
 
  
@@ -501,14 +501,14 @@ Finally, and if all robots are in place, the central robot will check  the state
 
 
 
-\subsection{State Representationn}
+\subsection{State Representation}
 
 \subsubsection{Introduction}
 The state and reward function must be well designed in order to generate the desired shape because how they are represented will directly impact our robot's performance towards achieving their goals and the architecture of the neural network.
 
 
 \subsubsection{State Representation}
-The state of the robots will be  the inputs for our neural networks and  based on them, we can  calulate  the rewards that the robot will get when acting in the environement.
+The state of the robots will be  the inputs for our neural networks and  based on them, we can  calculate  the rewards that the robot will get when acting in the environment.
 
 In our implementation we have defined six kind  of state information, the distance to goal, angle to goal, angular velocity,linear velocity ,the minimun detected object distance and it's angle for collision avoidance.
 
@@ -556,8 +556,8 @@ The orinal lds take 360deg mesurement all around the robot with a max length of 
 
 
 
-\item \textbf{The angular veloctiy}: 
-It is the angular or rotational mouvement of the robot, and it's between 
+\item \textbf{The angular velocity}: 
+It is the angular or rotational movement of the robot, and it's between 
 $ -\Pi $ and $\Pi$.
 
 \item \textbf{The linear veloctiy}: 
@@ -567,7 +567,7 @@ it  is the linear speed of the robot . and we have set it between 0.2 and 0.5 m/
 
 So, our final state representation is an array of :
 
-$state=[distance,angle,v_a,v_l,lds]$
+$state=[distance,angle,angular velocity,linear velocity,lidar mesurments]$
 
 where lds is a 20 element array.
 
@@ -575,7 +575,7 @@ where lds is a 20 element array.
 
 The reward function design is a critical part of any RL system. A well designed reward function will give the  robot more feedback when acting in the environment thus making the task more straight forward.
 
-The reward function was designed to engourge and reward the robot  more, when he  aproches the goal target, and penilize him when he collide with the wall or other robots.
+The reward function was designed to encourage  and reward the robot  more, when he  approaches the goal target, and penalize him when he collide with the wall or other robots.
 
 The design of the function is based on the state. We have used the distance , the  angle and the LDS to form the final function.
 
@@ -599,7 +599,7 @@ The second part is to the angle of the robot to the goal. formally:
  
  where $\theta_{goal}$  ranges  between $-\pi$  and $\pi$.
   
-And For avoiding collion between the robots and the wall, we have set two values. The first one is set  when the robot aproches the object which can lead to a collision. And the second one is when is actualy collide  with it.
+And For avoiding collision between the robots and the wall, we have set two values. The first one is set  when the robot approaches the object which can lead to a collision. And the second one is when is actually collide  with it.
 
 
 \begin{equation}  \label{obs_r}
@@ -622,7 +622,7 @@ Finally, we can add \ref{dist_r}, \ref{angle_r} and \ref{obs_r} to form the fina
 
 
 
-\subsection{Formation and Deep Reinfocement Learing}
+\subsection{Shape Formation And Deep Reinforcement Learning}
 \subsubsection{Introduction}
 
 

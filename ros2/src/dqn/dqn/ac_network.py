@@ -43,10 +43,10 @@ class ACNetwork():
         self.buffer_counter=0
         self.buffer_capacity=100_000
         self.state_size =6
-        self.state_buffer = np.zeros((self.buffer_capacity, 34))
+        self.state_buffer = np.zeros((self.buffer_capacity, 26))
         self.action_buffer = np.zeros((self.buffer_capacity,2))
         self.reward_buffer = np.zeros((self.buffer_capacity, 1))
-        self.next_state_buffer = np.zeros((self.buffer_capacity,34))
+        self.next_state_buffer = np.zeros((self.buffer_capacity,26))
         self.dones = np.zeros((self.buffer_capacity,1))
         if (model_load):
             self.ep = ep
@@ -66,10 +66,10 @@ class ACNetwork():
             
             # Instead of list of tuples as the exp.replay concept go
             # We use different np.arrays for each tuple element
-            self.state_buffer = np.zeros((self.buffer_capacity, 34))
+            self.state_buffer = np.zeros((self.buffer_capacity, 26))
             self.action_buffer = np.zeros((self.buffer_capacity,2))
             self.reward_buffer = np.zeros((self.buffer_capacity, 1))
-            self.next_state_buffer = np.zeros((self.buffer_capacity,34))
+            self.next_state_buffer = np.zeros((self.buffer_capacity,26))
             self.dones = np.zeros((self.buffer_capacity,1))
             self.ep = ep
             
@@ -96,7 +96,7 @@ class ACNetwork():
         init1 = tf.random_uniform_initializer(minval=-0.003, maxval=0.003)
         init2 = tf.random_uniform_initializer(minval=-0.0003, maxval=0.0003)
 
-        inputs = keras.layers.Input(shape=(34,))
+        inputs = keras.layers.Input(shape=(26,))
         out = keras.layers.Dense(400, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(inputs)
         out=keras.layers.Dropout(0.3)(out)
         out = keras.layers.BatchNormalization()(out)
@@ -123,7 +123,7 @@ class ACNetwork():
         return model
     
     def create_critic_model(self):
-        state_input = keras.layers.Input(shape=(34))
+        state_input = keras.layers.Input(shape=(26))
         state_out = keras.layers.Dense(512, activation="relu",
                                        kernel_initializer=keras.initializers.GlorotNormal())(state_input)
        
@@ -172,8 +172,6 @@ class ACNetwork():
         self, state_batch, action_batch, reward_batch, next_state_batch,dones
     ):
             
-            
-
             with tf.GradientTape() as tape:
                 target_actions = self.target_actor(next_state_batch, training=True)
                 target_actions=tf.concat(target_actions,axis=1)

@@ -61,9 +61,9 @@ class SuperController(Node):
       
         self.std_dev=0.20
         self.std_dev2=0.05
-        self.done_counter={"0":0,"1":0,"2":0,"3":0}
         self.ou_noise2 = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev2) * np.ones(1))
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
+        self.done_counter={"0":0,"1":0,"2":0,"3":0}
         self.super_agent.set_noise(self.ou_noise)
         self.super_agent.set_noise2(self.ou_noise2)
         self.env_result_client = self.create_client(Mac, "env_result")
@@ -159,7 +159,7 @@ class SuperController(Node):
 
                     
 
-                time.sleep(0.01)
+                time.sleep(0.013)
 
 
             for index, agent in enumerate(self.super_agent.agents):

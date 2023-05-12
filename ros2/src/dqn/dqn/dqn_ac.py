@@ -7,7 +7,7 @@ import gc
 import numpy as np
 #from tensorflow.keras.callbacks import Callback
 #from tensorflow.keras import backend as k
-
+from timeit import default_timer as timer   
 import tensorflow as tf
 from tensorflow import keras
 from dqn_msg.srv import Dqnn
@@ -40,15 +40,16 @@ class Dqn(Node):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
-        self.ep =2150 #1800 works well and using 2 2 3
-        self.test=False
-        self.agents = [ACNetwork("robot-1",True, self.ep),  #850 works great 
+        self.ep =4200 #650
+        self.test=True
+        self.agents = [ACNetwork("robot-1",True, self.ep),  
                       ACNetwork("robot-2",True, self.ep),
                       ACNetwork("robot-3",True, self.ep),
+                      ACNetwork("robot-2",True, self.ep)
                       # ACNetwork("robot-2",True, self.ep)
                       
                        ]
-        self.num_agents=3
+        self.num_agents=4
    
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
@@ -82,7 +83,7 @@ class Dqn(Node):
         self.current_states = [0.0 for _ in range(self.num_agents)]
         self.next_states = [0.0 for _ in range(self.num_agents)]
     
-        self.std_dev=0.20
+        self.std_dev=0.30
         self.std_dev2=0.05
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         self.ou_noise2 = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev2) * np.ones(1))
@@ -103,7 +104,7 @@ class Dqn(Node):
                     
                     for i in range(self.num_agents):
                         self.current_states[i] = future.result(
-                        ).states[i*34:i*34+34]
+                        ).states[i*26:i*26+26]
                         
                 else:
                     self.get_logger().error(
@@ -136,7 +137,7 @@ class Dqn(Node):
                 
 
                 for index,agent in enumerate(self.agents):
-                    
+               
                     if (not self.test):
 
                         noise = self.ou_noise()
@@ -151,6 +152,7 @@ class Dqn(Node):
                     result=agent.policy(state, noise,noise2)
                     actions[index*2] =float(result[0])
                     actions[index*2+1]=float(result[1]) 
+                
                
                  
                 
@@ -173,7 +175,7 @@ class Dqn(Node):
                                
                                 if(not self.dones[i]):
                                     self.next_states[i] = future.result(
-                                    ).states[i*34:i*34+34]
+                                    ).states[i*26:i*26+26]
                                     self.rewards[i] = future.result().rewards[i]
                                     self.returns[i] += self.rewards[i]
 
@@ -191,7 +193,7 @@ class Dqn(Node):
                 for index,agent in enumerate(self.agents):
                 
                         if (not self.test and   self.done_counter[index]<=1):
-                      
+                            
                             agent.update_replay_buffer(
                                 (self.current_states[index], self.rewards[index], actions[index*2:index*2+2], self.next_states[index], self.dones[index]))
                             #if(self.ep%self.train_every==0):

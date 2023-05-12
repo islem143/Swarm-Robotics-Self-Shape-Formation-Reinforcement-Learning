@@ -1,20 +1,16 @@
 from tensorflow import keras
 import tensorflow as tf
-from collections import deque
-from .utils import Utils
+
+
 import numpy as np
-import random
-from dqn_msg.srv import Dqnn
-from std_srvs.srv import Empty
-import psutil
-import time
-import rclpy
-import os
+
+
+
 from copy import copy
 from .agent import Agent
-from rclpy.node import Node
+
 from .replay_buffer import ReplayBuffer
-from .ouNoise import OUActionNoise
+
 physical_devices = tf.config.list_physical_devices('GPU')
 try:
     tf.config.experimental.set_memory_growth(physical_devices[0], True)
@@ -23,7 +19,7 @@ except:
     pass
 summary_writer = tf.summary.create_file_writer('logs')
 
-critic_loss = keras.losses.MeanSquaredError()
+loss_function = keras.losses.MeanSquaredError()
 
 
 def loss_actor(y):
@@ -35,13 +31,12 @@ keras.utils.get_custom_objects().update(custom_objects)
 
 
 class SuperAgent():
-    def __init__(self, num_agents=2,state_size=30,action_size=2, ep=0) -> None:
+    def __init__(self, num_agents=2,state_size=24,action_size=2, ep=0) -> None:
         self.num_agents = num_agents
         self.action_size=action_size
         self.state_size=state_size
         self.ep = ep
-        self.agents = [Agent(f"robot-{index+1}", state_size=self.state_size, action_size=self.action_size,
-                             num_agents=self.num_agents, model_load=False) for index in range(self.num_agents)]
+        self.agents = [Agent(f"robot-{index+1}",False,0,self.state_size,self.action_size,self.num_agents) for index in range(self.num_agents)]
         self.replay_buffer = ReplayBuffer(
             num_agents=self.num_agents, state_size=self.state_size, action_size=self.action_size)
         #self.std_dev = 0.35
@@ -49,8 +44,7 @@ class SuperAgent():
         self.discout_factor = 0.99
         self.batch_size = 128
         self.noise2 = 0.0
-        self.MIN_REPLAY_MEMORY_SIZE = 3000
-
+        self.MIN_REPLAY_MEMORY_SIZE = 5000
     def set_episode(self, ep):
         self.ep = ep
 
@@ -64,11 +58,12 @@ class SuperAgent():
         
         res = [self.agents[index].policy(state[index], self.noise(), np.abs(
             self.noise2())) for index in range(self.num_agents)]
+       
         a = []
         for r in res:
             a.append(float(r[0]))
             a.append(float(r[1]))
-
+       
         return a
     @tf.function
     def update_target(self,target_weights, weights, tau):
@@ -77,57 +72,56 @@ class SuperAgent():
         a.assign(b * tau + a * (1 - tau))
 
     @tf.function
-    def update(self, states, next_states, rewards, dones, actor_states, actor_next_states, actor_actions, done_counter):
+    def update(self, state_batch, next_state_batch, reward_batch, dones, action_batch,done_counter):
+        
         
        
-        for i in range(self.num_agents):
-         if (done_counter[i] <= 1):
-            
+    
+    
             with tf.GradientTape() as tape:
-                concat_actions = tf.concat(actor_actions, axis=1)
-                target_actions = [tf.concat(self.agents[index].target_actor(
-                    actor_next_states[index], training=True), axis=1) for index in range(self.num_agents)]
-                concat_target_actions = tf.concat(target_actions, axis=1)
+                target_actions = self.agents[0].target_actor(next_state_batch, training=True)
+                target_actions=tf.concat(target_actions,axis=1)
+            
+                y = reward_batch + self.discout_factor * self.agents[0].target_critic(
+                    [next_state_batch, target_actions], training=True
+                )*(1-dones)
+                
                 
               
-                y = tf.reshape(rewards[:, i], (-1, 1)) + self.discout_factor * self.agents[i].target_critic(
-                    [next_states, concat_target_actions], training=True
-                )*(1-tf.reshape(dones[:, i], (-1, 1)))
-                critic_value = self.agents[i].critic_model(
-                    [states, concat_actions], training=True)
-              
-                c_loss = critic_loss(y, critic_value)
+                critic_value = self.agents[0].critic_model([state_batch, action_batch], training=True)
+          
+                critic_loss = loss_function(y,critic_value)
+                
+                
                
 
-            critic_grad = tape.gradient(
-                c_loss, self.agents[i].critic_model.trainable_variables)
-            
-            self.agents[i].critic_optimizer.apply_gradients(
-                zip(critic_grad, self.agents[i].critic_model.trainable_variables))
-            with summary_writer.as_default():
-                tf.summary.scalar(
-                    f'loss_critic-{self.agents[i].name}', c_loss, step=self.agents[i].critic_optimizer.iterations)
-        
-            with tf.GradientTape() as tape:
-                policy_actions = [tf.concat(self.agents[index].actor_model(
-                    actor_states[index], training=True), axis=1) for index in range(self.num_agents)]
-                concat_policy_actions = tf.concat(policy_actions, axis=1)
-            
-                critic_val = self.agents[i].critic_model(
-                    [states, concat_policy_actions], training=True)
-            
-                actor_loss = loss_actor(critic_val)
-                
-
-            actor_grad = tape.gradient(
-                actor_loss, self.agents[i].actor_model.trainable_variables)
-        
-            self.agents[i].actor_optimizer.apply_gradients(
-                zip(actor_grad, self.agents[i].actor_model.trainable_variables)
+            critic_grad = tape.gradient(critic_loss, self.agents[0].critic_model.trainable_variables)
+            self.agents[0].critic_optimizer.apply_gradients(
+                zip(critic_grad, self.agents[0].critic_model.trainable_variables)
             )
             with summary_writer.as_default():
-                tf.summary.scalar(
-                    f'loss_actor-{self.agents[i].name}', actor_loss, step=self.agents[i].actor_optimizer.iterations)
+              tf.summary.scalar(f'loss_critic-{self.agents[0].name}', critic_loss, step=self.agents[0].critic_optimizer.iterations)
+
+            with tf.GradientTape() as tape:
+                actions = self.agents[0].actor_model(state_batch, training=True)
+                actions=tf.concat(actions,axis=1)
+                critic_value = self.agents[0].critic_model([state_batch, actions], training=True)
+               
+                # Used `-value` as we want to maximize the value given
+                # by the critic for our actions
+                # q_mean = tf.math.reduce_mean(critic_value)
+                # q_std = tf.math.reduce_std(critic_value)
+                # q_normalized = (critic_value - q_mean) / q_std
+                 
+                actor_loss = loss_actor(critic_value)
+           
+
+            actor_grad = tape.gradient(actor_loss, self.agents[0].actor_model.trainable_variables)
+            self.agents[0].actor_optimizer.apply_gradients(
+                zip(actor_grad, self.agents[0].actor_model.trainable_variables)
+            )
+            with summary_writer.as_default():
+              tf.summary.scalar(f'loss_actor-{self.agents[0].name}', actor_loss, step=self.agents[0].actor_optimizer.iterations)
         # with tf.GradientTape(persistent=True) as tape:
 
         #     target_actions = [tf.concat(self.agents[index].target_actor(
@@ -169,13 +163,13 @@ class SuperAgent():
 
         if (self.MIN_REPLAY_MEMORY_SIZE > self.replay_buffer.buffer_counter):
             return
-        states, next_states, rewards, dones, actor_states, actor_next_states, actor_actions = self.replay_buffer.get_minibatch(
+        states, next_states, rewards, dones,actions = self.replay_buffer.get_minibatch(
             self.batch_size)
 
-        self.update(states, next_states, rewards, dones, actor_states,
-                    actor_next_states, actor_actions, list(done_counter.values()))
+        self.update(states, next_states, rewards, dones,actions,list(done_counter.values()))
         for index, agent in enumerate(self.agents):
             if (done_counter[index] <= 1):
+    
                 self.update_target(
                     agent.target_actor.variables, agent.actor_model.variables, self.tau)
                 self.update_target(

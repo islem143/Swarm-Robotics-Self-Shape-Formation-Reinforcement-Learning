@@ -35,11 +35,11 @@
 \contentsline {subsubsection}{\numberline {4.3.2}Shape generation}{20}{subsubsection.4.3.2}%
 \contentsline {subsubsection}{\numberline {4.3.3}Shape formation Algorithm}{20}{subsubsection.4.3.3}%
 \contentsline {subsubsection}{\numberline {4.3.4}Explanation}{20}{subsubsection.4.3.4}%
-\contentsline {subsection}{\numberline {4.4}State Representationn}{21}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.4}State Representation}{21}{subsection.4.4}%
 \contentsline {subsubsection}{\numberline {4.4.1}Introduction}{21}{subsubsection.4.4.1}%
 \contentsline {subsubsection}{\numberline {4.4.2}State Representation}{21}{subsubsection.4.4.2}%
 \contentsline {subsection}{\numberline {4.5}Reward Function Design}{22}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Formation and Deep Reinfocement Learing}{24}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.6}Shape Formation And Deep Reinforcement Learning}{24}{subsection.4.6}%
 \contentsline {subsubsection}{\numberline {4.6.1}Introduction}{24}{subsubsection.4.6.1}%
 \contentsline {subsubsection}{\numberline {4.6.2}The learning flow}{24}{subsubsection.4.6.2}%
 \contentsline {section}{\numberline {5}Implementation}{27}{section.5}%
