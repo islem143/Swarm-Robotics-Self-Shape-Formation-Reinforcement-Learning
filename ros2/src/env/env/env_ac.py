@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents =4
+        self.num_agents =6
         self.cmd_vel_pub = {}
         self.goal_reached_by = {}
         for i in range(self.num_agents):
@@ -48,6 +48,10 @@ class Env(Node):
             Odometry, "/t5/odom", self.get_current_position5, 10)
         self.get_laser5 = self.create_subscription(
             LaserScan, "/t5/scan", self.get_lds5, 10)
+        self.get_odom5 = self.create_subscription(
+            Odometry, "/t6/odom", self.get_current_position6, 10)
+        self.get_laser5 = self.create_subscription(
+            LaserScan, "/t6/scan", self.get_lds6, 10)
         self.test =True
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
@@ -82,12 +86,12 @@ class Env(Node):
 
         c=[list(p) for p in itertools.product(a, repeat=2)]
 
-        perm_list = list(itertools.combinations(c, 5))
+        perm_list = list(itertools.combinations(c, 6))
 
 
         self.goals=[]
 
-        while len(self.goals)!=126:
+        while len(self.goals)!=84:
             s=random.choice(perm_list)
             if(s not in self.goals):
                 self.goals.append(list(s))
@@ -216,7 +220,18 @@ class Env(Node):
             self.goal_angles[4] -= 2*np.pi
         elif (self.goal_angles[4] < -np.pi):
             self.goal_angles[4] += 2*np.pi        
-      
+    def get_current_position6(self, msg):
+        self.positions[5] = [
+            msg.pose.pose.position.x, msg.pose.pose.position.y]
+        self.angles[5] = self.euler_from_quaternion(
+            msg.pose.pose.orientation)[2]
+
+        self.goal_angles[5] = (np.arctan2(self.goal_cords[5][1]-self.positions[5]
+                               [1], self.goal_cords[5][0]-self.positions[5][0]))-(self.angles[5])
+        if (self.goal_angles[5] > np.pi):
+            self.goal_angles[5] -= 2*np.pi
+        elif (self.goal_angles[5] < -np.pi):
+            self.goal_angles[5] += 2*np.pi     
     def get_lds(self, msg):
         a=msg.ranges[0:10]
         b=msg.ranges[-10:]
@@ -298,6 +313,20 @@ class Env(Node):
         if (self.min_ldss_dist[4] == np.Inf):
             self.min_ldss_dist[4] = float(3.5)
         self.min_ldss_angle[4] = np.argmin(msg.ranges)
+    def get_lds6(self, msg):
+
+        a=msg.ranges[0:10]
+        b=msg.ranges[-10:]
+        c=a+b
+        self.ldss[5]=c
+        for i in range(20):
+            if(self.ldss[5][i]==np.Inf):
+                self.ldss[5][i]=3.5
+        self.min_ldss_dist[5] = np.min(msg.ranges)
+
+        if (self.min_ldss_dist[5] == np.Inf):
+            self.min_ldss_dist[5] = float(3.5)
+        self.min_ldss_angle[5] = np.argmin(msg.ranges)
 
     def init_robots(self, index):
 
