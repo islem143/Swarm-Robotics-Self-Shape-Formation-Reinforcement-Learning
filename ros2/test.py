@@ -1,36 +1,22 @@
 import numpy as np
 import time
-class OUActionNoise:
-    def __init__(self, mean, std_deviation, theta=0.15, dt=1e-2, x_initial=None):
-        self.theta = theta
-        self.mean = mean
-        self.std_dev = std_deviation
-        self.dt = dt
-        self.x_initial = x_initial
-        self.reset()
-
-    def __call__(self):
-        # Formula taken from https://www.wikipedia.org/wiki/Ornstein-Uhlenbeck_process.
-        x = (
-            self.x_prev
-            + self.theta * (self.mean - self.x_prev) * self.dt
-            + self.std_dev * np.sqrt(self.dt) * np.random.normal(size=self.mean.shape)
-        )
-        # Store x into x_prev
-        # Makes next noise dependent on current one
-        self.x_prev = x
-        return x
-
-    def reset(self):
-        if self.x_initial is not None:
-            self.x_prev = self.x_initial
-        else:
-            self.x_prev = np.zeros_like(self.mean)
+import  itertools 
+import random
+a=[-1.0,0.0,1.0]
 
 
-std_dev=0.05
-ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(std_dev) * np.ones(1))            
 
-while True:
-    print(0.2+np.abs(ou_noise()))
-    time.sleep(0.5)
+c=[list(p) for p in itertools.product(a, repeat=2)]
+
+perm_list = list(itertools.combinations(c, 5))
+print(len(perm_list))
+
+goals=[]
+
+while len(goals)!=126:
+    s=random.choice(perm_list)
+    if(s not in goals):
+        goals.append(list(s))
+
+
+print(goals[0])

@@ -6,7 +6,7 @@ from std_msgs.msg import String
 from sensor_msgs.msg import LaserScan
 import numpy as np
 import random
-
+import itertools
 from geometry_msgs.msg import Twist
 from rclpy.qos import QoSProfile
 from std_srvs.srv import Empty
@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents = 4
+        self.num_agents =5
         self.cmd_vel_pub = {}
         self.goal_reached_by = {}
         for i in range(self.num_agents):
@@ -44,6 +44,10 @@ class Env(Node):
             Odometry, "/t4/odom", self.get_current_position4, 10)
         self.get_laser4 = self.create_subscription(
             LaserScan, "/t4/scan", self.get_lds4, 10)
+        self.get_odom5 = self.create_subscription(
+            Odometry, "/t5/odom", self.get_current_position5, 10)
+        self.get_laser5 = self.create_subscription(
+            LaserScan, "/t5/scan", self.get_lds5, 10)
         self.test =True
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
@@ -52,11 +56,11 @@ class Env(Node):
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.goal_publisher = self.create_publisher(Goal, "generate_goal", 10)
         self.shapes={
-            "line":[[0.0,1.0],[0.0,2.0] ,[0.0,-1.0]],
-            "line2":[[1.0,0.0],[2.0,0.0] ,[-1.0,0.0]],
-            "trianlge":[[0.0,0.0],[0.0,1.2] ,[0.0,-1.2]],
-            "trianlge2":[[1.0,0.5],[0.0,1.5] ,[0.0,-1.2]],
-            "square":[[-1.2,-1.2],[1.2,1.2] ,[-1.2,1.2]],
+            "line":[[0.0,-2.0],[1.0,-1.0] ,[0.0,0.0],[1.0,2.0]],
+            "line2":[[1.0,-2.0],[2.0,-1.0] ,[1.0,0.0],[2.0,1.0]],
+            "trianlge":[[1.0,-2.0],[0.0,1.5] ,[1.5,0.0],[2.0,0.0]],
+            "trianlge2":[[1.0,-1.5],[0.0,-0.5] ,[0.0,1.0],[0.0,0.0]],
+            "square":[[-1.2,-1.2],[1.2,1.2] ,[-1.2,1.2],[-2.0,-2.0]],
             #"line3":[[2.5,2.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
              "t1":[[-2.0,-1.0],[-1.0,0.0] ,[-2.0,1.0]], #,[0.0,0.0]
              "t2":[[-2.0,-1.5],[-2.0,0.0] ,[-2.0,1.5]], #,[-1.0,0.0]
@@ -64,15 +68,35 @@ class Env(Node):
              "l1":[[0.0,2.0],[0.0,0.5] ,[0.0,-0.5]],
              "test":[[0.0,-2.0],[0.0,-1.0] ,[0.0,1.0]] ,
              "test2":[[0.0,-1.5],[0.0,1.5] ,[0.0,0.0]],
-             "tt1":[[2.0,0.0],[0.0,-1.5] ,[0.0,1.5],[0.0,0.0]],
-             "tt2":[[1.5,0.0],[1.5,-1.5] ,[1.5,1.5],[1.5,0.5]],
-             "tt3":[[1.5,-2.0],[1.5,-1.0] ,[1.5,0.0],[1.5,1.0]],
-             "tt3":[[1.5,-2.0],[1.5,-1.0] ,[-1.5,0.0],[-1.5,1.0]]
-          
+             "tt1":[[2.0,0.0],[0.0,-1.5] ,[0.0,1.5]],
+             "tt2":[[1.5,0.0],[1.5,-1.5] ,[1.5,1.5]],
+             "tt3":[[1.5,-2.0],[1.5,-1.0] ,[1.5,0.0]],
+             #"tt3":[[1.5,1.5],[-1.5,-1.5] ,[-1.5,1.5]],
+             "obs1":[[1.5,1.5],[1.5,0.0] ,[1.5,-1.5]],
+             "obs2":[[1.0,0.0],[2.0,1.0] ,[2.0,-1.0]],
+             "obs3":[[1.0,0.0],[2.0,0.0] ,[3.0,0.0]]
 
         }
+        a=[-1.0,0.0,1.0]
+        self.num_crash=0
+
+        c=[list(p) for p in itertools.product(a, repeat=2)]
+
+        perm_list = list(itertools.combinations(c, 5))
+
+
+        self.goals=[]
+
+        while len(self.goals)!=126:
+            s=random.choice(perm_list)
+            if(s not in self.goals):
+                self.goals.append(list(s))
+
+     
+
        
-        self.goal_cords = self.shapes["tt3"]
+        self.goal_cords = self.goals[0]
+       #self.goal_cords=self.shapes["line"]
     #    self.shapes={
     #         "line":[[0.0,1.0],[0.0,2.0] ,[0.0,-1.0],[0.0,0.0]],
     #         "line2":[[1.0,0.0],[2.0,0.0] ,[-1.0,0.0],[-2.0,0.0]],
@@ -86,7 +110,7 @@ class Env(Node):
     #     }
 
         self.goal_freq = 0
-        self.goal_re =15
+        self.goal_re =0
         self.dones = [False for _ in range(self.num_agents)]
 
         self.steps = 0
@@ -179,6 +203,19 @@ class Env(Node):
             self.goal_angles[3] -= 2*np.pi
         elif (self.goal_angles[3] < -np.pi):
             self.goal_angles[3] += 2*np.pi
+
+    def get_current_position5(self, msg):
+        self.positions[4] = [
+            msg.pose.pose.position.x, msg.pose.pose.position.y]
+        self.angles[4] = self.euler_from_quaternion(
+            msg.pose.pose.orientation)[2]
+
+        self.goal_angles[4] = (np.arctan2(self.goal_cords[4][1]-self.positions[4]
+                               [1], self.goal_cords[4][0]-self.positions[4][0]))-(self.angles[4])
+        if (self.goal_angles[4] > np.pi):
+            self.goal_angles[4] -= 2*np.pi
+        elif (self.goal_angles[4] < -np.pi):
+            self.goal_angles[4] += 2*np.pi        
       
     def get_lds(self, msg):
         a=msg.ranges[0:10]
@@ -194,7 +231,7 @@ class Env(Node):
         if (self.min_ldss_dist[0] == np.Inf):
             self.min_ldss_dist[0] = float(3.5)
         self.min_ldss_angle[0] = np.argmin(msg.ranges)
-
+       
         
       
     
@@ -247,6 +284,21 @@ class Env(Node):
             self.min_ldss_dist[3] = float(3.5)
         self.min_ldss_angle[3] = np.argmin(msg.ranges)
 
+    def get_lds5(self, msg):
+
+        a=msg.ranges[0:10]
+        b=msg.ranges[-10:]
+        c=a+b
+        self.ldss[4]=c
+        for i in range(20):
+            if(self.ldss[4][i]==np.Inf):
+                self.ldss[4][i]=3.5
+        self.min_ldss_dist[4] = np.min(msg.ranges)
+
+        if (self.min_ldss_dist[4] == np.Inf):
+            self.min_ldss_dist[4] = float(3.5)
+        self.min_ldss_angle[4] = np.argmin(msg.ranges)
+
     def init_robots(self, index):
 
         twist = Twist()
@@ -294,7 +346,9 @@ class Env(Node):
         self.reset_sim_client.call_async(req)
 
     def step(self, request, response):
+        
         if (request.init):
+            print("num crash",self.num_crash)
             self.steps = 0
             self.dones = [False for _ in range(self.num_agents)]
             for index in range(self.num_agents):
@@ -339,21 +393,27 @@ class Env(Node):
         return True
 
     def generate_goal_pose(self):
-
         self.goal_re+=1  
-        if(self.goal_freq==1):
-            #a=["t1","t2","s1","l1","test"]
-            a=["line","line2","trianlge","trianlge2","square","t1","t2","s1","l1"]
+        self.goals=self.goals[1:len(self.goals)]
+        #self.goal_cords=random.choice(self.goals)
+        self.goal_cords=self.goals[0]
+        print(self.goal_cords)
+        print("len of gaols",len(self.goals))
+
+        # if(self.goal_freq==1):
+        #     #a=["t1","t2","s1","l1","test"]
+        #     a=["line","line2","trianlge","trianlge2","square"]
+        #     #a=["obs1","obs2","obs3","t2","tt1","t1"]
       
            
-            chosen=random.choice(a)
-            self.goal_cords=self.shapes[chosen]
-            if(self.goal_re>=10):
-             random.shuffle(self.goal_cords)
-           
-            self.goal_freq=0
-            print("chosen shape",chosen)
-            print(self.goal_cords)
+        #     chosen=random.choice(a)
+        #     self.goal_cords=self.shapes[chosen]
+        #     if(self.goal_re>=10):
+        #      random.shuffle(self.goal_cords)
+        #     print("goal re",self.goal_re)
+        #     self.goal_freq=0
+        #     print("chosen shape",chosen)
+        #     print(self.goal_cords)
        
        
 
@@ -390,7 +450,7 @@ class Env(Node):
 
             #if (self.min_ldss_dist[index] < 0.60):
              #   rewards[index] -= 10
-            if(any(a<0.50 for a in self.ldss[index])):
+            if(any(a<0.80 for a in self.ldss[index])):
                 rewards[index] -= 10
 
             if self.succeses[index]:
@@ -437,6 +497,7 @@ class Env(Node):
                 if (self.test):
                     self.dones = [True for _ in range(self.num_agents)]
                     self.fails = [True for _ in range(self.num_agents)]
+                    
                 else:
                    # if(not self.global_steps<5000):
 
@@ -467,9 +528,11 @@ class Env(Node):
             #if(not self.test):
             time.sleep(1)
             self.call_reset_sim()
-            if (all(self.succeses)):
-                self.goal_freq += 1
-                self.generate_goal_pose()
+            if(all(self.fails)):
+                self.num_crash+=1
+            #if(all(self.succeses)): 
+            self.goal_freq += 1
+            self.generate_goal_pose()
         self.steps += 1
 
         return l

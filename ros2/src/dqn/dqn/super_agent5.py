@@ -71,7 +71,7 @@ class SuperAgent():
      for (a, b) in zip(target_weights, weights):
         a.assign(b * tau + a * (1 - tau))
 
-    @tf.function
+    #@tf.function
     def update(self, states, next_states, rewards, dones, actions,done_counter):
         
         
@@ -85,7 +85,7 @@ class SuperAgent():
                     next_states[:,i*self.state_size:i*self.state_size+self.state_size], training=True), axis=1) for index in range(self.num_agents)]
                 concat_target_actions = tf.concat(target_actions, axis=1)
                
-         
+                print()
                 y = tf.reshape(rewards[:, i], (-1, 1)) + self.discout_factor * self.agents[i].target_critic(
                     [next_states, concat_target_actions], training=True
                 )*(1-tf.reshape(dones[:, i], (-1, 1)))

@@ -25,8 +25,8 @@ class Gazebo(Node):
         self.goal_pose_y=1.5
         self.spawn_entity_client = self.create_client(SpawnEntity, 'spawn_entity')
         self.delete_entity_client = self.create_client(DeleteEntity, 'delete_entity')
-        self.create_subscription(
-            Goal, "generate_goal", self.get_goal, 10)
+       # self.create_subscription(
+       #     Goal, "generate_goal", self.get_goal, 10)
         self.reset_simulation_client = self.create_client(Empty, 'reset_simulation')
         #self.init_service = self.create_service(Dqn, 'init', self.dqn_com_callback)
         self.position_x=1.0
@@ -38,25 +38,25 @@ class Gazebo(Node):
         self.reset_sim_service=self.create_service(Empty,"reset_sim",self.reset_simulations)
    
         #self.delete_entity(self.goal_entity_name)
-        self.init()
-        self.delete_entity(self.goal_entity_name)
-        self.create_timer(0.5,self.spawn)
+        #self.init()
+        #self.delete_entity(self.goal_entity_name)
+        #self.create_timer(0.5,self.spawn)
         
     def spawn(self):
         self.spawn_entity(self.goal_entity_name,self.goal_xml)
 
     def get_goal(self,msg):
-        self.delete_entity(self.goal_entity_name)
+        #self.delete_entity(self.goal_entity_name)
         
         self.position_x=msg.goal[0]
         self.position_y=msg.goal[1]
         
         
 
-    def init(self):
+    #def init(self):
         
         
-        self.spawn_entity(self.goal_entity_name,self.goal_xml)
+        #self.spawn_entity(self.goal_entity_name,self.goal_xml)
         
 
 
@@ -68,9 +68,9 @@ class Gazebo(Node):
 
         self.reset_simulation_client.call_async(req)
         
-        self.delete_entity(self.goal_entity_name)
+        #self.delete_entity(self.goal_entity_name)
         time.sleep(0.2)
-        self.spawn_entity(self.goal_entity_name,self.goal_xml)
+        #self.spawn_entity(self.goal_entity_name,self.goal_xml)
         return response
         
 
