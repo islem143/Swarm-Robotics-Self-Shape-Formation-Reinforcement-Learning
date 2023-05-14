@@ -81,7 +81,7 @@ class Env(Node):
              "obs3":[[1.0,0.0],[2.0,0.0] ,[3.0,0.0]]
 
         }
-        a=[-1.0,0.0,1.0]
+        a=[-1.0,0.0,1.0,2.0]
         self.num_crash=0
 
         c=[list(p) for p in itertools.product(a, repeat=2)]
@@ -91,7 +91,7 @@ class Env(Node):
 
         self.goals=[]
 
-        while len(self.goals)!=84:
+        while len(self.goals)!=126:
             s=random.choice(perm_list)
             if(s not in self.goals):
                 self.goals.append(list(s))

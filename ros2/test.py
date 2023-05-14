@@ -2,7 +2,7 @@ import numpy as np
 import time
 import  itertools 
 import random
-a=[-1.0,0.0,1.0]
+a=[-1.0,0.0,1.0,1.5]
 
 
 
@@ -13,10 +13,10 @@ print(len(perm_list))
 
 goals=[]
 
-while len(goals)!=84:
+while len(goals)!=126:
     s=random.choice(perm_list)
     if(s not in goals):
         goals.append(list(s))
 
 
-print(goals[0])
+print(len(goals))
