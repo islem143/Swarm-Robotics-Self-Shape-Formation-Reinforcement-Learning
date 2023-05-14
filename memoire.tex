@@ -24,7 +24,7 @@
 \graphicspath{{images/}}
 \onehalfspacing
 
-
+\usepackage{tabularx}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{pdfpages}
@@ -978,50 +978,243 @@ We have used the Adam optimizer for both networks with learning rates of 0.01 an
 \subsection{Introdution}
 
 In this last section, we will describe the results that we got from our experiment.
-and discuss them. We have divided the training into three phases. In the first one,
-We set simple goals to be achieved by the robots to get them familiar with the way
-Goals can be reached. Then, after forming some shapes, we increase the difficulty.
-of the goals by randomizing the positions and forcing each robot to explore each
-other to learn how to avoid collisions. Lastly, we added static obstacles to force the
-robots to form the desired shape in different environments. The training took more
-more than 10 hours to converge and yield the result that we got.
+The training took place between 3 robots, a set of shapes was generated from easy one to hard one to graduley help the robots learn forming the shapes.
 
 
+The training took about 9h to finish, and bellow are the total retunrs of the three robots during the enitre tarining phase.
+
+ 
+From the graph, in  the first few episodes, the robots gained some rewards easily, this is because the shapes were easy to form and the tainning had not being started.
+
+After that, and betewen episode 200 to 1500 we can notice that the robots start gainig rewards rapidly and the shapes formed  frequenly and the collisons  get down .
+
+finnaly, from episode 1500 to 3100, the graph start to be stable, but the robots still gain some rewards until he converges.
+
+We can notice that there  some minor diffrences between the three graphs, as each robot had his own expreinces and gained his own rewards separatly from the others.
 
 
+And we have deployed our trained models on a team of 4, 5 and 6 robots, where the expiernces of the three trained robots were beign tranfred to them.
 
+And to test our solution, we have generated a set of shapes difrent then used in the trainihg phase  and bellow is a table summiroze the accuracy of our solution:\\
+
+
+ 
+\begin{tabularx}{1.0\textwidth} { 
+  | >{\raggedright\arraybackslash}X 
+  | >{\centering\arraybackslash}X 
+  | >{\raggedleft\arraybackslash}X | }
+ \hline
+ number of robots & number of shapes & accuracy \\
+ \hline
+ 4  & 126  & 91\%  \\
+ \hline
+ 5  & 126  & 92\%  \\
+ \hline
+ 6  & 84  & 82\%  \\
+ 
+
+\end{tabularx}
+\\
+
+The shapes were formed with an accury of 92\% for team of robots with 4 or 5 numbers, but as we increase the number to 6, the accuracy droped to about 82\%
+
+
+ 
+
+\newpage
 
 
 
 
 \begin{figure}[h]  
+\begin{center}
+\scalebox{0.3}[0.3]{
+\includegraphics{robot1}
+}
 
-\includegraphics[scale=0.35]{robot1}
 \caption[robot1]{robot1}
-\end{figure}forming
+
+\end{center}
+
+\end{figure}
+
 
 \begin{figure}[h]  
+\begin{center}
+\scalebox{0.3}[0.3]{
+\includegraphics{robot2}
+}
 
-\includegraphics[scale=0.35]{robot2}
 \caption[robot2]{robot2}
+
+\end{center}
+
 \end{figure}
+
+
+
 
 \begin{figure}[h]  
 
-\includegraphics[scale=0.35]{robot3}
+\scalebox{0.3}[0.3]{
+\includegraphics{robot3}
+}
+
 \caption[robot3]{robot3}
+
+
 \end{figure}
 
 
-And to test diffrent shapes, we set 50 shapes to be formed and .. where formed thus...
 
 
-and we tried to add another robot by just copying one of the robots models to him , and the result was acceplte .
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.9\linewidth]{shape1}
+  \caption{shape1}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.9\linewidth]{shape2}
+  \caption{shape2}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{shapes1}
+\label{fig:test}
 
 
 
-The downside of oiur aporch is one the number of robots get s hight and the distance betwenn them is smalller than 1 metrs .
+\end{figure}
 
+
+
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.9\linewidth]{shape3}
+  \caption{shape3}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.9\linewidth]{shape4}
+  \caption{shape4}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{shapes2}
+\label{fig:test}
+
+
+
+\end{figure}
+
+
+
+
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.9\linewidth]{shape5}
+  \caption{shape5}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.9\linewidth]{shape6}
+  \caption{shape6}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{shapes3}
+\label{fig:test}
+
+
+
+
+
+\end{figure}
+
+
+
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{shape7}
+  \caption{shape7}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{shape8}
+  \caption{shape8}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{shapes4}
+\label{fig:test}
+
+
+
+\end{figure}
+
+
+
+
+
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{shape9}
+  \caption{shape9}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{shape10}
+  \caption{shape10}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{shapes5}
+\label{fig:test}
+
+
+
+\end{figure}
+
+
+
+
+
+
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.7\linewidth]{shape11}
+  \caption{shape11}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{shape12}
+  \caption{shape12}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{shapes6}
+\label{fig:test}
+
+
+
+\end{figure}
+
+
+
+\afterpage{\clearpage}
  \newpage
 \pagebreak
 \hspace{0pt}
