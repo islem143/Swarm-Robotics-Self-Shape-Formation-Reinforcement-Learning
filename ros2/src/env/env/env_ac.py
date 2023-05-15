@@ -78,7 +78,7 @@ class Env(Node):
              #"tt3":[[1.5,1.5],[-1.5,-1.5] ,[-1.5,1.5]],
              "obs1":[[1.5,1.5],[1.5,0.0] ,[1.5,-1.5]],
              "obs2":[[1.0,0.0],[2.0,1.0] ,[2.0,-1.0]],
-             "obs3":[[1.0,0.0],[2.0,0.0] ,[3.0,0.0]]
+             "obs3":[[0.0,0.0],[1.0,1.0] ,[1.0,-1.0],[-1.0,1.0] ,[-1.0,-1.0],[-1.0,0.0]]
 
         }
         a=[-1.0,0.0,1.0,2.0]
@@ -99,8 +99,8 @@ class Env(Node):
      
 
        
-        self.goal_cords = self.goals[0]
-       #self.goal_cords=self.shapes["line"]
+        #self.goal_cords = self.goals[0]
+        self.goal_cords=self.shapes["obs3"]
     #    self.shapes={
     #         "line":[[0.0,1.0],[0.0,2.0] ,[0.0,-1.0],[0.0,0.0]],
     #         "line2":[[1.0,0.0],[2.0,0.0] ,[-1.0,0.0],[-2.0,0.0]],
@@ -459,7 +459,7 @@ class Env(Node):
     def goal_reached(self, index):
         distance = self.get_distance_to_goal(index)
 
-        if (distance < 0.2):
+        if (distance < 0.15):
 
             return True
         return False

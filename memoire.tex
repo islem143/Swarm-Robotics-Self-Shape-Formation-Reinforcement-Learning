@@ -542,9 +542,9 @@ The second component is the angle to the goal. And to find it, we need to calcul
 
 \item \textbf{The lds  mesurments}: 
 In order to detect other robots and avoid collisions, we use an LDS, which gives us an array of elements where each value is the minimum distance detected and each index is the angle of detection.
-The original LDS take 360-degree measurements all around the robot, with a maximum length of 3.5 meters. But in our problem, we don't need such precision, as we have determined that just 40 samples are enough because there are no thin or small objects that require such precision. In addition, we also take just 20 of them, which will cover the front of the robot.
+The original LDS take 360-degree measurements all around the robot, with a maximum length of 3.5 meters. But in our problem, we don't need such precision, as we have determined that just 50 samples are enough because there are no thin or small objects that require such precision. In addition, we also take just 20 of them, which will cover the front of the robot.
 
-
+We also added the angle of detection as information to the state, as this helps the robot avoid collisions more effectively.
 
  \begin{figure}[h]  
 \centering
@@ -570,7 +570,8 @@ It is the linear speed of the robot. and we have set it between 0.2 and 0.5 m/s.
 
 So, our final state representation is an array of:
 
-$state=[distance,angle,angular velocity,linear velocity,lidar mesurments]$
+state=[distance,angle,angular velocity,linear velocity,lds angle,
+min lds distance,lidar mesurments]
 
 where lds is a 20 element array.
 
@@ -600,8 +601,8 @@ And to avoid collisions between the robots and the wall, we have set two values.
 
 \begin{equation}  \label{obs_r}
   R_{c}=\begin{cases}
-    -10, & \text{if $mdd< 0.6m$}.\\
-    -500 , & \text{ if $mdd <0.13m$ (a crash )}.\\
+    -10, & \text{if $mdd< 0.8m$}.\\
+    -500 , & \text{ if $mdd <0.20m$ (a crash )}.\\
     0 & \text{ else}.
   \end{cases}
 \end{equation}
@@ -976,26 +977,53 @@ We have used the Adam optimizer for both networks with learning rates of 0.01 an
 \pagebreak
 
 \subsection{Introdution}
+\begin{figure}[h]  
+\begin{center}
+\scalebox{0.3}[0.3]{
+\includegraphics{robot1}
+}
 
-In this last section, we will describe the results that we got from our experiment.
-The training took place between 3 robots, a set of shapes was generated from easy one to hard one to graduley help the robots learn forming the shapes.
+\caption[robot1]{robot1}
+
+\end{center}
+
+\end{figure}
+\begin{figure}[h]  
+\begin{center}
+\scalebox{0.3}[0.3]{
+\includegraphics{robot2}
+}
+
+\caption[robot2]{robot2}
+
+\end{center}
+
+\end{figure}
 
 
-The training took about 9h to finish, and bellow are the total retunrs of the three robots during the enitre tarining phase.
-
- 
-From the graph, in  the first few episodes, the robots gained some rewards easily, this is because the shapes were easy to form and the tainning had not being started.
-
-After that, and betewen episode 200 to 1500 we can notice that the robots start gainig rewards rapidly and the shapes formed  frequenly and the collisons  get down .
-
-finnaly, from episode 1500 to 3100, the graph start to be stable, but the robots still gain some rewards until he converges.
-
-We can notice that there  some minor diffrences between the three graphs, as each robot had his own expreinces and gained his own rewards separatly from the others.
 
 
-And we have deployed our trained models on a team of 4, 5 and 6 robots, where the expiernces of the three trained robots were beign tranfred to them.
+\begin{figure}[h]  
+\begin{center}
+\scalebox{0.3}[0.3]{
+\includegraphics{robot3}
+}
+\end{center}
+\caption[robot3]{robot3}
 
-And to test our solution, we have generated a set of shapes difrent then used in the trainihg phase  and bellow is a table summiroze the accuracy of our solution:\\
+
+\end{figure}
+In this last section, we will describe the results that we got from our experiment. The training took place between three robots. And to help the robots gradually learn to make the shapes, a range of shapes was created, ranging from easy to difficult.
+
+The training took about 9 hours to finish, and below is the total return of the three robots during the end-to-end training phase.
+From the graph, in the first few episodes, the robots gained some rewards easily; this is because the shapes were easy to form. After that, the returns drop quickly when the training starts.
+
+After that, and between episodes 200 and 1500, we can notice that the robots start gaining rewards rapidly, the shapes form frequently, and the collision number decreases.
+Finally, from episodes 1500 to 3100, the graph starts to be stable, but the robots still gain some rewards until it converges.
+We can also notice that there are some minor differences between the three graphs, as each robot had his own experiences and gained his own rewards separately from the others.
+
+We have deployed our trained models on a team of 4, 5, and 6 robots, where the experiences of the three trained robots were transferred to them.
+And to test our solution, we have generated a set of shapes different from those used in the training phase, and below is a table summarizing the total number of shapes being formed without any collision:\\
 
 
  
@@ -1016,54 +1044,20 @@ And to test our solution, we have generated a set of shapes difrent then used in
 \end{tabularx}
 \\
 
-The shapes were formed with an accury of 92\% for team of robots with 4 or 5 numbers, but as we increase the number to 6, the accuracy droped to about 82\%
-
+The shapes were formed with an accuracy of 92\% for a team of robots with 4 or 5 numbers, but as we increased the number to 6, the accuracy dropped to about 82\%.
+Most collisions happen when the shape is complex and requires a lot of navigation between the robots, thus leading to collisions between them, especially if the distance between the shape's edges is small.
 
  
 
-\newpage
+\subsection{Limitations And Future Work}:
+
+Our solution works fine when the number of robots is 3, 4, or 5. but as long as the numbers increase, the performances also decrease. And this can be solved using different types of algorithms that operate on a large number of agents. One of them is the MADDPG algorithm, which is a variant of the ddpg algorithm where the agents not only observe their local state but also the global state during the training, which helps the robot take actions not only based on their local state but also the global state.
 
 
 
 
-\begin{figure}[h]  
-\begin{center}
-\scalebox{0.3}[0.3]{
-\includegraphics{robot1}
-}
-
-\caption[robot1]{robot1}
-
-\end{center}
-
-\end{figure}
 
 
-\begin{figure}[h]  
-\begin{center}
-\scalebox{0.3}[0.3]{
-\includegraphics{robot2}
-}
-
-\caption[robot2]{robot2}
-
-\end{center}
-
-\end{figure}
-
-
-
-
-\begin{figure}[h]  
-
-\scalebox{0.3}[0.3]{
-\includegraphics{robot3}
-}
-
-\caption[robot3]{robot3}
-
-
-\end{figure}
 
 
 
@@ -1228,31 +1222,23 @@ The shapes were formed with an accury of 92\% for team of robots with 4 or 5 num
 \pagebreak
 
 
-Swarm robotics is a fast expanding  field that includes coordinating sizable groups of robots to cooperate in order to achieve a common objective. These robots communicate and work together to accomplish tasks that are challenging or perhaps impossible for a single robot to achieve.
-Swarm robotics is evolving as a result of increased research and development efforts by academics and industry professionals from all over the world, who are continually enhancing the functionality and effectiveness of these systems.
 
+
+Swarm robotics is a fast-expanding field that includes coordinating sizable groups of robots to cooperate in order to achieve a common objective. These robots communicate and work together to accomplish tasks that are challenging or perhaps impossible for a single robot to achieve. Swarm robotics is evolving as a result of increased research and development efforts by academics and industry professionals from all over the world, who are continually enhancing the functionality and effectiveness of these systems.
 
 
 
 One of the tasks or problems that swarm robots need to solve is pattern formation. Where a group of robots try to form some geometric patterns (lines, circles, rectangles, etc.) in order to do tasks that require such formation, such as object lifting, target encirclement, or military purposes.
- 
-
 
 There are a lot of algorithms and methods that try to solve this problem. One of them is using reinforcement learning with the help of deep neural networks for their ability to work in highly complex tasks and environments.
-
-In our theis, we solved the pattern formation problem by testing it with 4 robots where they try to achive their target goal with the help of a central robot that will facilitate the cordination between the team memembrs and monitor the formation status. Each robot in the team try to achiave his target goal  specifed by the central robot autonomsly by avoidng obstacles. 
-
+In our thesis, we solved the pattern formation problem using a team of robots that try to achieve their target goal with the help of a central robot that will facilitate coordination between the team members and monitor the formation status. Each robot in the team tries to achieve the target goal specified by the central robot autonomously by avoiding obstacles.
 
 
-We have choosed the DDPG algothim for being fast in convergence and works in continous action space. during training, we  
+We have chosen the DDPG RL Algothim. We have trained three robots to form some geometric shapes, which took about 9 hours to converge.
+Then we tested our trained models on a team of 4 and 5 robots, where the learning of the robots was transferred to them, and we got an accuracy of 92%.
+However, the performance of the team decreases as the number of robberies increases, and this can be solved using more suitable algorithms like the MADDPG algorithm, which is a variant of the DDPG.
 
-Our models got converged with a training time of 10  hours and have been tested and deployed to each robot to form diffrent shapes in diffrent environemnts.
- 
-The robots were able to form the givin shapes ... but somtimes they ...
- 
- 
- 
- 
+
 
 
 
