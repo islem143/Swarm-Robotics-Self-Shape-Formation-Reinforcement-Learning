@@ -87,7 +87,7 @@ a=[1.5,-1.5,0.0] =>line
  ---------------
 
   a=[-1.0,0.0,1.0]
-  4 robots 
+  6  robots 
   15 crash from 84   82%
   
   positions:
@@ -98,6 +98,20 @@ a=[1.5,-1.5,0.0] =>line
   r4 : -1.0 0        . . .
   #r5 : 1.5 1        
                      . . .
+ 
+ 
+ 
+ -----------
+ 
+ a=[-1.0,0.0,1.0]
+ 5  robots 
+ 12 crash from 126
+ 
+ ACNetwork("robot-1",True, self.ep),  
+                      ACNetwork("robot-2",True, self.ep),
+                      ACNetwork("robot-3",True, self.ep),
+                      ACNetwork("robot-2",True, self.ep),
+                      ACNetwork("robot-2",True, self.ep),
  
  
  

@@ -33,6 +33,42 @@
 \usepackage[acronym]{glossaries}
 \newacronym{ny}{NY}{New York}
 \begin{document}
+
+
+\newpage
+\pagebreak
+\hspace{0pt}
+\vfill
+\begin{center}
+\section{Résume}
+\end{center}
+\vfill
+\hspace{0pt}
+\pagebreak
+
+
+
+La robotique en essaim est un domaine en pleine expansion qui consiste à coordonner des groupes importants de robots pour qu'ils coopèrent afin d'atteindre un objectif commun. Les robots en essaim tentent de résoudre de multiples tâches et problèmes, dont l'un est le problème de la formation de motifs, où les robots tentent de former des formes géométriques. Il y a de nombreuses applications dans l'agriculture, la recherche et le sauvetage, et les entrepôts. L'une des méthodes utilisées pour contrôler l'essaim est les algorithme d'apprentissage par renforcement profond. Dans notre projet, nous avons utilisé l'algorithme DDPG pour contrôler l'équipe de robots afin de former des motifs avec l'aide d'un robot central qui surveillera et guidera les robots vers leurs objectifs cibles en générant des 
+coordonnée  relative à sa position. Notre algorithme a obtenu  une précision de 92\% lorsqu'il a été testé sur un ensemble aléatoire de formes lorsque le nombre de robots est de 3, 4 et 5, mais la précision tombe à 80\% lorsqu'il est testé sur un groupe de six robots. où un autre type d'algothime doit être appliqué, comme le madppg, pour gérer un grand nombre de robots.\\
+
+
+\textbf{Mots Clés}: Swarm robotics, reinfocemnt lerarning, DDPG,Ros,pattern foramtion,Gazebo
+
+
+\newpage
+\pagebreak
+\hspace{0pt}
+\vfill
+\begin{center}
+\section{Abstarct}
+\end{center}
+\vfill
+\hspace{0pt}
+\pagebreak
+
+
+Swarm robotics is a fast-expanding field that includes coordinating sizable groups of robots to cooperate in order to achieve a common objective. There are multiple tasks and problems that swarm robots try to solve; one of them is the pattern formation problem, where the robots try to form geometric shapes. It has many applications in agriculture, search and rescue, and warehouses. One of the methods used to control the swarm is deep reinforcement learning algothims.In our project, we used the ddpg RL algorithm to control the team of robots to form some patterns with the help of a central robot that will monitor and guide the robots towards their target goals by generating the shape relative to his position. Our algorithm gets an accuracy of 92\% when tested on a random set of shapes when the number of robots is 3, 4, or 5, but the accuracy drops to 80\% when tested on a group of six robots.
+
 \newpage
 \thispagestyle{empty}
 {
@@ -43,13 +79,7 @@
 
 
 
-\newpage
-\thispagestyle{empty}
-{
-\hypersetup{linkcolor=false}
-\tableofcontents
 
-}
 \newpage
 \listoffigures
 \clearpage
@@ -166,8 +196,7 @@ The early 1980s were when multi-robot systems first gained popularity. As the na
 \item Object Transport and Manipulation; 
 \item Motion Coordination; 
 \item Reconfigurable Robots. 
-\end{itemize} Swarm robotics is a subfield of multi-robot systems that differs from other multi-robot systems in some ways. \cite{arai2002advances}  
-
+\end{itemize}
 
  
 
@@ -232,10 +261,11 @@ The swarm aims to locate objects, pick them up, and position them where needed.
 
 \begin{figure}
 \centering
+
 \begin{subfigure}{.5\textwidth}
   \centering
   \includegraphics[width=.8\linewidth]{swarmfish}
-  \caption{fish swarm}
+  \caption{fish swarm }
   \label{fig:sub1}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
@@ -245,12 +275,15 @@ The swarm aims to locate objects, pick them up, and position them where needed.
   \label{fig:sub2}
 \end{subfigure}
 \caption{swarm animals}
+\textbf{ref}:https://www.nationalgeographic.com/
+\textbf{ref}:https://www.researchgate.net/
 \label{fig:test}
 \end{figure}
-\textbf{ref}:https://www.nationalgeographic.com/]]
-https://www.researchgate.net/
 
 
+
+\subsection{Concultion}
+In this section, we have defined swarm robotics, its properties and applications, and the problems or tasks that need to be solved by the team of robots. In the next chapter, we will introduce deep reinforcement learning and its applications in the swarm robotics field.
 
 
 \newpage
@@ -414,7 +447,8 @@ For robotics, \cite{long2018towards} have used the proximal policy optimization 
 Finnaly, in \cite{dong2020mobile},\cite{gong2022efficient} and \cite{quiroga2022position} have applied the ddpg and dqn algorithms for path playing and position control of robots in order to achieve the target goals.
 
 
-
+\subsection{Conclusion}:
+In this chapter, we have introduced deep reinforcement learning, its commonly used algorithms, and the related work done in the literature in the field of robotics.
 
 
  
@@ -657,12 +691,14 @@ To provide the robots with a notion of what it's like to attain a goal in terms 
 
 
 
- \begin{figure}[h!]  
+ \begin{figure}[h]  
 \centering
-\includegraphics[scale=2]{training_workflow3}
+\includegraphics[scale=1.8]{training_workflow3}
 \caption[training flow]{training flow}
 \end{figure}
 
+\subsection{Conclusion}:
+We have presented the problem, it's formulation and our proposed solution in this chapter. Then we explained how the robots' state was represented and how the reward was determined. Finally, we described the learning flow in the simulation.
 
 \afterpage{\clearpage}
 
@@ -956,7 +992,8 @@ We have used the Adam optimizer for both networks with learning rates of 0.01 an
 \caption[Actor Training]{Actor Training}
 \end{figure}
 
-
+\subsection{Conclusion}:
+In this chapter, we have described how we have implemented our solution in the Ros operating system and gazebo simulator and how we defined the different nodes, topics, and services in ros. Finally, we discussed the architecture of the neural networks and how we chose the parameters.
 
 \afterpage{\clearpage}
 
@@ -1235,7 +1272,7 @@ In our thesis, we solved the pattern formation problem using a team of robots th
 
 
 We have chosen the DDPG RL Algothim. We have trained three robots to form some geometric shapes, which took about 9 hours to converge.
-Then we tested our trained models on a team of 4 and 5 robots, where the learning of the robots was transferred to them, and we got an accuracy of 92%.
+Then we tested our trained models on a team of 4 and 5 robots, where the learning of the robots was transferred to them, and we got an accuracy of 92\%.
 However, the performance of the team decreases as the number of robberies increases, and this can be solved using more suitable algorithms like the MADDPG algorithm, which is a variant of the DDPG.
 
 

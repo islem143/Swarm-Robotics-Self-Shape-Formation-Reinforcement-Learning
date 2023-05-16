@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents =6
+        self.num_agents =5
         self.cmd_vel_pub = {}
         self.goal_reached_by = {}
         for i in range(self.num_agents):
@@ -81,15 +81,17 @@ class Env(Node):
              "obs3":[[0.0,0.0],[1.0,1.0] ,[1.0,-1.0],[-1.0,1.0] ,[-1.0,-1.0],[-1.0,0.0]]
 
         }
-        a=[-1.0,0.0,1.0,2.0]
+        a=[-1.0,0.0,1.0]
+     
         self.num_crash=0
 
         c=[list(p) for p in itertools.product(a, repeat=2)]
 
-        perm_list = list(itertools.combinations(c, 6))
+        perm_list = list(itertools.combinations(c, 5))
 
 
         self.goals=[]
+        self.goal_reached_by_id={0:0,1:0,2:0,3:0,4:0}
 
         while len(self.goals)!=126:
             s=random.choice(perm_list)
@@ -99,8 +101,8 @@ class Env(Node):
      
 
        
-        #self.goal_cords = self.goals[0]
-        self.goal_cords=self.shapes["obs3"]
+        self.goal_cords = self.goals[0]
+        #self.goal_cords=self.shapes["obs3"]
     #    self.shapes={
     #         "line":[[0.0,1.0],[0.0,2.0] ,[0.0,-1.0],[0.0,0.0]],
     #         "line2":[[1.0,0.0],[2.0,0.0] ,[-1.0,0.0],[-2.0,0.0]],
@@ -539,6 +541,7 @@ class Env(Node):
                    #     self.stop_robots(index)
 
             if (self.goal_reached(index)):
+                self.goal_reached_by_id[index]+=1
                 self.goal_reached_by[index] += 1
                 self.succeses[index] = True
                 self.dones[index] = True
