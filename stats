@@ -108,10 +108,10 @@ a=[1.5,-1.5,0.0] =>line
  12 crash from 126
  
  ACNetwork("robot-1",True, self.ep),  
-                      ACNetwork("robot-2",True, self.ep),
-                      ACNetwork("robot-3",True, self.ep),
-                      ACNetwork("robot-2",True, self.ep),
-                      ACNetwork("robot-2",True, self.ep),
+ACNetwork("robot-2",True, self.ep),
+ACNetwork("robot-3",True, self.ep),
+ACNetwork("robot-2",True, self.ep),
+  ACNetwork("robot-2",True, self.ep),
  
  
  
