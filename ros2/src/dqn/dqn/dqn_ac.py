@@ -40,17 +40,21 @@ class Dqn(Node):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
-        self.ep =3800 #650 2000
+        self.ep =1720#650 2000
         self.test=True
-        self.agents = [ACNetwork("robot-1",True, self.ep),  
-                      ACNetwork("robot-2",True, self.ep),
-                      ACNetwork("robot-3",True, self.ep),
-                      ACNetwork("robot-2",True, self.ep),
-                      ACNetwork("robot-2",True, self.ep),
-                      #ACNetwork("robot-3",True, self.ep)
+        load_buffer=True
+        load_model=True
+        self.agents = [ACNetwork("robot-4",load_model, self.ep,load_buffer),  
+                      ACNetwork("robot-4",load_model, self.ep,load_buffer),
+                       ACNetwork("robot-4",load_model, self.ep,load_buffer),
+                       ACNetwork("robot-4",load_model, self.ep,load_buffer),
+                       #ACNetwork("robot-4",load_model, self.ep,load_buffer),
+                   
+                 
+                      
                       
                        ]
-        self.num_agents=5
+        self.num_agents=4
    
         self.actions = [-np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2]
         self.actions_size = 5
@@ -73,7 +77,7 @@ class Dqn(Node):
         self.env_result_client = self.create_client(Mac, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = True
-        self.save_every=100
+        self.save_every=20
         #std_dev = 0.2
         
  
@@ -84,8 +88,8 @@ class Dqn(Node):
         self.current_states = [0.0 for _ in range(self.num_agents)]
         self.next_states = [0.0 for _ in range(self.num_agents)]
     
-        self.std_dev=0.30
-        self.std_dev2=0.05
+        self.std_dev=0.20
+        self.std_dev2=0.10
         self.ou_noise = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev) * np.ones(1))
         self.ou_noise2 = OUActionNoise(mean=np.zeros(1), std_deviation=float(self.std_dev2) * np.ones(1))
         
@@ -142,7 +146,7 @@ class Dqn(Node):
                     if (not self.test):
 
                         noise = self.ou_noise()
-                        noise2 = np.abs(self.ou_noise2())
+                        noise2 = self.ou_noise2()
                         
                     else:
                         noise=0
@@ -204,12 +208,12 @@ class Dqn(Node):
                             agent.update_target(agent.target_critic.variables,agent.critic_model.variables, self.tau)
                        
                         self.current_states[index] = self.next_states[index]
-                       
+                        #time.sleep(0.005)   
 
                        
                         
 
-                        time.sleep(0.01)
+                   
                
             
 

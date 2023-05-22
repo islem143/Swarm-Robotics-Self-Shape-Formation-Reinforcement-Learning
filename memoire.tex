@@ -52,7 +52,7 @@ La robotique en essaim est un domaine en pleine expansion qui consiste à coordo
 coordonnée  relative à sa position. Notre algorithme a obtenu  une précision de 92\% lorsqu'il a été testé sur un ensemble aléatoire de formes lorsque le nombre de robots est de 3, 4 et 5, mais la précision tombe à 80\% lorsqu'il est testé sur un groupe de six robots. où un autre type d'algothime doit être appliqué, comme le madppg, pour gérer un grand nombre de robots.\\
 
 
-\textbf{Mots Clés}: Swarm robotics, reinfocemnt lerarning, DDPG,Ros,pattern foramtion,Gazebo
+\textbf{Mots Clés}: Swarm robotics, Reinforcement lerarning, DDPG,Ros,Pattern foramtion,Gazebo
 
 
 \newpage
@@ -67,7 +67,9 @@ coordonnée  relative à sa position. Notre algorithme a obtenu  une précision 
 \pagebreak
 
 
-Swarm robotics is a fast-expanding field that includes coordinating sizable groups of robots to cooperate in order to achieve a common objective. There are multiple tasks and problems that swarm robots try to solve; one of them is the pattern formation problem, where the robots try to form geometric shapes. It has many applications in agriculture, search and rescue, and warehouses. One of the methods used to control the swarm is deep reinforcement learning algothims.In our project, we used the ddpg RL algorithm to control the team of robots to form some patterns with the help of a central robot that will monitor and guide the robots towards their target goals by generating the shape relative to his position. Our algorithm gets an accuracy of 92\% when tested on a random set of shapes when the number of robots is 3, 4, or 5, but the accuracy drops to 80\% when tested on a group of six robots.
+Swarm robotics is a fast-expanding field that includes coordinating sizable groups of robots to cooperate in order to achieve a common objective. There are multiple tasks and problems that swarm robots try to solve; one of them is the pattern formation problem, where the robots try to form geometric shapes. It has many applications in agriculture, search and rescue, and warehouses. One of the methods used to control the swarm is deep reinforcement learning algothims.In our project, we used the ddpg RL algorithm to control the team of robots to form some patterns with the help of a central robot that will monitor and guide the robots towards their target goals by generating the shape relative to his position. Our algorithm gets an accuracy of 92\% when tested on a random set of shapes when the number of robots is 3, 4, or 5, but the accuracy drops to 80\% when tested on a group of six robots.\\
+
+\textbf{Keywords}: Swarm robotics, Reinforcement lerarning, DDPG,Ros,Pattern foramtion,Gazebo
 
 \newpage
 \thispagestyle{empty}
@@ -432,23 +434,34 @@ Like in Q-learning, to enable better exploration for the agent, noise is sampled
 
 
 
-
 \subsection{Related Work}
 In this section, we present some of the work that has applied RL algorithms to training agents and robotic systems.
 
-The most used algorithm is deep Q learning, where \cite{mnih2013playing} has applied it in learning to play atari games by using a convolutional neural network by providing raw image pixels as input, where they demonstrated that the agents achieved great performance, even surpassing human level.
+The most used algorithm is deep Q learning, where \cite{mnih2013playing} has applied  in learning to play atari games by using a convolutional neural network by providing raw image pixels as input, where they demonstrated that the agents achieved great performance, even surpassing human level.
 In continuous action spaces, \cite{lillicrap2015continuous} have used the ddpg algorithm, which is an extension of the DQN and the DPG algorithms. They have used an actor-critic model-free policy-based algorithm that operates in contiguous action space by applying it to several simulated physics tasks, and also shows great results achieved by the agents.
 in the field of multi-agents. \cite{diallo2020multi} where they used a decentrilized approach to train multi-agents to form some patterns using the DQN network with a central replay buffer that contains agents experiences in order for them to learn cooperatively.
 
 
+in \cite{gong2022efficient} used the DDPG algorithm for path planning and control of a robot to reach its target position. Unlike traditional fully connected layers in the actor and critic layers of DDPG, they have fed the state of the robot to an LSTM layer, so the robot's decision is not based only on the current state but also the past state. The model was tested in different environments with and without obstacles and showed good results..
 
-For robotics, \cite{long2018towards} have used the proximal policy optimization algorithm (PPO), which is a policy-based one, to control in a decentrilized manner a group of robots to reach their target by avoiding collision between them. Also in \cite{ma2020multi} have used the ddpg algorithm to train multiple robots to encircle some target in a static position or in motion, where the agents (robots) learn to cooperatively accomplish their task by using a central replay memory.
-
-Finnaly, in \cite{dong2020mobile},\cite{gong2022efficient} and \cite{quiroga2022position} have applied the ddpg and dqn algorithms for path playing and position control of robots in order to achieve the target goals.
+In \cite{prasad2017multi}, they used a decentrilized Deep Q network approach to train six robots to form polygon squares, where they set the target goals for the agents and designed a reward function to encourage them to reach their goals.
 
 
+
+In \cite{long2018towards} have used the proximal policy optimization algorithm (PPO), which is a policy-based one, to control in a decentrilized manner a group of robots to reach their target by avoiding collisions between each other. To avoid collisions, they have used convultional neural networks to extract features from consecutive lidar measurements and then pass them through a dense layer with the robot's actions. The model was tested in different types of environments, and the robots were able to achieve their target goal successfully without collisions.
+
+In \cite{diallo2020multi}, They used a multi-agent DQN algorithm to train agents to form some shapes based on local sensing. And to enable cooperation between the agents, they used a central replay memory to store their experiences instead of a local one. They also generated a random  set of shapes at the begining of each episode to avoid overfitting when testing.
+The model was deployed, and the agents learned to form complex geometric shapes.
+
+
+In \cite{ma2020multi} have used the DDPG algorithm to train multiple robots to encircle some target in a static position or in motion, where the agents (robots) learn to cooperatively accomplish their task by using a central replay memory. With robots having access to the target locations, they used a primary-based reward function to keep a distance and angle from it and from the neighboring robots. The models were deployed and tested to encircle static and moving targets, and they showed good results.
+
+
+in \cite{bae2019multi}, a group of robots navigates an environment and moves in a predefined formation by working cooperatively. In this work, they combined CNN to analyze image data with Deep Q learning to train the robots to avoid each other and obstacles, then tested them in various environments, which showed good results.
+
+Finnaly in \cite{wang2019pattern}, They used a novel approach to train multiple robots to form complex shapes. They split their work into two phases: training and execution. In the training phase, they used two networks, one for predicting actions and one for values, like the actor-critic method, but they used their own extended PPO algorithm. In addition, they passed the state representation to an auto-encoder to reduce the state space. After the training phase is complete, they deploy each actor model to the robots to act in a decentrilized manner.
 \subsection{Conclusion}:
-In this chapter, we have introduced deep reinforcement learning, its commonly used algorithms, and the related work done in the literature in the field of robotics.
+In this chapter, we have introduced deep reinforcement learning, its commonly used algorithms, and  some of the related work done in the literature.
 
 
  
@@ -482,10 +495,8 @@ Our objective in this thesis is to make multirobots form geometric patterns like
 
 \subsubsection{Environement}
 
-We will describe our multi-robot environment as an MDP, where $S$ is the set of states that each robot will receive. $A$ is the set of actions that it can take, and $R$ is the set of rewards that each robot will get during each episode. The goal of each robot is to maximize his return by reaching the target and avoiding collisions with the wall and other robots and obstacles. 
-
+We will describe our multi-robot environment as an MDP, where $S$ is the set of states that each robot will receive. $A$ is the set of actions that it can take, and $R$ is the set of rewards that each robot will get during each episode. The goal of each robot is to maximize his return by reaching the target and avoiding collisions with the wall, other robots, and obstacles.
 For the environment, we will consider a scenario in which there are n ($n > 2$) robots moving in a 2D environment. Each robot will try to reach his target position, which is described by the homogeneous coordinates (x,y) that the primary robot determines.
-
 
  
  \begin{figure}[h]  
@@ -496,7 +507,7 @@ For the environment, we will consider a scenario in which there are n ($n > 2$) 
 
 \pagebreak
 \subsubsection{Shape generation}
-The center or leader robot will travel to a specific location in space to initiate the formation of the various shapes. From there, he will inform the other robots of the intended shape to be produced by indicating to them their target position relative to his position by being at a specific distance and angle.
+The center or leader robot will travel to a specific location in space to initiate the formation of the various shapes. From there, he will inform the other robots of the intended shape to be produced by indicating to them their target position relative to his position at a specific distance and angle.
 
 
 \subsubsection{Shape formation Algorithm}
@@ -512,13 +523,13 @@ The center or leader robot will travel to a specific location in space to initia
 \State Assign each robot an id starting from $id=1...N$
 
 \State Set the central robot with $id=1$.
-\State The central robot  chooses a random postion and stay on it.
+\State The central robot moves to a random location and fixes itself there.
 
-\State The central robot broadcasts a message containing his position with the desired shape by using generaing a set of cooardinates that each robot must reach.
+\State The central robot broadcasts a message containing his position and the desired shape by generating a set of coordinates that each robot must reach.
 \While{$c!=N$}
 \For{robot in robots}
 \State Take an action.
-\State Inform the central robot with his current postions every $t seconds$.
+\State Inform the central robot with his current positions every $t seconds$.
 \If{target position reached} 
     \State Stop the robot and inform the central robot.
     \State $c++$ 
@@ -1069,11 +1080,11 @@ And to test our solution, we have generated a set of shapes different from those
   | >{\centering\arraybackslash}X 
   | >{\raggedleft\arraybackslash}X | }
  \hline
- number of robots & number of shapes & accuracy \\
+ Number of robots & Total number of shapes & Shapes formed without collision \\
  \hline
- 4  & 126  & 91\%  \\
+ 4  & 126  & 95\%  \\
  \hline
- 5  & 126  & 92\%  \\
+ 5  & 126  & 88\%  \\
  \hline
  6  & 84  & 82\%  \\
  
@@ -1082,8 +1093,9 @@ And to test our solution, we have generated a set of shapes different from those
 \\
 
 The shapes were formed with an accuracy of 92\% for a team of robots with 4 or 5 numbers, but as we increased the number to 6, the accuracy dropped to about 82\%.
-Most collisions happen when the shape is complex and requires a lot of navigation between the robots, thus leading to collisions between them, especially if the distance between the shape's edges is small.
-
+Most of the collisions happen when multiple robots meet each other in a small area, where it is difficult for them to avoid complex scenarios. This also happens when the distance between the shape's edges is small.
+And most of the collision happened between just two robots; this means that the other ones reached their positions successfully. We have also noticed that the robots avoid collisions perfectly when they are static. This means that if we have a relatively large number of robots, we can command a number of them to reach their destination first, then, with a small delay, tell the others to follow, as this also shows a good result.
+Another observation that is related to the last point is that the robot's starting position matters, as some starting positions show good results, especially if not all robots start at the same distance from the goal. \newpage The last observation is that robots tend to form the shape more accurately if the distance between the shape edges is larger.
  
 
 \subsection{Limitations And Future Work}:
@@ -1226,18 +1238,10 @@ Our solution works fine when the number of robots is 3, 4, or 5. but as long as 
 \centering
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.7\linewidth]{shape11}
+  \includegraphics[width=.6\linewidth]{shape11}
   \caption{shape11}
   \label{fig:sub1}
 \end{subfigure}%
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=.8\linewidth]{shape12}
-  \caption{shape12}
-  \label{fig:sub2}
-\end{subfigure}
-\caption{shapes6}
-\label{fig:test}
 
 
 

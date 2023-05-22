@@ -6,7 +6,10 @@ ros2/log/
 ros2/build/
 ros2/install/
 ros2/venv/
-
+logs
+logs2
+ros2/logs
+ros2/logs2
 models-robot-1
 models-robot-11
 models-robot-22

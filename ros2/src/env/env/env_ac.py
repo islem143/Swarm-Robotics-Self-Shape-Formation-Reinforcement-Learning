@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents =5
+        self.num_agents = 4
         self.cmd_vel_pub = {}
         self.goal_reached_by = {}
         for i in range(self.num_agents):
@@ -31,7 +31,7 @@ class Env(Node):
             Odometry, "/t1/odom", self.get_current_position, 10)
         self.get_laser = self.create_subscription(
             LaserScan, "/t1/scan", self.get_lds, 10)
-        
+
         self.get_odom2 = self.create_subscription(
             Odometry, "/t2/odom", self.get_current_position2, 10)
         self.get_laser2 = self.create_subscription(
@@ -59,62 +59,69 @@ class Env(Node):
         #     Goal, "goal_pose", self.generate_goal_pose)
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.goal_publisher = self.create_publisher(Goal, "generate_goal", 10)
-        self.shapes={
-            "line":[[0.0,-2.0],[1.0,-1.0] ,[0.0,0.0],[1.0,2.0]],
-            "line2":[[1.0,-2.0],[2.0,-1.0] ,[1.0,0.0],[2.0,1.0]],
-            "trianlge":[[1.0,-2.0],[0.0,1.5] ,[1.5,0.0],[2.0,0.0]],
-            "trianlge2":[[1.0,-1.5],[0.0,-0.5] ,[0.0,1.0],[0.0,0.0]],
-            "square":[[-1.2,-1.2],[1.2,1.2] ,[-1.2,1.2],[-2.0,-2.0]],
-            #"line3":[[2.5,2.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
-             "t1":[[-2.0,-1.0],[-1.0,0.0] ,[-2.0,1.0]], #,[0.0,0.0]
-             "t2":[[-2.0,-1.5],[-2.0,0.0] ,[-2.0,1.5]], #,[-1.0,0.0]
-             "s1":[[-1.0,-1.0],[1.0,1.0] ,[-1.0,1.0]], #,[1.0,-1.0]
-             "l1":[[0.0,2.0],[0.0,0.5] ,[0.0,-0.5]],
-             "test":[[0.0,-2.0],[0.0,-1.0] ,[0.0,1.0]] ,
-             "test2":[[0.0,-1.5],[0.0,1.5] ,[0.0,0.0]],
-             "tt1":[[2.0,0.0],[0.0,-1.5] ,[0.0,1.5]],
-             "tt2":[[1.5,0.0],[1.5,-1.5] ,[1.5,1.5]],
-             "tt3":[[1.5,-2.0],[1.5,-1.0] ,[1.5,0.0]],
-             #"tt3":[[1.5,1.5],[-1.5,-1.5] ,[-1.5,1.5]],
-             "obs1":[[1.5,1.5],[1.5,0.0] ,[1.5,-1.5]],
-             "obs2":[[1.0,0.0],[2.0,1.0] ,[2.0,-1.0]],
-             "obs3":[[0.0,0.0],[1.0,1.0] ,[1.0,-1.0],[-1.0,1.0] ,[-1.0,-1.0],[-1.0,0.0]]
+        self.shapes = {
+            "line": [[0.0, -2.0], [1.0, -1.0], [0.0, 0.0], [1.0, 2.0]],
+            "line2": [[1.0, -2.0], [2.0, -1.0], [1.0, 0.0], [2.0, 1.0]],
+            "trianlge": [[1.0, -2.0], [0.0, 1.5], [1.5, 0.0], [2.0, 0.0]],
+            "trianlge2": [[1.0, -1.5], [0.0, -0.5], [0.0, 1.0], [0.0, 0.0]],
+            "square": [[-1.2, -1.2], [1.2, 1.2], [-1.2, 1.2], [-2.0, -2.0]],
+            # "line3":[[2.5,2.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
+            "t1": [[-2.0, -1.0], [-1.0, 0.0], [-2.0, 1.0]],  # ,[0.0,0.0]
+            "t2": [[-2.0, -1.5], [-2.0, 0.0], [-2.0, 1.5]],  # ,[-1.0,0.0]
+            "s1": [[-1.0, -1.0], [1.0, 1.0], [-1.0, 1.0]],  # ,[1.0,-1.0]
+            "l1": [[0.0, 2.0], [0.0, 0.5], [0.0, -0.5]],
+            "test": [[0.0, -2.0], [0.0, -1.0], [0.0, 1.0]],
+            "test2": [[0.0, -1.5], [0.0, 1.5], [0.0, 0.0]],
+            "tt1": [[2.0, 0.0], [0.0, -1.5], [0.0, 1.5]],
+            "tt2": [[1.5, 0.0], [1.5, -1.5], [1.5, 1.5]],
+            "tt3": [[1.5, -2.0], [1.5, -1.0], [1.5, 0.0]],
+            # "tt3":[[1.5,1.5],[-1.5,-1.5] ,[-1.5,1.5]],
+            "obs1": [[1.5, 1.5], [1.5, 0.0], [1.5, -1.5]],
+            "obs2": [[1.0, 0.0], [2.0, 1.0], [2.0, -1.0]],
+            "obs3": [[0.0, 0.0], [1.0, 1.0], [1.0, -1.0], [-1.0, 1.0], [-1.0, -1.0], [-1.0, 0.0]]
 
         }
         a=[-1.0,0.0,1.0]
-     
+
         self.num_crash=0
 
         c=[list(p) for p in itertools.product(a, repeat=2)]
 
-        perm_list = list(itertools.combinations(c, 5))
-
+        perm_list = list(itertools.combinations(c,4))
 
         self.goals=[]
         self.goal_reached_by_id={0:0,1:0,2:0,3:0,4:0}
+        self.don=[False for _ in range(self.num_agents)]
 
         while len(self.goals)!=126:
             s=random.choice(perm_list)
             if(s not in self.goals):
                 self.goals.append(list(s))
+        # self.goals = [[[0.5,0.5],[0.0,0.0],[-0.5,-0.5],[1.0,0.0]],
+        #               [[1.0,0.0],[0.0,0.0],[0.0,-1.0],[0.0,-2.0]],
+        #               [[0.0,0.0],[0.0,-1.0],[0.0,1.0],[1.0,0.0]],
+        #               [[-1.0,1.0],[-1.0,-1.0],[0.0,1.0],[0.0,-1.0]],
+        #              # [[-1.0,0.0],[-1.0,-1.0],[-1.0,1.0],[0.0,-1.0]],
+        #               #[[-1.0,0.0],[-1.0,-1.0],[-1.0,1.0],[0.0,-1.0]],
+        #               [[2.0,0.0],[1.0,0.0],[0.0,0.0],[-1.0,0.0]],
+        #               #[[1.5,-1.5],[-1.0,0.0],[2.0,0.0],[-2.0,0.0]],
 
-     
 
-       
-        self.goal_cords = self.goals[0]
-        #self.goal_cords=self.shapes["obs3"]
-    #    self.shapes={
-    #         "line":[[0.0,1.0],[0.0,2.0] ,[0.0,-1.0],[0.0,0.0]],
-    #         "line2":[[1.0,0.0],[2.0,0.0] ,[-1.0,0.0],[-2.0,0.0]],
-    #         "trianlge":[[0.0,-1.0],[0.0,1.2] ,[0.0,-1.2],[1.2,0.0]],
-    #         "trianlge2":[[0.0,1.5],[0.0,0.0] ,[0.0,-1.2],[1.5,0.0]],
-    #         "square":[[-1.2,-1.2],[1.2,1.2] ,[-1.2,1.2],[1.2,-1.2]],
-    #         #"line3":[[2.5,2.5],[1.5,1.5] ,[0.5,0.5],[-0.5,-0.5]],
-    #         #"test":[[1.5,1.5],[-1.5,-1.5] ,[1.5,-1.5],[-1.5,1.5]],
-          
+        #               ]
+        # self.goals = [[[1.0,1.0],[0.0,0.0],[0.0,-1.0],[0.0,-2.0]],
+        #               [[1.0,-1.0],[1.0,0.0],[0.0,-1.0],[0.0,1.0]],
+        #               [[-1.0,-1.0],[1.0,-1.0],[-1.0,1.0],[-1.0,-1.0]],
+        #               [[-1.0,1.0],[-1.0,-1.0],[-1.0,1.0],[0.0,-1.0]],
+        #              # [[-1.0,0.0],[-1.0,-1.0],[-1.0,1.0],[0.0,-1.0]],
+        #               #[[-1.0,0.0],[-1.0,-1.0],[-1.0,1.0],[0.0,-1.0]],
+        #               [[1.5,1.5],[-1.0,0.0],[2.0,0.0],[-2.0,0.0]],
+        #               [[1.5,-1.5],[-1.0,0.0],[2.0,0.0],[-2.0,0.0]],
 
-    #     }
 
+        #               ]
+  
+        self.goal_cords =self.goals[0]
+  
         self.goal_freq = 0
         self.goal_re =0
         self.dones = [False for _ in range(self.num_agents)]
@@ -133,8 +140,8 @@ class Env(Node):
         self.global_steps = 0
         self.current_angulars = [0.0 for _ in range(self.num_agents)]
         self.current_velocities = [0.0 for _ in range(self.num_agents)]
-        self.ldss=[[] for _ in range(self.num_agents)]
-   
+        self.ldss = [[] for _ in range(self.num_agents)]
+
     def get_current_position(self, msg):
         self.positions[0] = [
             msg.pose.pose.position.x, msg.pose.pose.position.y]
@@ -149,16 +156,21 @@ class Env(Node):
             self.goal_angles[0] -= 2*np.pi
         elif (self.goal_angles[0] < -np.pi):
             self.goal_angles[0] += 2*np.pi
-      
-        
+  
+        # distance = self.get_distance_to_goal(0)
+
+        # reward+=-(distance/self.get_abs_distance_to_goal(0))
+        # reward+= -np.abs((self.goal_angles[0]))
+        # print(reward)
+
+       
         # self.goal_angles2[0] = np.arctan2(
         #     self.positions[0][1]-self.goal_cords[0][1], self.positions[0][0]-self.goal_cords[0][0])-self.current_angle
         # if (self.goal_angles2[0] > np.pi):
         #     self.goal_angles2[0] -= 2*np.pi
         # elif (self.goal_angles2[0] < -np.pi):
         #     self.goal_angles2[0] += 2*np.pi
-        
-        
+
         # reward=0.0
         # distance = np.abs(self.get_distance_to_goal(0)-1.0)
         #     #rewards[index] += -(distance/self.get_abs_distance_to_goal(index))+1
@@ -178,10 +190,8 @@ class Env(Node):
             self.goal_angles[1] -= 2*np.pi
         elif (self.goal_angles[1] < -np.pi):
             self.goal_angles[1] += 2*np.pi
-        #self.goal_angles2[1] = np.arctan2(
+        # self.goal_angles2[1] = np.arctan2(
            # self.positions[1][1]-self.goal_cords[1][1], self.positions[1][0]-self.goal_cords[1][0])
-        
-
 
     def get_current_position3(self, msg):
         self.positions[2] = [
@@ -195,7 +205,6 @@ class Env(Node):
             self.goal_angles[2] -= 2*np.pi
         elif (self.goal_angles[2] < -np.pi):
             self.goal_angles[2] += 2*np.pi
-     
 
     def get_current_position4(self, msg):
         self.positions[3] = [
@@ -221,7 +230,8 @@ class Env(Node):
         if (self.goal_angles[4] > np.pi):
             self.goal_angles[4] -= 2*np.pi
         elif (self.goal_angles[4] < -np.pi):
-            self.goal_angles[4] += 2*np.pi        
+            self.goal_angles[4] += 2*np.pi
+
     def get_current_position6(self, msg):
         self.positions[5] = [
             msg.pose.pose.position.x, msg.pose.pose.position.y]
@@ -233,16 +243,17 @@ class Env(Node):
         if (self.goal_angles[5] > np.pi):
             self.goal_angles[5] -= 2*np.pi
         elif (self.goal_angles[5] < -np.pi):
-            self.goal_angles[5] += 2*np.pi     
+            self.goal_angles[5] += 2*np.pi
+
     def get_lds(self, msg):
-        a=msg.ranges[0:10]
-        b=msg.ranges[-10:]
-        c=a+b
-        self.ldss[0]=c
+        a = msg.ranges[0:10]
+        b = msg.ranges[-10:]
+        c = a+b
+        self.ldss[0] = c
         for i in range(20):
-            if(self.ldss[0][i]==np.Inf):
-                self.ldss[0][i]=3.5        
-       
+            if (self.ldss[0][i] == np.Inf):
+                self.ldss[0][i] = 3.5
+
         self.min_ldss_dist[0] = np.min(msg.ranges)
 
         if (self.min_ldss_dist[0] == np.Inf):
@@ -250,51 +261,47 @@ class Env(Node):
         self.min_ldss_angle[0] = np.argmin(msg.ranges)
        
         
-      
-    
-      
-        #print(self.min_ldss_dist[0],self.min_ldss_angle[0])
+       
+
     def get_lds2(self, msg):
 
-        a=msg.ranges[0:10]
-        b=msg.ranges[-10:]
-        c=a+b
-        self.ldss[1]=c
+        a = msg.ranges[0:10]
+        b = msg.ranges[-10:]
+        c = a+b
+        self.ldss[1] = c
         for i in range(20):
-            if(self.ldss[1][i]==np.Inf):
-                self.ldss[1][i]=3.5
+            if (self.ldss[1][i] == np.Inf):
+                self.ldss[1][i] = 3.5
         self.min_ldss_dist[1] = np.min(msg.ranges)
 
         if (self.min_ldss_dist[1] == np.Inf):
             self.min_ldss_dist[1] = float(3.5)
-        self.min_ldss_angle[1] = np.argmin(msg.ranges)        
-   
+        self.min_ldss_angle[1] = np.argmin(msg.ranges)
 
     def get_lds3(self, msg):
 
-        a=msg.ranges[0:10]
-        b=msg.ranges[-10:]
-        c=a+b
-        self.ldss[2]=c
+        a = msg.ranges[0:10]
+        b = msg.ranges[-10:]
+        c = a+b
+        self.ldss[2] = c
         for i in range(20):
-            if(self.ldss[2][i]==np.Inf):
-                self.ldss[2][i]=3.5
+            if (self.ldss[2][i] == np.Inf):
+                self.ldss[2][i] = 3.5
         self.min_ldss_dist[2] = np.min(msg.ranges)
 
         if (self.min_ldss_dist[2] == np.Inf):
             self.min_ldss_dist[2] = float(3.5)
-        self.min_ldss_angle[2] = np.argmin(msg.ranges) 
-      
+        self.min_ldss_angle[2] = np.argmin(msg.ranges)
 
     def get_lds4(self, msg):
 
-        a=msg.ranges[0:10]
-        b=msg.ranges[-10:]
-        c=a+b
-        self.ldss[3]=c
+        a = msg.ranges[0:10]
+        b = msg.ranges[-10:]
+        c = a+b
+        self.ldss[3] = c
         for i in range(20):
-            if(self.ldss[3][i]==np.Inf):
-                self.ldss[3][i]=3.5
+            if (self.ldss[3][i] == np.Inf):
+                self.ldss[3][i] = 3.5
         self.min_ldss_dist[3] = np.min(msg.ranges)
 
         if (self.min_ldss_dist[3] == np.Inf):
@@ -303,27 +310,28 @@ class Env(Node):
 
     def get_lds5(self, msg):
 
-        a=msg.ranges[0:10]
-        b=msg.ranges[-10:]
-        c=a+b
-        self.ldss[4]=c
+        a = msg.ranges[0:10]
+        b = msg.ranges[-10:]
+        c = a+b
+        self.ldss[4] = c
         for i in range(20):
-            if(self.ldss[4][i]==np.Inf):
-                self.ldss[4][i]=3.5
+            if (self.ldss[4][i] == np.Inf):
+                self.ldss[4][i] = 3.5
         self.min_ldss_dist[4] = np.min(msg.ranges)
 
         if (self.min_ldss_dist[4] == np.Inf):
             self.min_ldss_dist[4] = float(3.5)
         self.min_ldss_angle[4] = np.argmin(msg.ranges)
+
     def get_lds6(self, msg):
 
-        a=msg.ranges[0:10]
-        b=msg.ranges[-10:]
-        c=a+b
-        self.ldss[5]=c
+        a = msg.ranges[0:10]
+        b = msg.ranges[-10:]
+        c = a+b
+        self.ldss[5] = c
         for i in range(20):
-            if(self.ldss[5][i]==np.Inf):
-                self.ldss[5][i]=3.5
+            if (self.ldss[5][i] == np.Inf):
+                self.ldss[5][i] = 3.5
         self.min_ldss_dist[5] = np.min(msg.ranges)
 
         if (self.min_ldss_dist[5] == np.Inf):
@@ -338,7 +346,7 @@ class Env(Node):
 
     def move_robots(self, actions, index):
         twist = Twist()
-        twist.linear.x =actions[1]
+        twist.linear.x = actions[1]
         twist.angular.z = actions[0]
         self.cmd_vel_pub[index].publish(twist)
 
@@ -377,23 +385,24 @@ class Env(Node):
         self.reset_sim_client.call_async(req)
 
     def step(self, request, response):
-        
+
         if (request.init):
-            print("num crash",self.num_crash)
+            print("num crash", self.num_crash)
             self.steps = 0
             self.dones = [False for _ in range(self.num_agents)]
+            self.don = [False for _ in range(self.num_agents)]
             for index in range(self.num_agents):
                 self.init_positions[index] = self.positions[index]
 
                 self.init_robots(index)
                 print(self.goal_cords)
             response.states = self.get_state()
+            print("by", self.goal_reached_by_id)
 
             return response
 
         #self.dones = [False for _ in range(self.num_agents)]
         actions = request.actions
-        
 
         for index in range(self.num_agents):
             self.current_angulars[index] = actions[index*2]
@@ -406,6 +415,7 @@ class Env(Node):
             self.move_robots(actionss, index)
 
         state_s = self.get_state()
+
         rewards = self.get_reward()
 
         response.states = state_s
@@ -424,19 +434,25 @@ class Env(Node):
         return True
 
     def generate_goal_pose(self):
-        self.goal_re+=1  
+        self.goal_re += 1
         self.goals=self.goals[1:len(self.goals)]
-        #self.goal_cords=random.choice(self.goals)
+        #if (self.goal_re == 15):
+        #   self.goals = [[[1.0, 0.0]], [[1.5, 0.0]], [[1.5, 1.5]],
+        #                  [[1.5, -1.5]], [[-1.5, -1.5]], [[-1.5, 1.5]]]
+        #self.goal_cords = random.choice(self.goals)
+        #random.shuffle(self.goal_cords)
+        #if(self.goal_re >=10):
+        #    random.shuffle(self.goal_cords)
         self.goal_cords=self.goals[0]
+        print("len of gaols", len(self.goals))
+        print("goal reached --------------------")
         print(self.goal_cords)
-        print("len of gaols",len(self.goals))
 
         # if(self.goal_freq==1):
         #     #a=["t1","t2","s1","l1","test"]
         #     a=["line","line2","trianlge","trianlge2","square"]
         #     #a=["obs1","obs2","obs3","t2","tt1","t1"]
-      
-           
+
         #     chosen=random.choice(a)
         #     self.goal_cords=self.shapes[chosen]
         #     if(self.goal_re>=10):
@@ -445,12 +461,10 @@ class Env(Node):
         #     self.goal_freq=0
         #     print("chosen shape",chosen)
         #     print(self.goal_cords)
-       
-       
 
     def crashs(self, index):
 
-        if(self.min_ldss_dist[index]<0.20):
+        if (self.min_ldss_dist[index] < 0.13):
 
             return True
         return False
@@ -461,7 +475,7 @@ class Env(Node):
     def goal_reached(self, index):
         distance = self.get_distance_to_goal(index)
 
-        if (distance < 0.15):
+        if (distance < 0.20):
 
             return True
         return False
@@ -474,61 +488,62 @@ class Env(Node):
         rewards = [0 for _ in range(self.num_agents)]
         for index in range(self.num_agents):
             distance = self.get_distance_to_goal(index)
-            angle_to_goal= np.abs((self.goal_angles[index]))
-          
-            rewards[index] = -distance-angle_to_goal
-      
 
-            #if (self.min_ldss_dist[index] < 0.60):
-             #   rewards[index] -= 10
-            if(any(a<0.80 for a in self.ldss[index])):
-                rewards[index] -= 10
+            rewards[index]+=-distance/9.0
+            rewards[index]+= -5*np.abs((self.goal_angles[index]))+0.2
+           
+            #rewards[index] = -distance-angle_to_goal
+
+            #if (self.min_ldss_dist[index] < 0.80):
+            #   rewards[index] -= 10
+            if (any(a < 0.50 for a in self.ldss[index])):
+                rewards[index] -= 200
 
             if self.succeses[index]:
                 rewards[index] += 500
             elif self.fails[index]:
                 rewards[index] -= 500
-       
+
         return rewards
 
     def get_state(self):
         l = list()
         self.global_steps += 1
-       
+
         self.succeses = [False for _ in range(self.num_agents)]
         self.fails = [False for _ in range(self.num_agents)]
         for index in range(self.num_agents):
 
-            norm_angle = (self.goal_angles[index]+3.14)/(3.14+3.14)
+            norm_angle = (self.goal_angles[index]+np.pi)/(np.pi+np.pi)
             #norm_angle2 = (self.goal_angles2[index]+3.14)/(3.14+3.14)
             norm_angular = self.current_angulars[index]+np.pi/(np.pi+np.pi)
             norm_velo = self.current_velocities[index]-0.2/(0.5-0.2)
-            distance = self.get_distance_to_goal(index)/9.899494936611665
-                
+            distance = self.get_distance_to_goal(index)/14.142135623730951
+
             norm_lds = (self.min_ldss_dist[index]-0)/(3.5)
             # norm_lds_angle = self.min_ldss_angle[index]
 
             # l.append(float(norm_goal))
             # l.append(float(norm_angle))
-            #l.append(float(norm_lds))
-            #l.append(float(norm_lds_angle))
+            # l.append(float(norm_lds))
+            # l.append(float(norm_lds_angle))
 
             l.append(float(distance))
             l.append(float(norm_angle))
-            #l.append(float(norm_angle2))
+            # l.append(float(norm_angle2))
             l.append(float(norm_angular))
             l.append(float(norm_velo))
             # l.append(float(self.angles[index]))
             for a in self.ldss[index]:
-                  l.append(a/3.5)
+                l.append(a/3.5)
             l.append(float(norm_lds))
-            l.append(float(self.min_ldss_angle[index]))
-           
+            l.append(float(self.min_ldss_angle[index]/49))
+
             if (self.crashs(index)):
                 if (self.test):
                     self.dones = [True for _ in range(self.num_agents)]
                     self.fails = [True for _ in range(self.num_agents)]
-                    
+
                 else:
                    # if(not self.global_steps<5000):
 
@@ -541,13 +556,15 @@ class Env(Node):
                    #     self.stop_robots(index)
 
             if (self.goal_reached(index)):
-                self.goal_reached_by_id[index]+=1
+                # if(not self.don[index]):
+                # self.goal_reached_by_id[index]+=1
+                self.don[index] = True
                 self.goal_reached_by[index] += 1
                 self.succeses[index] = True
                 self.dones[index] = True
                 self.stop_robots(index)
 
-            if (self.steps ==600 and not self.test):
+            if (self.steps == 750 and not self.test):
                 self.dones = [True for _ in range(self.num_agents)]
                 self.fails = [True for _ in range(self.num_agents)]
                 if self.succeses[index]:
@@ -557,12 +574,12 @@ class Env(Node):
         if (all(self.dones)):
             for index in range(self.num_agents):
                 self.stop_robots(index)
-            #if(not self.test):
+            # if(not self.test):
             time.sleep(1)
             self.call_reset_sim()
             if(all(self.fails)):
-                self.num_crash+=1
-            #if(all(self.succeses)): 
+               self.num_crash+=1
+            #if (all(self.succeses)):
             self.goal_freq += 1
             self.generate_goal_pose()
         self.steps += 1

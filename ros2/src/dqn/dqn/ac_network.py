@@ -28,11 +28,12 @@ def loss_actor(y):
 custom_objects = {"custom_loss_actor": loss_actor}
 keras.utils.get_custom_objects().update(custom_objects)
 class ACNetwork():
-    def __init__(self, name, model_load=False, ep=0) -> None:
+    def __init__(self, name, model_load=False, ep=0,load_buffer=True) -> None:
         self.name = name
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         self.upper_bound=np.pi
         self.lower_bound=-np.pi
+        self.load_buffer=load_buffer
         # self.critic_lr = 0.001
 
         # self.actor_lr = 0.0001
@@ -41,7 +42,7 @@ class ACNetwork():
         self.critic_optimizer = tf.keras.optimizers.Adam(learning_rate=self.critic_lr)
         self.actor_optimizer = tf.keras.optimizers.Adam(learning_rate=self.actor_lr)
         self.buffer_counter=0
-        self.buffer_capacity=100_000
+        self.buffer_capacity=150_000
         self.state_size =6
         self.state_buffer = np.zeros((self.buffer_capacity, 26))
         self.action_buffer = np.zeros((self.buffer_capacity,2))
@@ -98,17 +99,17 @@ class ACNetwork():
 
         inputs = keras.layers.Input(shape=(26,))
         out = keras.layers.Dense(400, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(inputs)
-        out=keras.layers.Dropout(0.3)(out)
         out = keras.layers.BatchNormalization()(out)
+        out=keras.layers.Dropout(0.3)(out)
         out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        out=keras.layers.Dropout(0.3)(out)
-        out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        # out = keras.layers.BatchNormalization()(out)
+        # out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
         
-        out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        # out = keras.layers.BatchNormalization()(out)
+        # out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
   
         out = keras.layers.BatchNormalization()(out)
+        out=keras.layers.Dropout(0.3)(out)
      
         outputs = keras.layers.Dense(1, activation="tanh",kernel_initializer=init1)(out)
     
@@ -135,11 +136,11 @@ class ACNetwork():
 
         out = keras.layers.Dense(1024, kernel_regularizer=keras.regularizers.l2(0.01),
                                  activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(concat)
-        out=keras.layers.Dropout(0.2)(out)
+        out=keras.layers.Dropout(0.4)(out)
      
         out = keras.layers.Dense(1024, activation="relu",kernel_regularizer=keras.regularizers.l2(0.01),
                                  kernel_initializer=keras.initializers.GlorotNormal())(out)
-        out=keras.layers.Dropout(0.2)(out)
+        out=keras.layers.Dropout(0.4)(out)
        
         outputs = keras.layers.Dense(1)(out)
     
@@ -265,20 +266,25 @@ class ACNetwork():
         self.target_actor = Utils.load_model(self.target_actor, path2)
         self.critic_model = Utils.load_model(self.critic_model, path3)
         self.target_critic = Utils.load_model(self.target_critic, path4)
-        path = os.path.join(self.dir_path, self.get_model_file_name("json"))
-        self.buffer_counter=Utils.load_json(path, "counter")
+
+        if(self.load_buffer):
+            path = os.path.join(self.dir_path, self.get_model_file_name("json"))
+            self.buffer_counter=Utils.load_json(path, "counter")
         
-    
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","state"))
-        self.state_buffer= Utils.load_pickle(path)
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","reward"))
-        self.reward_buffer= Utils.load_pickle(path)
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","action"))
-        self.action_buffer= Utils.load_pickle(path)
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","next"))
-        self.next_state_buffer= Utils.load_pickle(path)
-        path = os.path.join(self.dir_path, self.get_model_file_name("obj","done"))
-        self.dones= Utils.load_pickle(path)
+            
+        
+            path = os.path.join(self.dir_path, self.get_model_file_name("obj","state"))
+            self.state_buffer= Utils.load_pickle(path)
+            
+            
+            path = os.path.join(self.dir_path, self.get_model_file_name("obj","reward"))
+            self.reward_buffer= Utils.load_pickle(path)
+            path = os.path.join(self.dir_path, self.get_model_file_name("obj","action"))
+            self.action_buffer= Utils.load_pickle(path)
+            path = os.path.join(self.dir_path, self.get_model_file_name("obj","next"))
+            self.next_state_buffer= Utils.load_pickle(path)
+            path = os.path.join(self.dir_path, self.get_model_file_name("obj","done"))
+            self.dones= Utils.load_pickle(path)
        
 
     def get_epsilon(self):

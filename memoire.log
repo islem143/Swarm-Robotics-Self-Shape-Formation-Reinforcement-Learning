@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.3.11)  15 MAY 2023 21:14
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.3.11)  20 MAY 2023 14:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -727,15 +727,6 @@ LaTeX Warning: Label `fig:sub1' multiply defined.
 
 LaTeX Warning: Label `sub@fig:sub1' multiply defined.
 
-
-LaTeX Warning: Label `fig:sub2' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:sub2' multiply defined.
-
-
-LaTeX Warning: Label `fig:test' multiply defined.
-
 )
 \openout1 = `memoire.aux'.
 
@@ -858,7 +849,24 @@ Underfull \hbox (badness 10000) in paragraph at lines 51--53
 
  []
 
-[2] [3] [4] (./memoire.toc [5])
+
+Overfull \hbox (6.15503pt too wide) in paragraph at lines 55--56
+[]\OT1/cmr/bx/n/12 Mots Cl^^Ses\OT1/cmr/m/n/12 : Swarm robotics, Re-in-force-me
+nt ler-arn-ing, DDPG,Ros,Pattern foram-
+ []
+
+[2] [3]
+Underfull \hbox (badness 10000) in paragraph at lines 70--71
+
+ []
+
+
+Overfull \hbox (6.35779pt too wide) in paragraph at lines 72--73
+[]\OT1/cmr/bx/n/12 Keywords\OT1/cmr/m/n/12 : Swarm robotics, Re-in-force-ment l
+er-arn-ing, DDPG,Ros,Pattern foram-
+ []
+
+[4] (./memoire.toc [5])
 \tf@toc=\write4
 \openout4 = `memoire.toc'.
 
@@ -868,163 +876,163 @@ Underfull \hbox (badness 10000) in paragraph at lines 51--53
 
  [7] [8
 
-] [9] [10] [11]
-[12] [13] [14] [15]
-<images//swarmfish.jpeg, id=465, 283.0575pt x 178.6675pt>
+] [9] [10] [11] [12] [13]
+[14] [15]
+<images//swarmfish.jpeg, id=463, 283.0575pt x 178.6675pt>
 File: images//swarmfish.jpeg Graphic file (type jpg)
 <use images//swarmfish.jpeg>
-Package pdftex.def Info: images//swarmfish.jpeg  used on input line 267.
+Package pdftex.def Info: images//swarmfish.jpeg  used on input line 269.
 (pdftex.def)             Requested size: 170.55766pt x 107.65932pt.
-<images//swarmbirds.jpeg, id=466, 310.15875pt x 163.61125pt>
+<images//swarmbirds.jpeg, id=464, 310.15875pt x 163.61125pt>
 File: images//swarmbirds.jpeg Graphic file (type jpg)
 <use images//swarmbirds.jpeg>
-Package pdftex.def Info: images//swarmbirds.jpeg  used on input line 273.
+Package pdftex.def Info: images//swarmbirds.jpeg  used on input line 275.
 (pdftex.def)             Requested size: 170.55766pt x 89.96898pt.
- [16 <./images//swarmfish.jpeg> <./images//swarmbirds.jpeg>] [17] [18]
-Underfull \hbox (badness 10000) in paragraph at lines 321--322
+ [16 <./images//swarmfish.jpeg> <./images//swarmbirds.jpeg>] [17]
+[18]
+Underfull \hbox (badness 10000) in paragraph at lines 323--324
 
  []
 
 [19]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 358.
+put line 360.
 LaTeX Font Info:    Trying to load font information for OMS+cmtt on input line 
-363.
-LaTeX Font Info:    No file OMScmtt.fd. on input line 363.
+365.
+LaTeX Font Info:    No file OMScmtt.fd. on input line 365.
 
 
 LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
-(Font)              for symbol `textbraceleft' on input line 363.
+(Font)              for symbol `textbraceleft' on input line 365.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 363--364
+Underfull \hbox (badness 10000) in paragraph at lines 365--366
 [] \OT1/cmtt/m/n/12 Initialise sequence s1 = \OMS/cmtt/m/n/12 f\OT1/cmtt/m/n/12
  x1\OMS/cmtt/m/n/12 g \OT1/cmtt/m/n/12 and preprocessed sequenced $\OML/cmm/m/i
 t/12 ^^^[]$ \OT1/cmtt/m/n/12 =
  []
 
 [20]
-<images//ddpg.png, id=508, 853.1875pt x 576.1525pt>
+<images//ddpg.png, id=506, 853.1875pt x 576.1525pt>
 File: images//ddpg.png Graphic file (type png)
 <use images//ddpg.png>
-Package pdftex.def Info: images//ddpg.png  used on input line 402.
+Package pdftex.def Info: images//ddpg.png  used on input line 404.
 (pdftex.def)             Requested size: 383.93083pt x 259.26622pt.
- [21 <./images//ddpg.png>] [22] [23] [24]
-<images//formation.png, id=544, 435.6275pt x 235.88126pt>
+ [21 <./images//ddpg.png>] [22] [23] [24] [25]
+<images//formation.png, id=550, 435.6275pt x 235.88126pt>
 File: images//formation.png Graphic file (type png)
 <use images//formation.png>
-Package pdftex.def Info: images//formation.png  used on input line 493.
+Package pdftex.def Info: images//formation.png  used on input line 504.
 (pdftex.def)             Requested size: 174.24791pt x 94.35083pt.
- [25 <./images//formation.png>]
-[26]
-<images//equations.png, id=557, 529.22719pt x 333.49594pt>
+ [26 <./images//formation.png>] [27]
+<images//equations.png, id=562, 529.22719pt x 333.49594pt>
 File: images//equations.png Graphic file (type png)
 <use images//equations.png>
-Package pdftex.def Info: images//equations.png  used on input line 572.
+Package pdftex.def Info: images//equations.png  used on input line 583.
 (pdftex.def)             Requested size: 423.38232pt x 266.7971pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[27]
-<images//lds3.png, id=562, 498.36188pt x 322.20375pt>
+[28]
+<images//lds3.png, id=567, 498.36188pt x 322.20375pt>
 File: images//lds3.png Graphic file (type png)
 <use images//lds3.png>
-Package pdftex.def Info: images//lds3.png  used on input line 585.
+Package pdftex.def Info: images//lds3.png  used on input line 596.
 (pdftex.def)             Requested size: 423.60959pt x 273.87447pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-Overfull \hbox (17.42644pt too wide) in paragraph at lines 607--609
+Overfull \hbox (17.42644pt too wide) in paragraph at lines 618--620
 []\OT1/cmr/m/n/12 state=[distance,angle,angular ve-loc-ity,linear ve-loc-ity,ld
 s an-gle, min lds dis-tance,lidar
  []
 
-[28 <./images//equations.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 642--645
+[29 <./images//equations.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 653--656
 \OT1/cmr/m/n/12 where $\OML/cmm/m/it/12 mdd$ \OT1/cmr/m/n/12 stands for the min
 -i-mum de-tected dis-tance.
  []
 
-[29 <./images//lds3.png>] [30]
-<images//simulation_flow.png, id=585, 568.22287pt x 389.35463pt>
+[30 <./images//lds3.png>] [31]
+<images//simulation_flow.png, id=591, 568.22287pt x 389.35463pt>
 File: images//simulation_flow.png Graphic file (type png)
 <use images//simulation_flow.png>
-Package pdftex.def Info: images//simulation_flow.png  used on input line 684.
+Package pdftex.def Info: images//simulation_flow.png  used on input line 695.
 (pdftex.def)             Requested size: 482.99171pt x 330.953pt.
 
-Overfull \hbox (56.59915pt too wide) in paragraph at lines 684--685
+Overfull \hbox (56.59915pt too wide) in paragraph at lines 695--696
  [][] 
  []
 
-<images//training_workflow3.png, id=586, 196.0926pt x 337.26pt>
+<images//training_workflow3.png, id=592, 196.0926pt x 337.26pt>
 File: images//training_workflow3.png Graphic file (type png)
 <use images//training_workflow3.png>
-Package pdftex.def Info: images//training_workflow3.png  used on input line 696
+Package pdftex.def Info: images//training_workflow3.png  used on input line 707
 .
 (pdftex.def)             Requested size: 352.9664pt x 607.06754pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[31 <./images//simulation_flow.png>] [32 <./images//training_workflow3.png>]
-[33
+[32 <./images//simulation_flow.png>] [33 <./images//training_workflow3.png>]
+[34
 
-] [34]
-<images//ros.png, id=605, 705.63625pt x 430.60875pt>
+] [35]
+<images//ros.png, id=610, 705.63625pt x 430.60875pt>
 File: images//ros.png Graphic file (type png)
 <use images//ros.png>
-Package pdftex.def Info: images//ros.png  used on input line 763.
+Package pdftex.def Info: images//ros.png  used on input line 774.
 (pdftex.def)             Requested size: 282.2495pt x 172.24043pt.
-<images//turtlebot3_burger_components.png, id=607, 547.04375pt x 500.87125pt>
+<images//turtlebot3_burger_components.png, id=612, 547.04375pt x 500.87125pt>
 File: images//turtlebot3_burger_components.png Graphic file (type png)
 <use images//turtlebot3_burger_components.png>
 Package pdftex.def Info: images//turtlebot3_burger_components.png  used on inpu
-t line 786.
+t line 797.
 (pdftex.def)             Requested size: 218.81361pt x 200.34494pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[35 <./images//ros.png>] [36 <./images//turtlebot3_burger_components.png>]
-<images//lds.png, id=619, 744.7825pt x 608.2725pt>
+[36 <./images//ros.png>] [37 <./images//turtlebot3_burger_components.png>]
+<images//lds.png, id=625, 744.7825pt x 608.2725pt>
 File: images//lds.png Graphic file (type png)
 <use images//lds.png>
-Package pdftex.def Info: images//lds.png  used on input line 817.
+Package pdftex.def Info: images//lds.png  used on input line 828.
 (pdftex.def)             Requested size: 297.90771pt x 243.30469pt.
 
-[37 <./images//lds.png>]
-<images//training.png, id=626, 776.9025pt x 393.8715pt>
+[38 <./images//lds.png>]
+<images//training.png, id=631, 776.9025pt x 393.8715pt>
 File: images//training.png Graphic file (type png)
 <use images//training.png>
-Package pdftex.def Info: images//training.png  used on input line 872.
+Package pdftex.def Info: images//training.png  used on input line 883.
 (pdftex.def)             Requested size: 466.14508pt x 236.3247pt.
 
-Overfull \hbox (39.75252pt too wide) in paragraph at lines 872--873
+Overfull \hbox (39.75252pt too wide) in paragraph at lines 883--884
  [][] 
  []
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[38]
-<images//deployment.png, id=631, 375.804pt x 279.444pt>
+[39]
+<images//deployment.png, id=636, 375.804pt x 279.444pt>
 File: images//deployment.png Graphic file (type png)
 <use images//deployment.png>
-Package pdftex.def Info: images//deployment.png  used on input line 888.
+Package pdftex.def Info: images//deployment.png  used on input line 899.
 (pdftex.def)             Requested size: 450.96255pt x 335.33112pt.
 
-Overfull \hbox (24.56999pt too wide) in paragraph at lines 888--889
+Overfull \hbox (24.56999pt too wide) in paragraph at lines 899--900
  [][] 
  []
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[39 <./images//training.png>] [40 <./images//deployment.png>]
-Overfull \hbox (64.4931pt too wide) detected at line 946
+[40 <./images//training.png>] [41 <./images//deployment.png>]
+Overfull \hbox (64.4931pt too wide) detected at line 957
 [][]\OML/cmm/m/it/12 closs \OT1/cmr/m/n/12 = \OML/cmm/m/it/12 loss\OT1/cmr/m/n/
 12 (\OML/cmm/m/it/12 critic\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 state; actions\OT1
 /cmr/m/n/12 )\OML/cmm/m/it/12 ; reward \OT1/cmr/m/n/12 + \OML/cmm/m/it/12 ^^M \
@@ -1034,79 +1042,79 @@ OMS/cmtt/m/n/12 ^^C \OML/cmm/m/it/12 targetcricic\OT1/cmr/m/n/12 (\OML/cmm/m/it
 /12 :
  []
 
-[41]
-<images//actor_model.png, id=651, 1402.23875pt x 610.28pt>
+[42]
+<images//actor_model.png, id=656, 1402.23875pt x 610.28pt>
 File: images//actor_model.png Graphic file (type png)
 <use images//actor_model.png>
-Package pdftex.def Info: images//actor_model.png  used on input line 960.
+Package pdftex.def Info: images//actor_model.png  used on input line 971.
 (pdftex.def)             Requested size: 490.79092pt x 213.6012pt.
 
-Overfull \hbox (64.39836pt too wide) in paragraph at lines 960--961
+Overfull \hbox (64.39836pt too wide) in paragraph at lines 971--972
  [][] 
  []
 
-<images//critic_model.png, id=652, 1404.24625pt x 660.4675pt>
+<images//critic_model.png, id=657, 1404.24625pt x 660.4675pt>
 File: images//critic_model.png Graphic file (type png)
 <use images//critic_model.png>
-Package pdftex.def Info: images//critic_model.png  used on input line 970.
+Package pdftex.def Info: images//critic_model.png  used on input line 981.
 (pdftex.def)             Requested size: 421.27713pt x 198.14177pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<images//critic_training.png, id=653, 1247.66125pt x 617.30624pt>
+<images//critic_training.png, id=658, 1247.66125pt x 617.30624pt>
 File: images//critic_training.png Graphic file (type png)
 <use images//critic_training.png>
-Package pdftex.def Info: images//critic_training.png  used on input line 981.
+Package pdftex.def Info: images//critic_training.png  used on input line 992.
 (pdftex.def)             Requested size: 436.68797pt x 216.06041pt.
 
-Overfull \hbox (10.29541pt too wide) in paragraph at lines 981--982
+Overfull \hbox (10.29541pt too wide) in paragraph at lines 992--993
  [][] 
  []
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<images//actor_training.png, id=654, 1224.575pt x 429.605pt>
+<images//actor_training.png, id=659, 1224.575pt x 429.605pt>
 File: images//actor_training.png Graphic file (type png)
 <use images//actor_training.png>
-Package pdftex.def Info: images//actor_training.png  used on input line 991.
+Package pdftex.def Info: images//actor_training.png  used on input line 1002.
 (pdftex.def)             Requested size: 428.60768pt x 150.364pt.
 
-Overfull \hbox (2.21512pt too wide) in paragraph at lines 991--992
+Overfull \hbox (2.21512pt too wide) in paragraph at lines 1002--1003
  [][] 
  []
 
-[42 <./images//actor_model.png>] [43 <./images//critic_model.png> <./images//cr
-itic_training.png> <./images//actor_training.png>] [44
+[43 <./images//actor_model.png>] [44 <./images//critic_model.png> <./images//cr
+itic_training.png> <./images//actor_training.png>] [45
 
 ]
-<images//robot1.png, id=674, 1435.3625pt x 476.78125pt>
+<images//robot1.png, id=679, 1435.3625pt x 476.78125pt>
 File: images//robot1.png Graphic file (type png)
 <use images//robot1.png>
-Package pdftex.def Info: images//robot1.png  used on input line 1021.
-(pdftex.def)             Requested size: 1435.35901pt x 476.78008pt.
-
-Overfull \hbox (6.56952pt too wide) in paragraph at lines 1021--1022
- [] 
- []
-
-<images//robot2.png, id=675, 1435.3625pt x 476.78125pt>
-File: images//robot2.png Graphic file (type png)
-<use images//robot2.png>
-Package pdftex.def Info: images//robot2.png  used on input line 1032.
+Package pdftex.def Info: images//robot1.png  used on input line 1032.
 (pdftex.def)             Requested size: 1435.35901pt x 476.78008pt.
 
 Overfull \hbox (6.56952pt too wide) in paragraph at lines 1032--1033
  [] 
  []
 
-<images//robot3.png, id=676, 1435.3625pt x 476.78125pt>
-File: images//robot3.png Graphic file (type png)
-<use images//robot3.png>
-Package pdftex.def Info: images//robot3.png  used on input line 1047.
+<images//robot2.png, id=680, 1435.3625pt x 476.78125pt>
+File: images//robot2.png Graphic file (type png)
+<use images//robot2.png>
+Package pdftex.def Info: images//robot2.png  used on input line 1043.
 (pdftex.def)             Requested size: 1435.35901pt x 476.78008pt.
 
-Overfull \hbox (6.56952pt too wide) in paragraph at lines 1047--1048
+Overfull \hbox (6.56952pt too wide) in paragraph at lines 1043--1044
+ [] 
+ []
+
+<images//robot3.png, id=681, 1435.3625pt x 476.78125pt>
+File: images//robot3.png Graphic file (type png)
+<use images//robot3.png>
+Package pdftex.def Info: images//robot3.png  used on input line 1058.
+(pdftex.def)             Requested size: 1435.35901pt x 476.78008pt.
+
+Overfull \hbox (6.56952pt too wide) in paragraph at lines 1058--1059
  [] 
  []
 
@@ -1114,87 +1122,83 @@ Overfull \hbox (6.56952pt too wide) in paragraph at lines 1047--1048
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1062--1064
+Underfull \hbox (badness 10000) in paragraph at lines 1073--1075
 
  []
 
-[45 <./images//robot1.png> <./images//robot2.png>]
-Overfull \hbox (17.62482pt too wide) in paragraph at lines 1081--1083
+[46 <./images//robot1.png> <./images//robot2.png>]
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 1092--1094
 [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1081--1083
+Underfull \hbox (badness 10000) in paragraph at lines 1092--1094
 
  []
 
-<images//shape1.png, id=683, 489.83pt x 310.15875pt>
+[47 <./images//robot3.png>]
+<images//shape1.png, id=693, 489.83pt x 310.15875pt>
 File: images//shape1.png Graphic file (type png)
 <use images//shape1.png>
-Package pdftex.def Info: images//shape1.png  used on input line 1106.
+Package pdftex.def Info: images//shape1.png  used on input line 1118.
 (pdftex.def)             Requested size: 191.87534pt x 121.49147pt.
-<images//shape2.png, id=684, 280.04625pt x 156.585pt>
+<images//shape2.png, id=694, 280.04625pt x 156.585pt>
 File: images//shape2.png Graphic file (type png)
 <use images//shape2.png>
-Package pdftex.def Info: images//shape2.png  used on input line 1112.
+Package pdftex.def Info: images//shape2.png  used on input line 1124.
 (pdftex.def)             Requested size: 191.87534pt x 107.28874pt.
-<images//shape3.png, id=685, 282.05376pt x 225.84375pt>
+<images//shape3.png, id=695, 282.05376pt x 225.84375pt>
 File: images//shape3.png Graphic file (type png)
 <use images//shape3.png>
-Package pdftex.def Info: images//shape3.png  used on input line 1129.
+Package pdftex.def Info: images//shape3.png  used on input line 1141.
 (pdftex.def)             Requested size: 191.87534pt x 153.63718pt.
-<images//shape4.png, id=686, 282.05376pt x 157.58875pt>
+<images//shape4.png, id=696, 282.05376pt x 157.58875pt>
 File: images//shape4.png Graphic file (type png)
 <use images//shape4.png>
-Package pdftex.def Info: images//shape4.png  used on input line 1135.
+Package pdftex.def Info: images//shape4.png  used on input line 1147.
 (pdftex.def)             Requested size: 191.87534pt x 107.2046pt.
-<images//shape5.png, id=687, 334.24875pt x 260.975pt>
+<images//shape5.png, id=697, 334.24875pt x 260.975pt>
 File: images//shape5.png Graphic file (type png)
 <use images//shape5.png>
-Package pdftex.def Info: images//shape5.png  used on input line 1153.
+Package pdftex.def Info: images//shape5.png  used on input line 1165.
 (pdftex.def)             Requested size: 191.87534pt x 149.81654pt.
-<images//shape6.png, id=688, 341.275pt x 297.11pt>
+<images//shape6.png, id=698, 341.275pt x 297.11pt>
 File: images//shape6.png Graphic file (type png)
 <use images//shape6.png>
-Package pdftex.def Info: images//shape6.png  used on input line 1159.
+Package pdftex.def Info: images//shape6.png  used on input line 1171.
 (pdftex.def)             Requested size: 191.87534pt x 167.04689pt.
-<images//shape7.png, id=689, 227.85126pt x 297.11pt>
+<images//shape7.png, id=699, 227.85126pt x 297.11pt>
 File: images//shape7.png Graphic file (type png)
 <use images//shape7.png>
-Package pdftex.def Info: images//shape7.png  used on input line 1178.
+Package pdftex.def Info: images//shape7.png  used on input line 1190.
 (pdftex.def)             Requested size: 170.55766pt x 222.40579pt.
-<images//shape8.png, id=690, 331.2375pt x 191.71625pt>
+<images//shape8.png, id=700, 331.2375pt x 191.71625pt>
 File: images//shape8.png Graphic file (type png)
 <use images//shape8.png>
-Package pdftex.def Info: images//shape8.png  used on input line 1184.
+Package pdftex.def Info: images//shape8.png  used on input line 1196.
 (pdftex.def)             Requested size: 170.55766pt x 98.71594pt.
-<images//shape9.png, id=691, 331.2375pt x 286.06876pt>
+<images//shape9.png, id=701, 331.2375pt x 286.06876pt>
 File: images//shape9.png Graphic file (type png)
 <use images//shape9.png>
-Package pdftex.def Info: images//shape9.png  used on input line 1203.
+Package pdftex.def Info: images//shape9.png  used on input line 1215.
 (pdftex.def)             Requested size: 170.55766pt x 147.29868pt.
-<images//shape10.png, id=692, 331.2375pt x 286.06876pt>
+<images//shape10.png, id=702, 331.2375pt x 286.06876pt>
 File: images//shape10.png Graphic file (type png)
 <use images//shape10.png>
-Package pdftex.def Info: images//shape10.png  used on input line 1209.
+Package pdftex.def Info: images//shape10.png  used on input line 1221.
 (pdftex.def)             Requested size: 170.55766pt x 147.29868pt.
-<images//shape11.png, id=693, 163.61125pt x 286.06876pt>
+<images//shape11.png, id=703, 163.61125pt x 286.06876pt>
 File: images//shape11.png Graphic file (type png)
 <use images//shape11.png>
-Package pdftex.def Info: images//shape11.png  used on input line 1229.
-(pdftex.def)             Requested size: 149.23674pt x 260.93408pt.
-<images//shape12.png, id=694, 292.09125pt x 256.96pt>
-File: images//shape12.png Graphic file (type png)
-<use images//shape12.png>
-Package pdftex.def Info: images//shape12.png  used on input line 1235.
-(pdftex.def)             Requested size: 170.55766pt x 150.04848pt.
-[46 <./images//robot3.png>] [47 <./images//shape1.png> <./images//shape2.png> <
-./images//shape3.png> <./images//shape4.png> <./images//shape5.png> <./images//
-shape6.png>] [48 <./images//shape7.png> <./images//shape8.png> <./images//shape
-9.png> <./images//shape10.png>] [49 <./images//shape11.png> <./images//shape12.
-png>] [50
+Package pdftex.def Info: images//shape11.png  used on input line 1241.
+(pdftex.def)             Requested size: 127.91905pt x 223.6609pt.
+ [48 <./images//shape1.png> <./images//shape2.png> <./images//shape3.png> <./im
+ages//shape4.png>] [49 <./images//shape5.png> <./images//shape6.png> <./images/
+/shape7.png> <./images//shape8.png>] [50 <./images//shape9.png> <./images//shap
+e10.png> <./images//shape11.png>] [51
 
-] [51] (./memoire.bbl [52]) [53] (./memoire.aux)
+] [52]
+(./memoire.bbl [53]) [54] (./memoire.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -1205,10 +1209,10 @@ Package rerunfilecheck Info: File `memoire.out' has not changed.
 (rerunfilecheck)             Checksum: A9FFC6692744D1E00175F21A9CAA6210;9902.
  ) 
 Here is how much of TeX's memory you used:
- 21250 strings out of 480129
- 373209 string characters out of 5893409
- 715488 words of memory out of 5000000
- 38698 multiletter control sequences out of 15000+600000
+ 21242 strings out of 480129
+ 373009 string characters out of 5893409
+ 715520 words of memory out of 5000000
+ 38688 multiletter control sequences out of 15000+600000
  475567 words of font info for 50 fonts, out of 8000000 for 9000
  81 hyphenation exceptions out of 8191
  91i,15n,91p,1145b,622s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1225,10 +1229,10 @@ msfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
 s/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
 sy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on memoire.pdf (53 pages, 1534143 bytes).
+Output written on memoire.pdf (54 pages, 1522118 bytes).
 PDF statistics:
- 845 PDF objects out of 1000 (max. 8388607)
- 695 compressed objects within 7 object streams
- 179 named destinations out of 1000 (max. 500000)
- 673 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 852 PDF objects out of 1000 (max. 8388607)
+ 702 compressed objects within 8 object streams
+ 181 named destinations out of 1000 (max. 500000)
+ 668 words of extra memory for PDF output out of 10000 (max. 10000000)
 

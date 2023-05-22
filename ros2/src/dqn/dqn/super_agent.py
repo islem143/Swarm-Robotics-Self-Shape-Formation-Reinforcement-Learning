@@ -19,7 +19,7 @@ except:
     pass
 summary_writer = tf.summary.create_file_writer('logs')
 
-loss_function = keras.losses.MeanSquaredError()
+critic_loss = keras.losses.MeanSquaredError()
 
 
 def loss_actor(y):
@@ -42,7 +42,7 @@ class SuperAgent():
         #self.std_dev = 0.35
         self.tau = 0.001
         self.discout_factor = 0.99
-        self.batch_size = 128
+        self.batch_size = 256
         self.noise2 = 0.0
         self.MIN_REPLAY_MEMORY_SIZE = 5000
     def set_episode(self, ep):
@@ -72,56 +72,67 @@ class SuperAgent():
         a.assign(b * tau + a * (1 - tau))
 
     @tf.function
-    def update(self, state_batch, next_state_batch, reward_batch, dones, action_batch,done_counter):
+    def update(self, states, next_states, rewards, dones, actions,done_counter):
         
         
-       
-    
-    
-            with tf.GradientTape() as tape:
-                target_actions = self.agents[0].target_actor(next_state_batch, training=True)
-                target_actions=tf.concat(target_actions,axis=1)
-            
-                y = reward_batch + self.discout_factor * self.agents[0].target_critic(
-                    [next_state_batch, target_actions], training=True
-                )*(1-dones)
-                
-                
-              
-                critic_value = self.agents[0].critic_model([state_batch, action_batch], training=True)
-          
-                critic_loss = loss_function(y,critic_value)
-                
-                
-               
-
-            critic_grad = tape.gradient(critic_loss, self.agents[0].critic_model.trainable_variables)
-            self.agents[0].critic_optimizer.apply_gradients(
-                zip(critic_grad, self.agents[0].critic_model.trainable_variables)
-            )
-            with summary_writer.as_default():
-              tf.summary.scalar(f'loss_critic-{self.agents[0].name}', critic_loss, step=self.agents[0].critic_optimizer.iterations)
-
-            with tf.GradientTape() as tape:
-                actions = self.agents[0].actor_model(state_batch, training=True)
-                actions=tf.concat(actions,axis=1)
-                critic_value = self.agents[0].critic_model([state_batch, actions], training=True)
-               
-                # Used `-value` as we want to maximize the value given
-                # by the critic for our actions
-                # q_mean = tf.math.reduce_mean(critic_value)
-                # q_std = tf.math.reduce_std(critic_value)
-                # q_normalized = (critic_value - q_mean) / q_std
-                 
-                actor_loss = loss_actor(critic_value)
+        for i in range(self.num_agents):
+         if (done_counter[i] <= 1):
            
+            with tf.GradientTape() as tape:
+                #concat_actions = tf.concat(actions, axis=1)
+                
+                target_actions = [tf.concat(self.agents[index].target_actor(
+                    next_states[:,i*self.state_size:i*self.state_size+self.state_size], training=True), axis=1) for index in range(self.num_agents)]
+                concat_target_actions = tf.concat(target_actions, axis=1)
+               
+               
+                y = tf.reshape(rewards[:, i], (-1, 1)) + self.discout_factor * self.agents[i].target_critic(
+                    [next_states, concat_target_actions], training=True
+                )*(1-tf.reshape(dones[:, i], (-1, 1)))
+               
+                
+                critic_value = self.agents[i].critic_model(
+                    [states, actions], training=True)
+            
+                c_loss = critic_loss(y, critic_value)
+               
 
-            actor_grad = tape.gradient(actor_loss, self.agents[0].actor_model.trainable_variables)
-            self.agents[0].actor_optimizer.apply_gradients(
-                zip(actor_grad, self.agents[0].actor_model.trainable_variables)
+            critic_grad = tape.gradient(
+                c_loss, self.agents[i].critic_model.trainable_variables)
+            
+            self.agents[i].critic_optimizer.apply_gradients(
+                zip(critic_grad, self.agents[i].critic_model.trainable_variables))
+            with summary_writer.as_default():
+                tf.summary.scalar(
+                    f'loss_critic-{self.agents[i].name}', c_loss, step=self.agents[i].critic_optimizer.iterations)
+        
+            with tf.GradientTape() as tape:
+                policy_actions = [tf.concat(self.agents[index].actor_model(
+                    states[:,i*self.state_size:i*self.state_size+self.state_size], training=True), axis=1) for index in range(self.num_agents)]
+                concat_policy_actions = tf.concat(policy_actions, axis=1)
+               
+             
+                
+
+      
+         
+                critic_val = self.agents[i].critic_model(
+                    [states, concat_policy_actions], training=True)
+            
+                actor_loss = loss_actor(critic_val)
+               
+                
+
+            actor_grad = tape.gradient(
+                actor_loss, self.agents[i].actor_model.trainable_variables)
+     
+           
+            self.agents[i].actor_optimizer.apply_gradients(
+                zip(actor_grad, self.agents[i].actor_model.trainable_variables)
             )
             with summary_writer.as_default():
-              tf.summary.scalar(f'loss_actor-{self.agents[0].name}', actor_loss, step=self.agents[0].actor_optimizer.iterations)
+                tf.summary.scalar(
+                    f'loss_actor-{self.agents[i].name}', actor_loss, step=self.agents[i].actor_optimizer.iterations)
         # with tf.GradientTape(persistent=True) as tape:
 
         #     target_actions = [tf.concat(self.agents[index].target_actor(

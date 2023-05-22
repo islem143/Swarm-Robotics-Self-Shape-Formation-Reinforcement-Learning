@@ -58,6 +58,16 @@ E.~A.~O. Diallo and T.~Sugawara, ``Multi-agent pattern formation: a distributed
   model-free deep reinforcement learning approach,'' in {\em 2020 International
   Joint Conference on Neural Networks (IJCNN)}, pp.~1--8, IEEE, 2020.
 
+\bibitem{gong2022efficient}
+H.~Gong, P.~Wang, C.~Ni, and N.~Cheng, ``Efficient path planning for mobile
+  robot based on deep deterministic policy gradient,'' {\em Sensors}, vol.~22,
+  no.~9, p.~3579, 2022.
+
+\bibitem{prasad2017multi}
+B.~S. Prasad, A.~G. Manjunath, and H.~Ramasangu, ``Multi-agent polygon
+  formation using reinforcement learning.,'' in {\em ICAART (1)}, pp.~159--165,
+  2017.
+
 \bibitem{long2018towards}
 P.~Long, T.~Fan, X.~Liao, W.~Liu, H.~Zhang, and J.~Pan, ``Towards optimally
   decentralized multi-robot collision avoidance via deep reinforcement
@@ -69,21 +79,16 @@ J.~Ma, H.~Lu, J.~Xiao, Z.~Zeng, and Z.~Zheng, ``Multi-robot target encirclement
   control with collision avoidance via deep reinforcement learning,'' {\em
   Journal of Intelligent \& Robotic Systems}, vol.~99, pp.~371--386, 2020.
 
-\bibitem{dong2020mobile}
-Y.~Dong and X.~Zou, ``Mobile robot path planning based on improved ddpg
-  reinforcement learning algorithm,'' in {\em 2020 IEEE 11th International
-  Conference on software engineering and service science (ICSESS)}, pp.~52--56,
-  IEEE, 2020.
+\bibitem{bae2019multi}
+H.~Bae, G.~Kim, J.~Kim, D.~Qian, and S.~Lee, ``Multi-robot path planning method
+  using reinforcement learning,'' {\em Applied sciences}, vol.~9, no.~15,
+  p.~3057, 2019.
 
-\bibitem{gong2022efficient}
-H.~Gong, P.~Wang, C.~Ni, and N.~Cheng, ``Efficient path planning for mobile
-  robot based on deep deterministic policy gradient,'' {\em Sensors}, vol.~22,
-  no.~9, p.~3579, 2022.
-
-\bibitem{quiroga2022position}
-F.~Quiroga, G.~Hermosilla, G.~Farias, E.~Fabregas, and G.~Montenegro,
-  ``Position control of a mobile robot through deep reinforcement learning,''
-  {\em Applied Sciences}, vol.~12, no.~14, p.~7194, 2022.
+\bibitem{wang2019pattern}
+J.~Wang, J.~Cao, M.~Stojmenovic, M.~Zhao, J.~Chen, and S.~Jiang, ``Pattern-rl:
+  Multi-robot cooperative pattern formation via deep reinforcement learning,''
+  in {\em 2019 18th IEEE International Conference On Machine Learning And
+  Applications (ICMLA)}, pp.~210--215, IEEE, 2019.
 
 \bibitem{turtlebot}
 https://emanual.robotis.com/, ``Gazebo.'' \url{https://emanual.robotis.com/}.

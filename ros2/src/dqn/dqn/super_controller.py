@@ -38,7 +38,7 @@ class SuperController(Node):
 
     def __init__(self):
         super().__init__('dqn')
-        self.state_size = 24
+        self.state_size = 18
         self.action_size = 2
         self.num_agents =1
         self.test=False
@@ -155,11 +155,11 @@ class SuperController(Node):
                     
                     self.super_agent.train(self.done_counter)
                 self.current_actor_states=self.next_actor_states
-                
+                time.sleep(0.01)
 
                     
 
-                time.sleep(0.013)
+               
 
 
             for index, agent in enumerate(self.super_agent.agents):

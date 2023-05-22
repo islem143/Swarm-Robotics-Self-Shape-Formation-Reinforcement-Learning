@@ -63,32 +63,31 @@ class Agent():
        
 
 
+   
     def create_actor_model(self):
-        # Initialize weights between -3e-3 and 3-e3
-        last_init = tf.random_uniform_initializer(minval=-0.003, maxval=0.003)
-        last_init2 = tf.random_uniform_initializer(minval=-0.0003, maxval=0.0003)
-
-
-        inputs = keras.layers.Input(shape=(self.state_size,))
-        out = keras.layers.Dense(400, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(inputs)
-        out=keras.layers.Dropout(0.3)(out)
-        out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        out=keras.layers.Dropout(0.3)(out)
-        out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        #out=keras.layers.Dropout(0.2)(out)
-        out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-       # out=keras.layers.Dropout(0.2)(out)
-        out = keras.layers.BatchNormalization()(out)
-     
-        outputs = keras.layers.Dense(1, activation="tanh",kernel_initializer=last_init
-        
-)(out)
-        outputs2 = keras.layers.Dense(1, activation="tanh",kernel_initializer=last_init2
     
-)(out)
+        init1 = tf.random_uniform_initializer(minval=-0.003, maxval=0.003)
+        init2 = tf.random_uniform_initializer(minval=-0.0003, maxval=0.0003)
+
+        inputs = keras.layers.Input(shape=(18,))
+        out = keras.layers.Dense(400, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(inputs)
+        out = keras.layers.BatchNormalization()(out)
+        out=keras.layers.Dropout(0.3)(out)
+        out = keras.layers.Dense(300, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        # out = keras.layers.BatchNormalization()(out)
+        # out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+        
+        # out = keras.layers.BatchNormalization()(out)
+        # out = keras.layers.Dense(128, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
+  
+        out = keras.layers.BatchNormalization()(out)
+        out=keras.layers.Dropout(0.3)(out)
+     
+        outputs = keras.layers.Dense(1, activation="tanh",kernel_initializer=init1)(out)
+    
+        outputs2 = keras.layers.Dense(1, activation="tanh",kernel_initializer=init2)(out)
+    
+
 
         
         outputs = outputs * self.upper_bound
@@ -97,34 +96,26 @@ class Agent():
         return model
     
     def create_critic_model(self):
-        state_input = keras.layers.Input(shape=(self.state_size*self.num_agents))
-        state_out = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_input)
-        #state_out = keras.layers.BatchNormalization()(state_out)
-        # state_out = keras.layers.Dense(32, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(state_out)
-        # state_out = keras.layers.BatchNormalization()(state_out)
-
-            # Action as input
-        action_input = keras.layers.Input(shape=(self.action_size*self.num_agents))
-        action_out = keras.layers.Dense(256, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(action_input)
-      #  action_out =  keras.layers.BatchNormalization()(action_out)
-            # Both are passed through seperate layer before concatenating
+        state_input = keras.layers.Input(shape=(18))
+        state_out = keras.layers.Dense(512, activation="relu",
+                                       kernel_initializer=keras.initializers.GlorotNormal())(state_input)
+       
+        action_input = keras.layers.Input(shape=(2))
+        action_out = keras.layers.Dense(256, activation="relu",
+                                        kernel_initializer=keras.initializers.GlorotNormal())(action_input)
+     
         concat = keras.layers.Concatenate()([state_out, action_out])
 
-        out = keras.layers.Dense(1024, kernel_regularizer=keras.regularizers.l2(0.01),activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(concat)
-        out=keras.layers.Dropout(0.2)(out)
-       # out = keras.layers.BatchNormalization()(out)
-        out = keras.layers.Dense(1024, activation="relu",kernel_regularizer=keras.regularizers.l2(0.01),kernel_initializer=keras.initializers.GlorotNormal())(out)
-        out=keras.layers.Dropout(0.2)(out)
-        #out = keras.layers.BatchNormalization()(out)
-        #out= keras.layers.Dense(256, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        #out=keras.layers.Dropout(0.2)(out)
-        #out = keras.layers.BatchNormalization()(out)
-        # out = keras.layers.Dense(512, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(out)
-        # out=keras.layers.Dropout(0.2)(out)
-        # out = keras.layers.BatchNormalization()(out)
+        out = keras.layers.Dense(1024, kernel_regularizer=keras.regularizers.l2(0.01),
+                                 activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(concat)
+        out=keras.layers.Dropout(0.4)(out)
+     
+        out = keras.layers.Dense(1024, activation="relu",kernel_regularizer=keras.regularizers.l2(0.01),
+                                 kernel_initializer=keras.initializers.GlorotNormal())(out)
+        out=keras.layers.Dropout(0.4)(out)
+       
         outputs = keras.layers.Dense(1)(out)
-
-        # Outputs single value for give state-action
+    
         model = tf.keras.Model([state_input, action_input], outputs)
 
         return model
