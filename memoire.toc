@@ -47,19 +47,19 @@
 \contentsline {subsubsection}{\numberline {6.6.1}Introduction}{31}{subsubsection.6.6.1}%
 \contentsline {subsubsection}{\numberline {6.6.2}The learning flow}{31}{subsubsection.6.6.2}%
 \contentsline {subsection}{\numberline {6.7}Conclusion}{32}{subsection.6.7}%
-\contentsline {section}{\numberline {7}Implementation}{34}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Introduction}{35}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Roboting Operating system}{35}{subsection.7.2}%
-\contentsline {subsubsection}{\numberline {7.2.1}Ros Basics}{35}{subsubsection.7.2.1}%
-\contentsline {subsection}{\numberline {7.3}TurtleBot}{36}{subsection.7.3}%
-\contentsline {subsubsection}{\numberline {7.3.1}TurtleBot3 components}{36}{subsubsection.7.3.1}%
-\contentsline {subsection}{\numberline {7.4}Simulation}{37}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}Ros implemation}{38}{subsection.7.5}%
-\contentsline {subsection}{\numberline {7.6}Ros implemation: Training phase}{39}{subsection.7.6}%
-\contentsline {subsection}{\numberline {7.7}Ros implemation: Test phase}{40}{subsection.7.7}%
-\contentsline {subsection}{\numberline {7.8}Neural network implementation}{41}{subsection.7.8}%
-\contentsline {subsection}{\numberline {7.9}Conclusion}{43}{subsection.7.9}%
-\contentsline {section}{\numberline {8}Result and analysis}{45}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Introdution}{46}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Limitations And Future Work}{48}{subsection.8.2}%
-\contentsline {section}{\numberline {9}Conclusion}{51}{section.9}%
+\contentsline {section}{\numberline {7}Implementation}{35}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Introduction}{36}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Roboting Operating system}{36}{subsection.7.2}%
+\contentsline {subsubsection}{\numberline {7.2.1}Ros Basics}{36}{subsubsection.7.2.1}%
+\contentsline {subsection}{\numberline {7.3}TurtleBot}{37}{subsection.7.3}%
+\contentsline {subsubsection}{\numberline {7.3.1}TurtleBot3 components}{37}{subsubsection.7.3.1}%
+\contentsline {subsection}{\numberline {7.4}Simulation}{38}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Ros implemation}{39}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Ros implemation: Training phase}{40}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}Ros implemation: Test phase}{41}{subsection.7.7}%
+\contentsline {subsection}{\numberline {7.8}Neural network implementation}{42}{subsection.7.8}%
+\contentsline {subsection}{\numberline {7.9}Conclusion}{44}{subsection.7.9}%
+\contentsline {section}{\numberline {8}Result and analysis}{46}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Introdution}{47}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Limitations And Future Work}{49}{subsection.8.2}%
+\contentsline {section}{\numberline {9}Conclusion}{52}{section.9}%

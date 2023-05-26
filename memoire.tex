@@ -394,7 +394,7 @@ minibatch of transitions $(\phi_{t} , a_{t} , r_{t} , \phi_{t+1} )$ in $D$
 One of the downsides of DQN is that  he can  only work  in discrete action spaces. For this reason, tasks that require continuous control, such as the linear and rotational movements of robots, require discretization. In most cases, this can result in a large action space, which slows convergence and causes instability.
 For this, there is another type of DRL algorithm named Deep Deterministic Policy Gradient, which is a policy-based actor-critic algorithm that takes the benefits of both methods (the policy-based method and the value-based method) and uses the actor-critic to reduce the bias (underfitting) that occurs.
 DDPG is composed of two neural networks: the actor and the critic. The job of the actor is to select an action based on the input state. And it is the critic who will determine if that action is suitable or not by observing the rewards returned when taking that specific action in a specific state.
-The critic network is learned using the Bellman equation, the same as q-learning.
+The critic network is learned using the Bellman equation, the same as q-learning, and the actor network try to maximize the value predicted by the critic network by setting the mean values of the critic as a loss function
 The DDPG algorithm also uses a replay buffer to store agent experiences in order to sample from them later when training the network.
 Like in Q-learning, to enable better exploration for the agent, noise is sampled from a process $\eta$ then added to the output of the actor network. It is common to use the Ornstein-Uhlenbeck process to generate temporally correlated values. \cite{lillicrap2015continuous}
 
@@ -460,8 +460,8 @@ In \cite{ma2020multi} have used the DDPG algorithm to train multiple robots to e
 in \cite{bae2019multi}, a group of robots navigates an environment and moves in a predefined formation by working cooperatively. In this work, they combined CNN to analyze image data with Deep Q learning to train the robots to avoid each other and obstacles, then tested them in various environments, which showed good results.
 
 Finnaly in \cite{wang2019pattern}, They used a novel approach to train multiple robots to form complex shapes. They split their work into two phases: training and execution. In the training phase, they used two networks, one for predicting actions and one for values, like the actor-critic method, but they used their own extended PPO algorithm. In addition, they passed the state representation to an auto-encoder to reduce the state space. After the training phase is complete, they deploy each actor model to the robots to act in a decentrilized manner.
-\subsection{Conclusion}:
-In this chapter, we have introduced deep reinforcement learning, its commonly used algorithms, and  some of the related work done in the literature.
+\subsection{Conclusion}
+In this chapter, we have introduced deep reinforcement learning, its commonly used algorithms,their advantages and disadvantages, and some of the most used algorithms and solutions to solve the pattern formation problem in the literature.
 
 
  
@@ -555,7 +555,7 @@ The first robot will choose and occupy a random location. Then, he generates a s
 \subsection{State Representation}
 
 \subsubsection{Introduction}
-The state must be carefully planned in order to produce the right shape since how it is shown will have a direct influence on how well our robot performs in attaining its objectives.
+The state must be carefully planned in order to produce the right shape since how it is presented will have a direct influence on how well our robot performs in attaining its objectives.
 
 
 \subsubsection{State Representation}
@@ -622,7 +622,7 @@ where lds is a 20 element array.
 
 \subsection{Reward Function Design}
 
-The reward function design is a critical part of any RL system. A well-designed reward function will give the robot more feedback when acting in the environment, thus making the task more 
+The reward function design is a critical part of any RL system. A well-designed reward function will give the robot more feedback when acting in the environment, thus making the task more easy to acomplish.
 The reward function was designed to encourage and reward the robot more when he approaches the goal target and penalize him when he collides with the wall or other robots.
 The design of the function is based on the state. We have used the distance, the angle, and the LDS to form the final function.
 We have divided the function into three parts: The first part is the distance reward. We will give the robot more reward when he achieves the target goal and less when he doesn't.
@@ -630,13 +630,13 @@ We have divided the function into three parts: The first part is the distance re
 \setcounter{equation}{0}
 
        \begin{equation} \label{dist_r}
-     R_{D}=-D_{goal}
+     R_{D}=-D_{goal}*\alpha
    \end{equation}
- Where $D_{goal}$ is the changing distance between the robot and the target goal, and the second part is the angle of the robot to the goal. formally:
+ Where $D_{goal}$ is the changing distance between the robot and the target goal and, and the second part is the angle of the robot to the goal. formally:
 
 
      \begin{equation} \label{angle_r}
-     R_{\theta}=-\theta_{goal}
+     R_{\theta}=-\theta_{goal}*\beta
    \end{equation}
  
  where $\theta_{goal}$  ranges  between $-\pi$  and $\pi$.
@@ -646,20 +646,30 @@ And to avoid collisions between the robots and the wall, we have set two values.
 
 \begin{equation}  \label{obs_r}
   R_{c}=\begin{cases}
-    -10, & \text{if $mdd< 0.8m$}.\\
-    -500 , & \text{ if $mdd <0.20m$ (a crash )}.\\
+    -50, & \text{if $mdd< 0.4m$}.\\
+    -100 , & \text{ if $mdd <0.13m$ (a crash )}.\\
     0 & \text{ else}.
   \end{cases}
 \end{equation}
 where $mdd$ stands for the minimum detected distance.\linebreak
-Finally, we can add \ref{dist_r}, \ref{angle_r} and \ref{obs_r} to form the finale reward function: 
+
+The finale component of our  function is the success reward:
+\begin{equation}  \label{goal_r}
+  R_{s}=\begin{cases}
+    100, & \text{if $D_{goal}< 0.2m$}.\\
+    
+    0 & \text{ else}.
+  \end{cases}
+\end{equation}
+
+Finally, we can add \ref{dist_r}, \ref{angle_r}  \ref{obs_r} and \ref{goal_r} to form the finale reward function: 
 
  
     \begin{equation} \label{final_r}
-     R=R_{D}+R_{\theta}+R{c}
+     R=R_{D}+R_{\theta}+R{c}+R_{s}
    \end{equation}
 
-
+We have set different weights for each component: $\alpha = 2$ and $\beta = 5$. So that there will be a priority in the robot's action. In our case, collision avoidance is of high priority, followed by the angle to the goal, and finally the distance to the goal.
 
 
 
@@ -685,7 +695,7 @@ This information (state,action,reward,next state) will be stored in a replay buf
 
 
 If all robots reach their goal, the simulation is reset and another formation shape is generated in order to prevent overfitting a certain type of shape.
-And if they collide, the simulation is reset, and the robots try again to form the desired shape.
+And if they collide, the simulation is reset, and the robots try again to form the informed shape.
 This learning flow will continue until the models converge and the robots form the shapes many times, respectively.
 To provide the robots with a notion of what it's like to attain a goal in terms of actions to take and states to be in and to facilitate exploration, we assign relatively basic objectives to be completed in the beginning, and after our robots are familiar with achieving their destinations, we raise the challenge and randomize the target goals.
 
@@ -708,8 +718,8 @@ To provide the robots with a notion of what it's like to attain a goal in terms 
 \caption[training flow]{training flow}
 \end{figure}
 
-\subsection{Conclusion}:
-We have presented the problem, it's formulation and our proposed solution in this chapter. Then we explained how the robots' state was represented and how the reward was determined. Finally, we described the learning flow in the simulation.
+\subsection{Conclusion}
+We have presented the problem, it's formulation and our proposed solution in this chapter. Then we explained how the robots' state was represented and how the reward was designed. Finally, we described the learning flow and simulation flow in the simulation.
 
 \afterpage{\clearpage}
 
@@ -1066,9 +1076,10 @@ In this last section, we will describe the results that we got from our experime
 The training took about 9 hours to finish, and below is the total return of the three robots during the end-to-end training phase.
 From the graph, in the first few episodes, the robots gained some rewards easily; this is because the shapes were easy to form. After that, the returns drop quickly when the training starts.
 
-After that, and between episodes 200 and 1500, we can notice that the robots start gaining rewards rapidly, the shapes form frequently, and the collision number decreases.
+Then, and between episodes 200 and 1500, we can notice that the robots start gaining rewards rapidly, the shapes are beign formed frequently, and the collision number decreases.
 Finally, from episodes 1500 to 3100, the graph starts to be stable, but the robots still gain some rewards until it converges.
 We can also notice that there are some minor differences between the three graphs, as each robot had his own experiences and gained his own rewards separately from the others.
+
 
 We have deployed our trained models on a team of 4, 5, and 6 robots, where the experiences of the three trained robots were transferred to them.
 And to test our solution, we have generated a set of shapes different from those used in the training phase, and below is a table summarizing the total number of shapes being formed without any collision:\\
@@ -1082,7 +1093,7 @@ And to test our solution, we have generated a set of shapes different from those
  \hline
  Number of robots & Total number of shapes & Shapes formed without collision \\
  \hline
- 4  & 126  & 95\%  \\
+ 4  & 126  & 98\%  \\
  \hline
  5  & 126  & 88\%  \\
  \hline
@@ -1092,7 +1103,7 @@ And to test our solution, we have generated a set of shapes different from those
 \end{tabularx}
 \\
 
-The shapes were formed with an accuracy of 92\% for a team of robots with 4 or 5 numbers, but as we increased the number to 6, the accuracy dropped to about 82\%.
+The shapes were formed with an accuracy of 98\% for a team of robots with 4 , and 88\% with the team of  5 robots, but as we increased the number to 6, the accuracy dropped to about 82\%.
 Most of the collisions happen when multiple robots meet each other in a small area, where it is difficult for them to avoid complex scenarios. This also happens when the distance between the shape's edges is small.
 And most of the collision happened between just two robots; this means that the other ones reached their positions successfully. We have also noticed that the robots avoid collisions perfectly when they are static. This means that if we have a relatively large number of robots, we can command a number of them to reach their destination first, then, with a small delay, tell the others to follow, as this also shows a good result.
 Another observation that is related to the last point is that the robot's starting position matters, as some starting positions show good results, especially if not all robots start at the same distance from the goal. \newpage The last observation is that robots tend to form the shape more accurately if the distance between the shape edges is larger.
@@ -1100,7 +1111,8 @@ Another observation that is related to the last point is that the robot's starti
 
 \subsection{Limitations And Future Work}:
 
-Our solution works fine when the number of robots is 3, 4, or 5. but as long as the numbers increase, the performances also decrease. And this can be solved using different types of algorithms that operate on a large number of agents. One of them is the MADDPG algorithm, which is a variant of the ddpg algorithm where the agents not only observe their local state but also the global state during the training, which helps the robot take actions not only based on their local state but also the global state.
+Our solution works fine when the number of robots is 3, 4, or 5, but as long as the numbers increase, the performance also decreases. And this can be solved either by training more robots in the training phase, which leads to good results but requires more computational resources, or by using different types of algorithms that operate on a large number of agents. One of them is the MADDPG algorithm, which is a variant of the ddpg algorithm where the agents not only observe their local state but also the global state during the training, which helps the robot take actions not only based on their local state but also the global state.
+Another drawback that occurs when the number of robots is large is the high flow of information and communication with the central robots. This can also be solved by using the last-mentioned algorithm.
 
 
 
@@ -1234,19 +1246,6 @@ Our solution works fine when the number of robots is 3, 4, or 5. but as long as 
 
 
 
-\begin{figure}
-\centering
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=.6\linewidth]{shape11}
-  \caption{shape11}
-  \label{fig:sub1}
-\end{subfigure}%
-
-
-
-\end{figure}
-
 
 
 \afterpage{\clearpage}
@@ -1276,8 +1275,8 @@ In our thesis, we solved the pattern formation problem using a team of robots th
 
 
 We have chosen the DDPG RL Algothim. We have trained three robots to form some geometric shapes, which took about 9 hours to converge.
-Then we tested our trained models on a team of 4 and 5 robots, where the learning of the robots was transferred to them, and we got an accuracy of 92\%.
-However, the performance of the team decreases as the number of robberies increases, and this can be solved using more suitable algorithms like the MADDPG algorithm, which is a variant of the DDPG.
+Then we tested our trained models on a team of 4 ,5  and 6 robots, where the learning of the robots was transferred to them, and we got an accuracy of 98\%, 88\% and .. respectively
+However, the performance of the team decreases as the number of robots increases, and this can be solved using more suitable algorithms like the MADDPG algorithm, which is a variant of the DDPG algorithm.
 
 
 
