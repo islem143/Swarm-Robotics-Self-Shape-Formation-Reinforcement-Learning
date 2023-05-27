@@ -40,11 +40,11 @@ class Dqn(Node):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
-        self.ep =400
-        self.test=False
+        self.ep =1900
+        self.test=True
         load_buffer=True
         load_model=True
-        self.agents = [ACNetwork("robot-1",load_model, self.ep,load_buffer),  
+        self.agents = [ACNetwork("robot-2",load_model, self.ep,load_buffer),  
                      
                        ACNetwork("robot-2",load_model, self.ep,load_buffer),
                        ACNetwork("robot-3",load_model, self.ep,load_buffer),

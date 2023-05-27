@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents = 4
+        self.num_agents = 5
         self.cmd_vel_pub = {}
         self.goal_reached_by = {}
         for i in range(self.num_agents):
@@ -52,7 +52,7 @@ class Env(Node):
             Odometry, "/t6/odom", self.get_current_position6, 10)
         self.get_laser5 = self.create_subscription(
             LaserScan, "/t6/scan", self.get_lds6, 10)
-        self.test =False
+        self.test =True
         self.env_result_service = self.create_service(
             Mac, "env_result", self.step)
         # self.env_goal_service = self.create_service(
@@ -81,15 +81,15 @@ class Env(Node):
             "obs3": [[0.0, 0.0], [1.0, 1.0], [1.0, -1.0], [-1.0, 1.0], [-1.0, -1.0], [-1.0, 0.0]]
 
         }
-        a=[1.0,0.0,-1.0]
+        a=[-1.3,0.0,1.3]
 
         self.num_crash=0
 
         c=[list(p) for p in itertools.product(a, repeat=2)]
 
-        perm_list = list(itertools.combinations(c,4))
+        perm_list = list(itertools.combinations(c,5))
 
-        self.goals=perm_list[0:126]
+        self.goals=perm_list[0:84]
         self.goal_reached_by_id={0:0,1:0,2:0,3:0,4:0}
         self.don=[False for _ in range(self.num_agents)]
 
@@ -226,11 +226,11 @@ class Env(Node):
             self.goal_angles[5] += 2*np.pi
 
     def get_lds(self, msg):
-        #a = msg.ranges[0:19]
-        #b = msg.ranges[-19:]
-        #c = a+b
-        self.ldss[0] = msg.ranges
-        for i in range(50):
+        a = msg.ranges[0:11]
+        b = msg.ranges[-11:]
+        c = a+b
+        self.ldss[0] = c
+        for i in range(22):
             if (self.ldss[0][i] == np.Inf):
                 self.ldss[0][i] = 3.5
 
@@ -245,11 +245,11 @@ class Env(Node):
 
     def get_lds2(self, msg):
 
-        # a = msg.ranges[0:11]
-        # b = msg.ranges[-11:]
-        # c = a+b
-        self.ldss[1] = msg.ranges
-        for i in range(50):
+        a = msg.ranges[0:11]
+        b = msg.ranges[-11:]
+        c = a+b
+        self.ldss[1] = c
+        for i in range(22):
             if (self.ldss[1][i] == np.Inf):
                 self.ldss[1][i] = 3.5
         self.min_ldss_dist[1] = np.min(msg.ranges)
@@ -260,11 +260,11 @@ class Env(Node):
 
     def get_lds3(self, msg):
 
-        # a = msg.ranges[0:11]
-        # b = msg.ranges[-11:]
-        # c = a+b
-        self.ldss[2] = msg.ranges
-        for i in range(50):
+        a = msg.ranges[0:11]
+        b = msg.ranges[-11:]
+        c = a+b
+        self.ldss[2] = c
+        for i in range(22):
             if (self.ldss[2][i] == np.Inf):
                 self.ldss[2][i] = 3.5
         self.min_ldss_dist[2] = np.min(msg.ranges)
@@ -275,11 +275,11 @@ class Env(Node):
 
     def get_lds4(self, msg):
 
-        # a = msg.ranges[0:11]
-        # b = msg.ranges[-11:]
-        # c = a+b
-        self.ldss[3] = msg.ranges
-        for i in range(50):
+        a = msg.ranges[0:11]
+        b = msg.ranges[-11:]
+        c = a+b
+        self.ldss[3] = c
+        for i in range(22):
             if (self.ldss[3][i] == np.Inf):
                 self.ldss[3][i] = 3.5
         self.min_ldss_dist[3] = np.min(msg.ranges)
@@ -290,11 +290,11 @@ class Env(Node):
 
     def get_lds5(self, msg):
 
-        # a = msg.ranges[0:11]
-        # b = msg.ranges[-11:]
-        # c = a+b
-        self.ldss[4] = msg.ranges
-        for i in range(50):
+        a = msg.ranges[0:11]
+        b = msg.ranges[-11:]
+        c = a+b
+        self.ldss[4] = c
+        for i in range(22):
             if (self.ldss[4][i] == np.Inf):
                 self.ldss[4][i] = 3.5
         self.min_ldss_dist[4] = np.min(msg.ranges)
@@ -305,11 +305,11 @@ class Env(Node):
 
     def get_lds6(self, msg):
 
-        # a = msg.ranges[0:11]
-        # b = msg.ranges[-11:]
-        # c = a+b
-        self.ldss[5] = msg.ranges
-        for i in range(50):
+        a = msg.ranges[0:11]
+        b = msg.ranges[-11:]
+        c = a+b
+        self.ldss[5] = c
+        for i in range(22):
             if (self.ldss[5][i] == np.Inf):
                 self.ldss[5][i] = 3.5
         self.min_ldss_dist[5] = np.min(msg.ranges)
@@ -415,15 +415,15 @@ class Env(Node):
 
     def generate_goal_pose(self):
         self.goal_re += 1
-        #self.goals=self.goals[1:len(self.goals)]
+        self.goals=self.goals[1:len(self.goals)]
       
         
-        self.goal_cords = random.choice(self.goals)    
+        #self.goal_cords = random.choice(self.goals)    
         #if(self.goal_re >=10):
         #     random.shuffle(self.goal_cords)
         
-        #self.goal_cords=self.goals[0]
-        #print("len of gaols", len(self.goals))
+        self.goal_cords=self.goals[0]
+        print("len of gaols", len(self.goals))
         print("goal reached --------------------")
         print(self.goal_cords[0])
 
@@ -508,7 +508,7 @@ class Env(Node):
                 l.append(a/3.5)
             l.append(float(norm_lds))
             l.append(float(self.min_ldss_angle[index]/49))
-          
+
             if (self.crashs(index)):
                 if (self.test):
                     self.dones = [True for _ in range(self.num_agents)]
@@ -547,11 +547,11 @@ class Env(Node):
             # if(not self.test):
             #time.sleep(1)
             self.call_reset_sim()
-            #if(all(self.fails)):
-            #  self.num_crash+=1
-            if (all(self.succeses)):
-                self.goal_freq += 1
-                self.generate_goal_pose()
+            if(all(self.fails)):
+               self.num_crash+=1
+            #if (all(self.succeses)):
+            self.goal_freq += 1
+            self.generate_goal_pose()
         self.steps += 1
 
         return l
