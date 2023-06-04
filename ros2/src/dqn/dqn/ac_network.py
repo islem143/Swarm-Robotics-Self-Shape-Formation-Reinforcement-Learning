@@ -44,10 +44,10 @@ class ACNetwork():
         self.buffer_counter=0
         self.buffer_capacity=150_000
         self.state_size =6
-        self.state_buffer = np.zeros((self.buffer_capacity, 56))
+        self.state_buffer = np.zeros((self.buffer_capacity, 28))
         self.action_buffer = np.zeros((self.buffer_capacity,2))
         self.reward_buffer = np.zeros((self.buffer_capacity, 1))
-        self.next_state_buffer = np.zeros((self.buffer_capacity,56))
+        self.next_state_buffer = np.zeros((self.buffer_capacity,28))
         self.dones = np.zeros((self.buffer_capacity,1))
         if (model_load):
             self.ep = ep
@@ -67,10 +67,10 @@ class ACNetwork():
             
             # Instead of list of tuples as the exp.replay concept go
             # We use different np.arrays for each tuple element
-            self.state_buffer = np.zeros((self.buffer_capacity, 56))
+            self.state_buffer = np.zeros((self.buffer_capacity, 28))
             self.action_buffer = np.zeros((self.buffer_capacity,2))
             self.reward_buffer = np.zeros((self.buffer_capacity, 1))
-            self.next_state_buffer = np.zeros((self.buffer_capacity,56))
+            self.next_state_buffer = np.zeros((self.buffer_capacity,28))
             self.dones = np.zeros((self.buffer_capacity,1))
             self.ep = ep
             
@@ -97,7 +97,7 @@ class ACNetwork():
         init1 = tf.random_uniform_initializer(minval=-0.003, maxval=0.003)
         init2 = tf.random_uniform_initializer(minval=-0.0003, maxval=0.0003)
 
-        inputs = keras.layers.Input(shape=(56,))
+        inputs = keras.layers.Input(shape=(28,))
         out = keras.layers.Dense(400, activation="relu",kernel_initializer=keras.initializers.GlorotNormal())(inputs)
         out = keras.layers.BatchNormalization()(out)
         out=keras.layers.Dropout(0.2)(out)
@@ -124,7 +124,7 @@ class ACNetwork():
         return model
     
     def create_critic_model(self):
-        state_input = keras.layers.Input(shape=(56))
+        state_input = keras.layers.Input(shape=(28))
         state_out = keras.layers.Dense(512, activation="relu",
                                        kernel_initializer=keras.initializers.GlorotNormal())(state_input)
        

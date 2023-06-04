@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/islem/Documents/PFE/ros2/install/mrs_msg/include/**",
+        "/home/islem/Documents/PFE/ros2/install/dqn_msg/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/islem/Documents/PFE/ros2/src/dqn_msg/include/**",
+        "/home/islem/Documents/PFE/ros2/venv/mrs_msg/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

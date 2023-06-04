@@ -2,7 +2,7 @@ import numpy as np
 import time
 import  itertools 
 import random
-a=[1.0,0.0,2.0]
+a=[1.0,0.0,-1.0]
 
 
 

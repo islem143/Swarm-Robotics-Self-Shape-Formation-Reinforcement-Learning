@@ -1,6 +1,11 @@
 \documentclass[12pt]{extarticle}
 \usepackage{algorithm}
-
+\usepackage{booktabs}% nicer horizontal lines
+\usepackage{caption}% fix vertical spacing of table captions
+\usepackage{siunitx}% align numbers at the decimal point
+\usepackage{arabtex}
+\usepackage{utf8}
+\setcode{utf8}
 
 \usepackage{amsmath}
 \usepackage{algpseudocode}
@@ -33,44 +38,60 @@
 \usepackage[acronym]{glossaries}
 \newacronym{ny}{NY}{New York}
 \begin{document}
+\begin{titlepage}
 
+\includepdf{pagedegarde}
 
-\newpage
-\pagebreak
-\hspace{0pt}
-\vfill
+\end{titlepage}
+
 \begin{center}
-\section{Résume}
+\begin{doublespace}
+\subsection*{REMERCIEMENTS}
+Je remercie tout d'abord \textbf{ALLAH}, le tout puissant pour m'avoir aider dans mes études et me guider vers le bon chemain.
+
+J'adresse aussi mes remerciement et amours pour mes chéres parents pour  leur soutien et sacrifice, mes fréres, mes amis et toutes les personnes pour leur encouragement durant toute l'année.
+
+Je remercie également, Monsieur DAIRI Abdlelkader, pour son encadrement et conseils durant la préparation de mon mémoire de fin d'étude.
+
+Je remercie aussi Monsieur BELAID Mohammed Said et Monsieur ELHANNACHI Sid Ahmed, pour avoir accepter juger et examiner mon travaille de mon mémoire de fin d'étude.
+ 
+j'adresse aussi  mes remerciement, au corps  enseignant et
+administratif de l’université de mohamed boudiaf d'oran qui a contribué à la réussite de nos études universitaires.
+ 
+ 
+ \subsection*{Dédicace}
+Ce travail est dédié mes parents mon soutien moral et source de joie et de bonheur cecont qui m’ont toujours poussé et motivé dans mes études , aussi à et à mes frère et ma sœur et toute ma famille.
+ 
+ 
+ 
+\end{doublespace}
 \end{center}
-\vfill
-\hspace{0pt}
+\pagebreak
+\begin{RLtext}
+
+\<الملخص   >
+
+\<سرب الروبوتات هو مجال آخد في التوسع يتضمن التنسيق بين مجموعة من الروبوتات من أجل إنجاز مهمة معينة. يحوال مجال سرب الروبوتات حل عدة مشاكل و القيام بعدة عمليات , منها عملية تشكيل الأشكال الهندسية  حيث تم تجريبها في مجالات عدة مثل الزراعة, عمليات الانقاد و المستودعات. من الطرق المستعملة في القيام بمثل هده العميات هي استعمال التعلم المعزز . في هدا البحث قمنا باستعمال خوارزمية DDPG  من أجل  تسير فريق من الروبوتات بالاستعانة بروبوت محوري يقوم باتنسيق و مراقبة و مساعة الروبوتات في انجاز المهمة .لقد قمنا باختبار عملنا علة مجموعة تتكون من 3 4 5 و 6 روبوتات لتكوين مجموعة من الاشكال . تحصلنا في حالة 3 و 4 روبوتات علة دقة 95 بامئة , في حالة 5 روبوتات تحصلنا على دقة 88 بامئة, أما بالنسة لست روبوتات فقد تحصلنا على نسبة 72 بالمئة.      >
+\end{RLtext}
+\subsection{Résume}
+
+
+
+La robotique en essaim est un domaine en pleine expansion qui consiste à coordonner des groupes importants de robots pour qu'ils coopèrent afin d'atteindre un objectif commun. Les robots en essaim tentent de résoudre de multiples tâches et problèmes, dont l'un est le problème de la formation de motifs, où les robots tentent de former des formes géométriques. Il y a de nombreuses applications dans l'agriculture, la recherche , le sauvetage, et les entrepôts. L'une des méthodes utilisées pour contrôler l'essaim est les algorithme d'apprentissage par renforcement profond. Dans notre projet, nous avons utilisé l'algorithme DDPG pour contrôler l'équipe de robots afin de former des motifs avec l'aide d'un robot central qui surveillera et guidera les robots vers leurs objectifs cibles en générant des 
+coordonnée  relative à sa position. Notre algorithme a obtenu  une précision de 95\% lorsqu'il a été testé sur un ensemble aléatoire de formes lorsque le nombre de robots est de trois et quatre ,  88\% dans le cas de cinq robots , et à 70\% lorsqu'il est testé sur un groupe de six robots.
+
+\textbf{Mots Clés}: La robotique en essaim, apprentissage par renforcement profond, DDPG,Ros,Format de motif,Gazebo
+
 \pagebreak
 
+\subsection{Abstarct}
+
+Swarm robotics is a fast-expanding field that includes coordinating sizable groups of robots to cooperate in order to achieve a common objective. There are multiple tasks and problems that swarm robots try to solve; one of them is the pattern formation problem, where the robots try to form geometric shapes. It has many applications in agriculture, search and rescue, and warehouses. One of the methods used to control the swarm is deep reinforcement learning algothims. In our project, we used the DDPG RL algorithm to control a team of robots to form some patterns with the help of a central robot that will monitor and guide the robots towards their target goals by generating the shape relative to his position. Our algorithm got an accuracy of 95\% when tested on a random set of shapes when the number of robots is 3, 4. and 88\% on five robots, and  72\% when tested on a group of six robots.\\
 
 
-La robotique en essaim est un domaine en pleine expansion qui consiste à coordonner des groupes importants de robots pour qu'ils coopèrent afin d'atteindre un objectif commun. Les robots en essaim tentent de résoudre de multiples tâches et problèmes, dont l'un est le problème de la formation de motifs, où les robots tentent de former des formes géométriques. Il y a de nombreuses applications dans l'agriculture, la recherche et le sauvetage, et les entrepôts. L'une des méthodes utilisées pour contrôler l'essaim est les algorithme d'apprentissage par renforcement profond. Dans notre projet, nous avons utilisé l'algorithme DDPG pour contrôler l'équipe de robots afin de former des motifs avec l'aide d'un robot central qui surveillera et guidera les robots vers leurs objectifs cibles en générant des 
-coordonnée  relative à sa position. Notre algorithme a obtenu  une précision de 92\% lorsqu'il a été testé sur un ensemble aléatoire de formes lorsque le nombre de robots est de 3, 4 et 5, mais la précision tombe à 80\% lorsqu'il est testé sur un groupe de six robots. où un autre type d'algothime doit être appliqué, comme le madppg, pour gérer un grand nombre de robots.\\
 
-
-\textbf{Mots Clés}: Swarm robotics, Reinforcement lerarning, DDPG,Ros,Pattern foramtion,Gazebo
-
-
-\newpage
-\pagebreak
-\hspace{0pt}
-\vfill
-\begin{center}
-\section{Abstarct}
-\end{center}
-\vfill
-\hspace{0pt}
-\pagebreak
-
-
-Swarm robotics is a fast-expanding field that includes coordinating sizable groups of robots to cooperate in order to achieve a common objective. There are multiple tasks and problems that swarm robots try to solve; one of them is the pattern formation problem, where the robots try to form geometric shapes. It has many applications in agriculture, search and rescue, and warehouses. One of the methods used to control the swarm is deep reinforcement learning algothims.In our project, we used the ddpg RL algorithm to control the team of robots to form some patterns with the help of a central robot that will monitor and guide the robots towards their target goals by generating the shape relative to his position. Our algorithm gets an accuracy of 92\% when tested on a random set of shapes when the number of robots is 3, 4, or 5, but the accuracy drops to 80\% when tested on a group of six robots.\\
 
 \textbf{Keywords}: Swarm robotics, Reinforcement lerarning, DDPG,Ros,Pattern foramtion,Gazebo
-
 \newpage
 \thispagestyle{empty}
 {
@@ -84,6 +105,7 @@ Swarm robotics is a fast-expanding field that includes coordinating sizable grou
 
 \newpage
 \listoffigures
+\listoftables
 \clearpage
 
 \newpage
@@ -104,7 +126,7 @@ Swarm robotics is a fast-expanding field that includes coordinating sizable grou
 
 \vspace{0.2cm}
 
-\textbf{DRL} Deep Reinfocement learning.
+\textbf{DRL} Deep Reinforcement learning.
 
 \vspace{0.2cm}
 
@@ -210,7 +232,7 @@ The main characters of swarm robots are:
 \item The number of robots in the swarm is large.
 \item Homogeneity is required for robots. A small number is acceptable if not.
 \item Robots must be incompetent with regard to the primary task they must complete, otherwise, they will fail or perform poorly.
-\item Robots are limited to local communication and sensing. It makes sure that coordination is spread, making scalability one of the system's characteristics. \cite{navarro2013introduction} \end{itemize}
+\item Robots are limited to local communication and sensing. It makes sure that coordination is spread \cite{navarro2013introduction}, making scalability one of the system's characteristics.  \end{itemize}
 
 \subsection{Swarm robotics properties}
 Swarm robotics have some properties that describe the system's current condition. Below are some of these properties:
@@ -225,37 +247,48 @@ Swarm robotics have some properties that describe the system's current condition
   
 
 \subsection{Domain of application}
-In this section, we will list some of the significant domains where swarm robotics fits in and can impact solving the domain problem.\newpage
-\subsubsection{Tasks that cover a region}
-Swarm robots are best suited for handling issues that encompass an area of space because of the swarm's extensive sensing capabilities, such as monitoring the environment of a lake or surveillance of a particular region. \cite{csahin2005swarm}\cite{olaronke2020systematic}
+In this section, we will list some of the significant domains where swarm robotics fits in. \cite{csahin2005swarm}\cite{olaronke2020systematic}
 
-\subsubsection{Search and rescue missions}
-Swarm robots can be used for these sorts of tasks in various accidents or catastrophes, such as earthquakes, when human involvement is challenging. These robots include the M-TRAN, Polyobot, and Swarm Bot.
+\begin{itemize}
 
-\subsubsection{Cleaning of oil speals}
-Such problems may be handled more quickly and affordably with a swarm of robots. Seaswarm, a robot created by the senseable team at MIT, is an example of one used for such activities.
+\item \textbf{Tasks that cover a region}: Swarm robots are best suited for handling issues that encompass an area of space because of the swarm's extensive sensing capabilities, such as monitoring the environment of a lake or surveillance of a particular region.
+\item \textbf{Search and rescue missions}: Swarm robots can be used for these sorts of tasks in various accidents or catastrophes, such as earthquakes, when human involvement is challenging. These robots include the M-TRAN, Polyobot, and Swarm Bot.
+\item \textbf{Cleaning of oil speals}: Such problems may be handled more quickly and affordably with a swarm of robots. Seaswarm, a robot created by the senseable team at MIT, is an example of one used for such activities.
+\item \textbf{Exploration}: To investigate Mars, swarm robots like Marsbees have been created. The same holds true for the CoCoRo swarm, which was employed for an in-depth underwater investigation.
+\item \textbf{Agriculture}: As they are  used to enhance agriculture and keep an eye on the health of crops and detect diseases or pests. And can also support precision agriculture practices by accurately and autonomously carrying out operations like seeding, fertilizing, or spraying pesticides. They are able to move over fields, recognize good planting sites, and work together to complete chores more quickly. 
 
-\subsubsection{Exploration}
-To investigate Mars, swarm robots like Marsbees have been created. The same holds true for the CoCoRo swarm, which was employed for an in-depth underwater investigation.
-\subsubsection{Agriculture}
-As they are  used to enhance agriculture and keep an eye on the health of crops. 
+
+\end{itemize}
+
+
+
+
 
 \subsection{Swarm robotics basic tasks and problems}
 SR tasks may be reduced to simple operations that the swarm often performs in an effort to achieve its goal.
 Aggregation, dispersion, pattern development, coordinated movement, hole avoidance, and foraging are among these activities.\cite{bayindir2007review}\cite{navarro2013introduction}.
 
-\subsubsection{Aggregation}
-The robots are combined in order to complete a task or share information. In a centralized system, this task could be simple, but in a decentralized one, it might be challenging.
-\subsubsection{Dispersion}
-Sometimes, in order to increase the group's sensing capacities during exploration, the swarm must span a large region without losing contact with its members. 
-\subsubsection{Pattern formation}
-In order to carry things or navigate hallways, the swarm must sometimes create precise patterns such as circles, squares, or lines.
-\subsubsection{Cordinated movement}
-It is making an effort to coordinate the group movements by maintaining the established pattern between the robots.
-\subsubsection{Hole avoidance}
-As suggested by the name, the group makes an effort to avoid stepping into holes.
-\subsubsection{Foraging}
-The swarm aims to locate objects, pick them up, and position them where needed.
+
+\begin{itemize} 
+
+\item \textbf{Aggregation}: Robot aggregation is the process through which separate robots unite to form a larger group, sometimes known as a swarm. When robots aggregate, they frequently display coordinated behavior and cooperate to achieve a common objective. This aggregation can take place virtually, where robots coordinate their actions and behaviors without physically merging, or it can take place physically, where robots physically assemble into a larger structure or create a cohesive group.
+\item \textbf{Dispersion}:
+The process by which a swarm or collection of robots disperses throughout a space or environment is referred to as robot dispersion. Dispersion involves robots relocating away from one another and dispersing their places, in contrast to aggregation, which involves robots coming together to create a cohesive group. Robot dispersion could be advantageous or desirable for a number of reasons, including: coverage, resource optimization, distributed sensing and scalability.
+
+\item \textbf{Pattern formation}: Pattern formation refers to the process by which a group or swarm of robots organizes themselves into specific geometric patterns or arrangements like lines, cirles, squares ... . The robots try to coordinate their movements and positions to achieve the desired pattern.
+\item \textbf{Coordinated movement}:
+Coordinated movement refers to the coordinated motion and navigation of individual robots. The robots collaborate to accomplish a shared objective by planning their movements and activities to ensure effective and seamless operation.
+
+\item \textbf{Hole avoidance}:
+Robot swarms that can navigate around or avoid open areas or gaps in the environment, sometimes referred to as "holes," are said to be engaging in "hole avoidance." For the robots to navigate, holes may stand in for risks, impediments, or places that are difficult or undesired. 
+\item \textbf{Foraging}:
+Robot swarm foraging is the term used to describe the group search, retrieval, and movement of resources or objects from the environment. In order to efficiently identify, collect, and carry things of interest to a predetermined destination, it needs the coordinated activity of several robots. Robotic swarms' foraging tendencies frequently take cues from the behavior of ants and bees and other biological systems.
+\end{itemize}
+
+
+
+
+
 
 
 
@@ -277,14 +310,13 @@ The swarm aims to locate objects, pick them up, and position them where needed.
   \label{fig:sub2}
 \end{subfigure}
 \caption{swarm animals}
-\textbf{ref}:https://www.nationalgeographic.com/
-\textbf{ref}:https://www.researchgate.net/
+
 \label{fig:test}
 \end{figure}
 
 
 
-\subsection{Concultion}
+\subsection{Conclusion}
 In this section, we have defined swarm robotics, its properties and applications, and the problems or tasks that need to be solved by the team of robots. In the next chapter, we will introduce deep reinforcement learning and its applications in the swarm robotics field.
 
 
@@ -334,7 +366,7 @@ If the MPD is episodic, then the agent will accumulate a set of rewards at the e
 Setting $\gamma<1$ will ensure the convergence of the return in the case of non-episodic MPDS.\cite{arulkumaran2017brief}.
 
 \subsection{Q learning}
-Q-learning is a type of model-free reinforcement learning algorithm based on the dynamic programming technique, where the agent tries to maximize its rewards by finding the optimal policy $\Pi$ in an iterative manner. In order to achieve this, the agent uses a type of equation called a value function that gives it the value or reward of being in a state $s$ and taking action according to its policy $\Pi$.
+Q-learning is a type of model-free reinforcement learning algorithm based on the dynamic programming technique, where the agent tries to maximize its rewards by finding the optimal policy $\Pi$ in an iterative manner. In order to achieve this, the agent uses a type of equation called a value function that gives it the value or reward of being in a state $s$ and taking action according to its policy $\Pi$.\cite{watkins1992q}
 
 
 \[ V^{\Pi}(S)=E[r(s,a)+\gamma V^{\Pi}(s') ] \] 
@@ -346,7 +378,7 @@ In order to find the optimal value function, hence finding the optimal policy, t
 
 The same goes for the action-value function, which gives the return if the agent chooses the action $a$ and follows the optimal policy thereafter.
 
-\[ Q^{*}(S,a)=E[r(s,a)+max_{a}\gamma Q^{*}(s',a) ] \]\cite{watkins1992q}.
+\[ Q^{*}(S,a)=E[r(s,a)+max_{a}\gamma Q^{*}(s',a) ] \].
 
 
 \pagebreak
@@ -402,7 +434,7 @@ Like in Q-learning, to enable better exploration for the agent, noise is sampled
  \begin{figure}[h] 
 \centering
 \includegraphics[scale=0.45]{ddpg}
-\caption[ddpg]{ddpg \textbf{ref}:https://www.researchgate.net/]]}
+\caption[ddpg]{DDPG }
 \end{figure}
 
 
@@ -435,31 +467,51 @@ Like in Q-learning, to enable better exploration for the agent, noise is sampled
 
 
 \subsection{Related Work}
-In this section, we present some of the work that has applied RL algorithms to training agents and robotic systems.
+In this section, we present some of the work that has applied RL algorithms to training agents and robotic systems. Multiple algorithms have been used from DQN,DDPG, PPO etc... and state represnation was diffrent also. Most of them used the robot distance and orientation as state input and to calculate the reward function to reach their goal. For collision avoidance, they used either a camera or lidar measurements.
 
 The most used algorithm is deep Q learning, where \cite{mnih2013playing} has applied  in learning to play atari games by using a convolutional neural network by providing raw image pixels as input, where they demonstrated that the agents achieved great performance, even surpassing human level.
 In continuous action spaces, \cite{lillicrap2015continuous} have used the ddpg algorithm, which is an extension of the DQN and the DPG algorithms. They have used an actor-critic model-free policy-based algorithm that operates in contiguous action space by applying it to several simulated physics tasks, and also shows great results achieved by the agents.
 in the field of multi-agents. \cite{diallo2020multi} where they used a decentrilized approach to train multi-agents to form some patterns using the DQN network with a central replay buffer that contains agents experiences in order for them to learn cooperatively.
 
 
-in \cite{gong2022efficient} used the DDPG algorithm for path planning and control of a robot to reach its target position. Unlike traditional fully connected layers in the actor and critic layers of DDPG, they have fed the state of the robot to an LSTM layer, so the robot's decision is not based only on the current state but also the past state. The model was tested in different environments with and without obstacles and showed good results..
-
-In \cite{prasad2017multi}, they used a decentrilized Deep Q network approach to train six robots to form polygon squares, where they set the target goals for the agents and designed a reward function to encourage them to reach their goals.
-
+in \cite{gong2022efficient} used the DDPG algorithm for path planning and control of a robot to reach its target position. Unlike traditional fully connected layers in the actor and critic layers of DDPG, they have fed the state of the robot to an LSTM layer, so the robot's decision is not based only on the current state but also the past state. They have used the robot's distance and orientation to reach the goal and a sample of lidar measurements to avoid obstacles.The model was tested in different environments with and without obstacles and showed the following result:
+For environments without obstacles, the success rate was (100\%). In the second environment, they put up a few simple obstacles, and the success rate was (87\%). And for the third environment, they used more complex obtacles (73\%). The test took about 1.5 hours in all three environments.
 
 
-In \cite{long2018towards} have used the proximal policy optimization algorithm (PPO), which is a policy-based one, to control in a decentrilized manner a group of robots to reach their target by avoiding collisions between each other. To avoid collisions, they have used convultional neural networks to extract features from consecutive lidar measurements and then pass them through a dense layer with the robot's actions. The model was tested in different types of environments, and the robots were able to achieve their target goal successfully without collisions.
 
-In \cite{diallo2020multi}, They used a multi-agent DQN algorithm to train agents to form some shapes based on local sensing. And to enable cooperation between the agents, they used a central replay memory to store their experiences instead of a local one. They also generated a random  set of shapes at the begining of each episode to avoid overfitting when testing.
+In \cite{ma2020multi} have used the DDPG algorithm to train multiple robots to encircle some target in a static position or in motion, where the agents (robots) learn to cooperatively accomplish their task by using a central replay memory. With robots having access to the target locations, they used a primary-based reward function to keep a distance and angle from it and from the neighboring robots where prioreties were as follow:
+The highest priority was collision avoidance, where each robot had a safe radius that he should keep to avoid collisions with other robots or obstacles. The second priority was to keep the specified radius from the target center. The third priority was the angular distance to be kept between neighboring robots. Lastly, they warned the robots to keep a certain angular velocity, which had the lowest priority. The trained models was tested in two diffrent environemnts:
+The first environment was stationary target encirclement, where the target robot was in a fixed position, which was an easy objective to achieve by the team of robots; hence, they learned to cooperate with each other to form an encirclement formation and enclose the target. The second environemnt  was trying to encircle a moving target and the robots also learned to collaborate to encircle him.
+
+
+
+
+
+
+In \cite{prasad2017multi}, they used a decentrilized Deep Q network approach to train six robots to form polygon squares, where they set the target goals for the agents and designed a reward function to encourage them to reach their goals. But the state space was discrete, and the reward function was calculated for each of the x and y axes.
+
+
+
+In \cite{long2018towards} have used the proximal policy optimization algorithm (PPO), which is a policy-based one, to control in a decentrilized manner a group of robots to reach their target by avoiding collisions between each other. To avoid collisions, they have used convolutional neural networks to extract features from consecutive lidar measurements and then pass them through a dense layer with the robot's actions.They also used the robot and static obstacle positions to calculate a simple reward function.
+
+ he model was tested in different types of environments, and the robots were able to achieve their target goal successfully without collisions.
+
+In \cite{diallo2020multi}, They used a multi-agent DQN algorithm to train agents to form some shapes based on local sensing. And to enable cooperation between the agents, they used a central replay memory to store their experiences instead of a local one. Each agent's state is represented as a multichannel image, where each channel corresponds to a distinct aspect of its field of vision. Each channel was a binary matrix were 1 detones the existance of an object and 0 else. The first channel was the position of the wall and obstacles; the second channel was the position of the robot itself; and the third channel was the position of the goal targets. Laslty, the final channel contains the goal positions of all other robots.
+The experimentations was tested on with  700 agents and they achived good result with a large enough view range.
+
+
+They also generated a random  set of shapes at the begining of each episode to avoid overfitting when testing.
 The model was deployed, and the agents learned to form complex geometric shapes.
 
-
-In \cite{ma2020multi} have used the DDPG algorithm to train multiple robots to encircle some target in a static position or in motion, where the agents (robots) learn to cooperatively accomplish their task by using a central replay memory. With robots having access to the target locations, they used a primary-based reward function to keep a distance and angle from it and from the neighboring robots. The models were deployed and tested to encircle static and moving targets, and they showed good results.
 
 
 in \cite{bae2019multi}, a group of robots navigates an environment and moves in a predefined formation by working cooperatively. In this work, they combined CNN to analyze image data with Deep Q learning to train the robots to avoid each other and obstacles, then tested them in various environments, which showed good results.
 
-Finnaly in \cite{wang2019pattern}, They used a novel approach to train multiple robots to form complex shapes. They split their work into two phases: training and execution. In the training phase, they used two networks, one for predicting actions and one for values, like the actor-critic method, but they used their own extended PPO algorithm. In addition, they passed the state representation to an auto-encoder to reduce the state space. After the training phase is complete, they deploy each actor model to the robots to act in a decentrilized manner.
+In \cite{wang2019pattern}, They used a novel approach to train multiple robots to form complex shapes. They split their work into two phases: training and execution. In the training phase, they used two networks, one for predicting actions and one for values, like the actor-critic method, but they used their own extended PPO algorithm. The output of the policy network was the angular and linear velocity of the robot. In addition, instead of passing raw state representation to the networks, they passed it to an auto-encoder to reduce and shrink the state space, which contains the positions of all robots in the team. In the training phase, they were alternating between sampling, getting new trajectories, and training the networks. After the training phase is complete, they deploy each actor model to the robots to act in a decentrilized manner. Their algorithm was tested against the standard PPO algorithm and showed better convergence speed and higher rewards. They also compared their method with a rule-based one called NH-ORCA, which creates rules to calculate the target positions and let the robots move towards them using the ORCA algorithm, though their method took more time to converge but showed better performance.
+
+Finnaly, In \cite{pan2022flexible}, They used an extended version of the Twin Delayed Deterministic Policy Gradient algorithm, or TD3, which uses two Q-functions and a policy. The TD3 algorithm uses six neural networks: three main and three targets for stabilizing the training. They used the paradigm of centralized training with decentralized execution and tested their algorithm on 2 to 10 agents, where the training time took about 22 hours in the simulation of 10 agents. Finally, the robots were able to form some shapes like diamonds, Xs, and Vs.
+
+
 \subsection{Conclusion}
 In this chapter, we have introduced deep reinforcement learning, its commonly used algorithms,their advantages and disadvantages, and some of the most used algorithms and solutions to solve the pattern formation problem in the literature.
 
@@ -474,7 +526,7 @@ In this chapter, we have introduced deep reinforcement learning, its commonly us
 \hspace{0pt}
 \vfill
 \begin{center}
-\section{Problem formulation And Solution Conception}
+\section{Swarm Robots Self Shape Formation}
 \end{center}
 \vfill
 \hspace{0pt}
@@ -484,33 +536,48 @@ In this chapter, we have introduced deep reinforcement learning, its commonly us
  
 
 \subsection{Introduction}
-In this section, we'll go into detail about the objective that needs to be accomplished by our robots, the difficulties they must overcome, and then our suggested solution.
-\subsection{Goal defintion}
-Our objective in this thesis is to make multirobots form geometric patterns like lines, circles, squares, and triangles while avoiding collisions and moving toward their destination in a quick and efficient manner. 
+In this chapter, we'll go into detail about the objective that needs to be accomplished by our robots, the difficulties they must overcome, then our suggested solution and finnaly the results that we got.
+
 
 
 
 \subsection{Problem Formulation}
  
-
+\subsubsection{Goal Definition}
+Our objective in this thesis is to make multirobots form geometric patterns like lines, circles, squares, and triangles while avoiding collisions and moving toward their destination in a quick and efficient manner. 
 \subsubsection{Environement}
-
 We will describe our multi-robot environment as an MDP, where $S$ is the set of states that each robot will receive. $A$ is the set of actions that it can take, and $R$ is the set of rewards that each robot will get during each episode. The goal of each robot is to maximize his return by reaching the target and avoiding collisions with the wall, other robots, and obstacles.
 For the environment, we will consider a scenario in which there are n ($n > 2$) robots moving in a 2D environment. Each robot will try to reach his target position, which is described by the homogeneous coordinates (x,y) that the primary robot determines.
 
  
- \begin{figure}[h]  
+ \begin{figure}[H]  
 \centering
 \includegraphics[scale=0.4]{formation}
 \caption[formation]{formation}
 \end{figure}
+\pagebreak
+\begin{figure}[H]  
+\centering
+\includegraphics[scale=0.8]{training_workflow3}
+\caption[Training flow]{Training flow}
+\label{fig:training}
+\end{figure}
+\subsection{Methodologie}
+Figure \ref{fig:training}  shows  the steps that we  followed to implement our solution.
+It starts with the robot being in a given state; he then takes an action, receives sensor data from the sensors like LDS and IMU, and then, based on them, calculates the reward function, and finally, the robot transitions to a new state.
+This information (state,action,reward,next state) will be stored in a replay buffer to be sampled from during the training of the models, and once he reaches a certain number of experiences, the training starts.
 
 \pagebreak
+If all robots reach their goal, the simulation is reset and another formation shape is generated in order to prevent overfitting a certain type of shape.
+And if they collide, the simulation is reset, and the robots try again to form the informed shape.
+This learning flow will continue until the models converge and the robots form the shapes many times.
+To provide the robots with a notion of what it's like to attain a goal in terms of actions to take and states to be in and to facilitate exploration, we assign relatively basic objectives to be completed in the beginning, and after our robots are familiar with achieving their destinations, we raise the challenge and randomize the target goals.
+
+
+
 \subsubsection{Shape generation}
-The center or leader robot will travel to a specific location in space to initiate the formation of the various shapes. From there, he will inform the other robots of the intended shape to be produced by indicating to them their target position relative to his position at a specific distance and angle.
+The center or leader robot will travel to a specific location in space to initiate the formation of the various shapes. From there, he will inform the other robots of the intended shape to be produced by indicating to them their target position relative to his position at a specific distance and angle. Bellow is The  Shape formation Algorithm:
 
-
-\subsubsection{Shape formation Algorithm}
 
 
 \begin{algorithm}[H]
@@ -543,7 +610,6 @@ The center or leader robot will travel to a specific location in space to initia
 \end{algorithmic}
 \end{algorithm}
 
-\subsubsection{Explanation}
 
 
 
@@ -552,13 +618,13 @@ The first robot will choose and occupy a random location. Then, he generates a s
 
 
 
-\subsection{State Representation}
+\subsubsection{State Representation}
 
-\subsubsection{Introduction}
+
 The state must be carefully planned in order to produce the right shape since how it is presented will have a direct influence on how well our robot performs in attaining its objectives.
 
 
-\subsubsection{State Representation}
+
 Our neural networks will receive information about the robots' current states as inputs, and using this information, we can determine the rewards that the robots will receive for acting in the environment.
 In our implementation, we have six types of state information: the minimum detected object distance and its angle for collision avoidance; the distance to goal; the angle to goal; the angular velocity; and the linear velocity.
 
@@ -577,11 +643,12 @@ The second component is the angle to the goal. And to find it, we need to calcul
 
 
 \[ \theta(P,G)=yaw-arctan(P/G)  \] 
-
- \begin{figure}[h]  
+See Figure \ref{fig:equations}.
+ \begin{figure}[H]  
 \centering
 \includegraphics[scale=0.8]{equations}
 \caption[equations]{equations}
+\label{fig:equations}
 \end{figure}
 
 
@@ -590,17 +657,6 @@ In order to detect other robots and avoid collisions, we use an LDS, which gives
 The original LDS take 360-degree measurements all around the robot, with a maximum length of 3.5 meters. But in our problem, we don't need such precision, as we have determined that just 50 samples are enough because there are no thin or small objects that require such precision. In addition, we also take just 20 of them, which will cover the front of the robot.
 
 We also added the angle of detection as information to the state, as this helps the robot avoid collisions more effectively.
-
- \begin{figure}[h]  
-\centering
-\includegraphics[scale=0.85]{lds3}
-\caption[lds mesurement]{lds mesurements}
-\end{figure}
-
-
-
-
-
 
 \item \textbf{The angular velocity}: 
 It is the angular or rotational movement of the robot, and it's between 
@@ -612,7 +668,6 @@ It is the linear speed of the robot. and we have set it between 0.2 and 0.5 m/s.
 \end{itemize}
 
 
-
 So, our final state representation is an array of:
 
 state=[distance,angle,angular velocity,linear velocity,lds angle,
@@ -620,7 +675,21 @@ min lds distance,lidar mesurments]
 
 where lds is a 20 element array.
 
-\subsection{Reward Function Design}
+
+ \begin{figure}[H]  
+\centering
+\includegraphics[scale=0.80]{lds3}
+\caption[lds mesurement]{Lds mesurements}
+\end{figure}
+
+
+
+
+
+
+
+
+\subsubsection{Reward Function Design}
 
 The reward function design is a critical part of any RL system. A well-designed reward function will give the robot more feedback when acting in the environment, thus making the task more easy to acomplish.
 The reward function was designed to encourage and reward the robot more when he approaches the goal target and penalize him when he collides with the wall or other robots.
@@ -674,10 +743,7 @@ We have set different weights for each component: $\alpha = 2$ and $\beta = 5$. 
 
 
 
-\subsection{Shape Formation And Deep Reinforcement Learning}
-\subsubsection{Introduction}
-
-
+\subsubsection{Model Training and Deep Reinforcement Learning}
 
 
 Each robot will have its own neural network, which will guide him towards the goal positions by avoiding collisions with other robots.
@@ -688,23 +754,6 @@ The robot will learn to move towards the goal by adjusting the angle and will us
 For the critic, he gets as input both the state and the actions and outputs the q-value, which will be used by the actor to choose the suitable actions to take.
 The parameters of both networks will affect the performance of the robots and the speed of convergence. We will describe in detail the parameters that we have chosen to be good for achieving the task.
 
-\subsubsection{The learning flow}
-Here, we will describe the learning flow that the robots will go through to learn how to approach their goals.
-It starts with the robot being in a given state; he then takes an action, receives sensor data from the sensors like LDS and IMU, and then, based on them, calculates the reward function, and finally, the robot transitions to a new state.
-This information (state,action,reward,next state) will be stored in a replay buffer to be sampled from during the training of the models, and once he reaches a certain number of experiences, the training starts.
-
-
-If all robots reach their goal, the simulation is reset and another formation shape is generated in order to prevent overfitting a certain type of shape.
-And if they collide, the simulation is reset, and the robots try again to form the informed shape.
-This learning flow will continue until the models converge and the robots form the shapes many times, respectively.
-To provide the robots with a notion of what it's like to attain a goal in terms of actions to take and states to be in and to facilitate exploration, we assign relatively basic objectives to be completed in the beginning, and after our robots are familiar with achieving their destinations, we raise the challenge and randomize the target goals.
-
-
- \begin{figure}[h]  
-\centering
-\includegraphics[scale=0.85]{simulation_flow}
-\caption[simulation flow]{simulation low}
-\end{figure}
 
 
 
@@ -712,33 +761,17 @@ To provide the robots with a notion of what it's like to attain a goal in terms 
 
 
 
- \begin{figure}[h]  
-\centering
-\includegraphics[scale=1.8]{training_workflow3}
-\caption[training flow]{training flow}
-\end{figure}
 
-\subsection{Conclusion}
-We have presented the problem, it's formulation and our proposed solution in this chapter. Then we explained how the robots' state was represented and how the reward was designed. Finally, we described the learning flow and simulation flow in the simulation.
 
-\afterpage{\clearpage}
+ 
 
-\newpage
-\pagebreak
-\hspace{0pt}
-\vfill
-\begin{center}
-\section{Implementation}
-\end{center}
-\vfill
-\hspace{0pt}
-
-\pagebreak
+\subsubsection{Conclusion}
+We have presented the problem, it's formulation and our proposed solution in this chapter. Then we explained how the robots' state was represented and how the reward was designed. Finally, we described the neural networks used and the  model training flow.
 
 
 
+\subsection{Implemenation}
 
-\subsection{Introduction}
 In this section, we will explain how we have implemented the solution, how the neural networks are designed, and what frameworks, tools, and simulators were used to train and test the robot's shape formation.
 
 
@@ -751,11 +784,10 @@ In this section, we will explain how we have implemented the solution, how the n
 
 
 
-\subsection{Roboting Operating system}
+\subsubsection{Roboting Operating system}
 To implement our work and test it, we used the robot operating system (ROS), which is a collection of open source software and tools that simplifies our work by giving us the necessary tools for controlling the robots, determining their positions and angles, gathering sensor data and preparing it for manipulation, and also giving the robots a way to communicate with one another.
-\subsubsection{Ros Basics}
-There are five concepts that ROS is built on that will allow us to implement our solution in a simple and modular way.
 
+There are five concepts that ROS is built on that will allow us to implement our solution in a simple and modular way. Figure 7.
 
  
 
@@ -779,7 +811,7 @@ As with topics, we must set the data type that the services work with.
  
 
  
- \begin{figure}[h]  
+ \begin{figure}[H]  
 \centering
 \includegraphics[scale=0.4]{ros}
 \caption[Ros]{Ros}
@@ -796,11 +828,10 @@ Ros supports C, C++, or Python as programming languages. In our project, we chos
 
 
 
-\subsection{TurtleBot}
+\subsubsection{TurtleBot}
 We will be using the Turtlebot robot, which was developed by Open Robotics. The same organization is behind Ros and the gazebo simulator.
-This robot is used for educational, research, and prototyping purposes, where multiple versions have been developed. In this thesis, we will be using the Turblebot 3-burger version.\cite{turtlebot}
+This robot is used for educational, research, and prototyping purposes, where multiple versions have been developed. In this thesis, we will be using the Turblebot 3-burger version. Figure 8\cite{turtlebot}
 
-\subsubsection{TurtleBot3 components}
 TurtleBot3 is a two-wheeled, small, lightweight robot equipped with a variety of sensors, including a 360-degree laser rangefinder for obstacle avoidance and an IMU for navigation and localization. The robot is powered by a Raspberry Pi single-board computer and is compatible with ROS.
  \begin{figure}[h]  
 \centering
@@ -809,8 +840,7 @@ TurtleBot3 is a two-wheeled, small, lightweight robot equipped with a variety of
 \end{figure}
 
 \begin{itemize}
-\item \textbf{LDS}:  LDS, which stands for laser distance sensor, which uses lasers to detect the distance between the robot and its surroundings to allow the robot to navigate in the environment and avoid detected obstacles. The LDS used in this project can sense objects in 360 degrees with a maximum length of 3.5 meters. The LDS was one of the data sources used to train our neural networks besides the robots positions. We have used it to detect other robots and avoid collisions during navigation. We have minimized the original 360-degree sample from the LDS as there is no need for such precision in our project.
-
+\item \textbf{LDS}:  LDS, which stands for laser distance sensor, which uses lasers to detect the distance between the robot and its surroundings to allow the robot to navigate in the environment and avoid detected obstacles. The LDS used in this project can sense objects in 360 degrees with a maximum length of 3.5 meters. The LDS was one of the data sources used to train our neural networks besides the robots positions. We have used it to detect other robots and avoid collisions during navigation. We have minimized the original 360-degree sample from the LDS as there is no need for such precision in our project. Figure \ref{fig:lds} shows the LDS in the gazebo simulator
      
 \item \textbf{IMU}: IMU, which stands for Inertial Measurement Unit, is a type of electronic sensor that is used to measure the orientation, position, and velocity of a moving object. The IMU combines information from many sensors, such as accelerometers, gyroscopes, and magnetometers, to give a thorough picture of the movement of the object in three dimensions. The position of the robot is calculated relative to a fixed reference frame, which is either defined by the system designer, like a closed room or factory, or by the robot himself in an outdoor environment.
 
@@ -825,7 +855,7 @@ TurtleBot3 is a two-wheeled, small, lightweight robot equipped with a variety of
 
 
 
-\subsection{Simulation}
+\subsubsection{Simulator}
 It's hard, time-consuming, and costly to train the robots in the real world. For that, simulation is used to train the robots, as it allows us to train in a faster, repeatable way and lets us put the robots and the environment in different conditions for faster experimentation.
 
 Robotics simulation programs like Gazebo, Webots, V-REP, MATLAB Robotics System Toolbox, and CoppeliaSim are some of the more well-liked ones. Each one of them has its own features, from programming language support to a fee.
@@ -833,10 +863,11 @@ In our project, we used the Gazebo Simulator because it is free, open source, an
 Gazebo is an open-source collection of software libraries that have been developed for robotics developers and educators.
 It allows you to simulate robotic systems in a virtual environment, providing a safe and cost-effective way to test and refine robot designs before deploying them in the real world. It contains a lot of prebuilt sensors and gives the user the ability to build custom ones. The gazebo is also able to simulate real-world physical phenomena, including physics-based motion, collision detection, and sensor simulation.
   
- \begin{figure}[h]  
+ \begin{figure}[H]  
 \centering
 \includegraphics[scale=0.4]{lds.png}
 \caption[Lds]{TurbleBot3 Lds}
+\label{fig:lds}
 \end{figure}
 
 
@@ -859,7 +890,7 @@ It allows you to simulate robotic systems in a virtual environment, providing a 
 
  
 
-\subsection{Ros implemation}
+\subsubsection{Ros implemation}
 In this section, we will describe how we have implemented our solution in ROS and how we defined the different nodes, topics, and services that make up the system.
 The work is divided into two phases. The first is the training and testing phase, and the second is the deployment phase.
 In the first phase, we implemented the solution in ROS in a way to facilitate the training process, which will require a lot of modification of code and simulation replay. In this phase, we haven't set up the networking between the robots, as we assume that each robot knows his target position and that we can access the global state.
@@ -868,8 +899,8 @@ In the second phase, after the models are trained, we will deploy them in each r
 
 
 
-\subsection{Ros implemation: Training phase}
-
+\subsubsection{Ros implemation: Training phase}
+Figure \ref{fig:ros_tr} shows the ROS implemnation in the training phase.
 We have followed the OpenAI Gym implementation of RL problems using the Python programming language.
 In the training phase, we have defined two nodes and one Python class for the neural networks.
 The first node is the environment node. This node is responsible for getting sensor data, positions, and commands for robots to move in the simulation.
@@ -888,14 +919,16 @@ This Python class defines the models and the network architecture, contains the 
 
 
 
- \begin{figure}[h]  
+ \begin{figure}[H]  
 \centering
 \includegraphics[scale=0.6]{training}
 \caption[training phase]{training}
+\label{fig:ros_tr}
 \end{figure}
 
-\pagebreak
-\subsection{Ros implemation: Test phase}
+
+\subsubsection{Ros implemation: Deployments phase}
+Figure \ref{fig:ros_tr} shows the ROS implemnation in the deployment phase.
 In this phase, and after the training of the models is done, we will deploy just the actor models on each robot (no need for the critic as no training is happening) in order to predict actions based on the input state.
 We have set up a node for each robot; therefore, communication will take place between these nodes by defining custom topics. Each node will get input states and pass them to the actor model to predict the actions to take.
 We have defined one topic called the goals topic, in which the central robot publishes the goal positions and others subscribe to it.  We have also defined a service in the central robot that others will send requests to either inform him about their current position or if they have reached the target goal, in order for the central robot to monitor the state of the formation.
@@ -904,7 +937,7 @@ Once all robots are in place, the central robot can then check if the shape is p
 
 
 
- \begin{figure}[h]  
+ \begin{figure}[H]  
 \centering
 \includegraphics[scale=1.2]{deployment}
 \caption[deployment]{deployment}
@@ -919,17 +952,28 @@ Once all robots are in place, the central robot can then check if the shape is p
 
 
 
- 
-\newpage
 
 
 
+\subsubsection{Neural network implementation}
 
-\subsection{Neural network implementation}
-Designing the architecture of the neural networks and choosing the right parameters to fit is a crucial part of achieving convergence and better performance. There are a large number of parameters to choose from: hidden layers, number of units, activation functions, weight initialization, regularization, etc. and each one of them has its own role, and there is no clear rule for which one to choose, so trial and error is the way to go. In this section, we will discuss the parameters we choose and explain the reasons behind them.
+\begin{figure}[H]  
+\centering
+\includegraphics[scale=0.55]{actor_net}
+\caption[Actor model]{Actor Model}
+\label{fig:actor}
+\end{figure}
+
+\begin{figure}[H]  
+\centering
+\includegraphics[scale=0.55]{critic_net}
+\caption[Critic model]{Critic Model}
+\label{fig:critic}
+\end{figure}
+Designing the architecture of the neural networks and choosing the right parameters to fit is a crucial part of achieving convergence and better performance. There are a large number of parameters to choose from: hidden layers, number of units, activation functions, weight initialization, regularization, etc. and each one of them has its own role, and there is no clear rule for which one to choose, so trial and error is the way to go. In this section, we will discuss the parameters we choose and explain the reasons behind them. Figure \ref{fig:actor}, \ref{fig:critic}
  
 The first thing we have done is normalize the input data to achieve better convergence and stability in our models. We have nominalized our data to be between 0 and 1 for all the inputs:
-\newpage
+
 Distance normalization:
 
   \begin{equation} \label{dist_norm}
@@ -975,21 +1019,23 @@ For the actor, it will be the mean predicted value of the critic network multipl
    
 We have used the Adam optimizer for both networks with learning rates of 0.01 and 0.001 for the critic and actor respectively. We set the batch size to 128 and the minimum size of the replay buffer before training start to 5000 samples.
 
-
- \begin{figure}[h]  
+Figures \ref{fig:ac} and \ref{fig:cc} are the implemation of the neural netwoks in Tesnorflow framework, and  Figures \ref{cc:t} and \ref{ac:t} is where the loss functions are caluclated and the backpropagation is done to calculate the gradients and minimize the loss.
+ \begin{figure}[H]   
 \centering
-\includegraphics[scale=0.35]{actor_model}
+\includegraphics[scale=0.30]{actor_model}
 \caption[Actor model]{Actor Model}
+\label{fig:ac}
 \end{figure}
 
 
 
 
 
- \begin{figure}[h]  
+ \begin{figure}[H]  
 \centering
 \includegraphics[scale=0.30]{critic_model}
 \caption[Critic model]{Critic Model}
+\label{fig:cc}
 \end{figure}
 
 
@@ -997,63 +1043,54 @@ We have used the Adam optimizer for both networks with learning rates of 0.01 an
 
 
     
- \begin{figure}[h]  
+ \begin{figure}[H]  
 \centering
-\includegraphics[scale=0.35]{critic_training}
+\includegraphics[scale=0.30]{critic_training}
 \caption[Critic Training]{Critic Training}
+\label{cc:t}
 \end{figure}
 
 
 
 
    
- \begin{figure}[t]  
+ \begin{figure}[H]  
 \centering
 \includegraphics[scale=0.35]{actor_training}
 \caption[Actor Training]{Actor Training}
+\label{ac:t}
 \end{figure}
 
-\subsection{Conclusion}:
+\subsubsection{Conclusion}
 In this chapter, we have described how we have implemented our solution in the Ros operating system and gazebo simulator and how we defined the different nodes, topics, and services in ros. Finally, we discussed the architecture of the neural networks and how we chose the parameters.
 
-\afterpage{\clearpage}
 
 
 
 
 
-\newpage
-\pagebreak
-\hspace{0pt}
-\vfill
-\begin{center}
-\section{Result and analysis}
-\end{center}
-\vfill
-\hspace{0pt}
-
-\pagebreak
+\subsection{Results And Analysis}
 
 \subsection{Introdution}
-\begin{figure}[h]  
+\begin{figure}[H]  
 \begin{center}
 \scalebox{0.3}[0.3]{
 \includegraphics{robot1}
 }
 
-\caption[robot1]{robot1}
-
+\caption[Robot1 Returns]{Robot1 Returns}
+\label{fig:return1}
 \end{center}
 
 \end{figure}
-\begin{figure}[h]  
+\begin{figure}[H]  
 \begin{center}
 \scalebox{0.3}[0.3]{
 \includegraphics{robot2}
 }
 
-\caption[robot2]{robot2}
-
+\caption[Robot2 Returns]{Robot2 Returns}
+\label{fig:return2}
 \end{center}
 
 \end{figure}
@@ -1061,79 +1098,74 @@ In this chapter, we have described how we have implemented our solution in the R
 
 
 
-\begin{figure}[h]  
+\begin{figure}[H]  
 \begin{center}
 \scalebox{0.3}[0.3]{
 \includegraphics{robot3}
 }
 \end{center}
-\caption[robot3]{robot3}
-
+\caption[Robot3 Returns]{Robot3 Returns}
+\label{fig:return3}
 
 \end{figure}
+
+
 In this last section, we will describe the results that we got from our experiment. The training took place between three robots. And to help the robots gradually learn to make the shapes, a range of shapes was created, ranging from easy to difficult.
 
 The training took about 9 hours to finish, and below is the total return of the three robots during the end-to-end training phase.
-From the graph, in the first few episodes, the robots gained some rewards easily; this is because the shapes were easy to form. After that, the returns drop quickly when the training starts.
+The Figures \ref{fig:return1},\ref{fig:return2} and \ref{fig:return3}   are the total returns durring the training phase,  in the first few episodes, the robots gained some rewards easily; this is because the shapes were easy to form. After that, the returns drop quickly when the training starts.
 
-Then, and between episodes 200 and 1500, we can notice that the robots start gaining rewards rapidly, the shapes are beign formed frequently, and the collision number decreases.
-Finally, from episodes 1500 to 3100, the graph starts to be stable, but the robots still gain some rewards until it converges.
-We can also notice that there are some minor differences between the three graphs, as each robot had his own experiences and gained his own rewards separately from the others.
-
+Then, and between episodes 200-300 and 1500, we can notice that the robots start gaining rewards rapidly, the shapes are beign formed frequently, and the collision number decreases.
+Finally, from episodes 1500 to 24600, the graph starts to be stable, but the robots still gain some rewards until it converges.
+We can also notice that there are some minor differences between the three graphs, as each robot had his own experiences and gained his own rewards separately from the others. 
 
 We have deployed our trained models on a team of 4, 5, and 6 robots, where the experiences of the three trained robots were transferred to them.
-And to test our solution, we have generated a set of shapes different from those used in the training phase, and below is a table summarizing the total number of shapes being formed without any collision:\\
+And to test our solution, we have generated a set of shapes different from those used in the training phase. The table \ref{results} summarize the total number of shapes being formed without any collision:\\
 
-
+\begin{table}[H]
+  \centering
+  \caption{Result of different robot team size forming different shapes}
+  \label{results}
+  \begin{tabular}{
+    l
+    S[table-format=1.2]
+    S[table-format=-3.2]
+    S[table-format=-3.2]
+    S[table-format=-2.2]
+    S[table-format=-2.2]
+  }
+    \toprule
+    
+     {Number of robots} & {Total number of shapes} & {Shapes formed without collision}\\
+    \midrule
+   4 & 126 & 98\% \\
+      5 & 126 & 88\% \\
+   6 & 84 & 72\% \\
+    
+    \bottomrule
+  \end{tabular}
+\end{table}
  
-\begin{tabularx}{1.0\textwidth} { 
-  | >{\raggedright\arraybackslash}X 
-  | >{\centering\arraybackslash}X 
-  | >{\raggedleft\arraybackslash}X | }
- \hline
- Number of robots & Total number of shapes & Shapes formed without collision \\
- \hline
- 4  & 126  & 98\%  \\
- \hline
- 5  & 126  & 88\%  \\
- \hline
- 6  & 84  & 82\%  \\
- 
 
-\end{tabularx}
-\\
-
-The shapes were formed with an accuracy of 98\% for a team of robots with 4 , and 88\% with the team of  5 robots, but as we increased the number to 6, the accuracy dropped to about 82\%.
+The shapes were formed with an accuracy of 98\% for a team of robots with 4 , and 88\% with the team of  5 robots, but as we increased the number to 6, the accuracy dropped to about 72\%.
 Most of the collisions happen when multiple robots meet each other in a small area, where it is difficult for them to avoid complex scenarios. This also happens when the distance between the shape's edges is small.
 And most of the collision happened between just two robots; this means that the other ones reached their positions successfully. We have also noticed that the robots avoid collisions perfectly when they are static. This means that if we have a relatively large number of robots, we can command a number of them to reach their destination first, then, with a small delay, tell the others to follow, as this also shows a good result.
-Another observation that is related to the last point is that the robot's starting position matters, as some starting positions show good results, especially if not all robots start at the same distance from the goal. \newpage The last observation is that robots tend to form the shape more accurately if the distance between the shape edges is larger.
+Another observation that is related to the last point is that the robot's starting position matters, as some starting positions show good results, especially if not all robots start at the same distance from the goal. The last observation is that robots tend to form the shape more accurately if the distance between the shape edges is larger.
  
 
-\subsection{Limitations And Future Work}:
-
-Our solution works fine when the number of robots is 3, 4, or 5, but as long as the numbers increase, the performance also decreases. And this can be solved either by training more robots in the training phase, which leads to good results but requires more computational resources, or by using different types of algorithms that operate on a large number of agents. One of them is the MADDPG algorithm, which is a variant of the ddpg algorithm where the agents not only observe their local state but also the global state during the training, which helps the robot take actions not only based on their local state but also the global state.
-Another drawback that occurs when the number of robots is large is the high flow of information and communication with the central robots. This can also be solved by using the last-mentioned algorithm.
 
 
-
-
-
-
-
-
-
-
-\begin{figure}
+\begin{figure}[H]
 \centering
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.9\linewidth]{shape1}
+  \includegraphics[width=.8\linewidth]{shape1}
   \caption{shape1}
   \label{fig:sub1}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.9\linewidth]{shape2}
+  \includegraphics[width=.8\linewidth]{shape2}
   \caption{shape2}
   \label{fig:sub2}
 \end{subfigure}
@@ -1146,17 +1178,17 @@ Another drawback that occurs when the number of robots is large is the high flow
 
 
 
-\begin{figure}
+\begin{figure}[H]
 \centering
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.9\linewidth]{shape3}
+  \includegraphics[width=.7\linewidth]{shape3}
   \caption{shape3}
   \label{fig:sub1}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.9\linewidth]{shape4}
+  \includegraphics[width=.7\linewidth]{shape4}
   \caption{shape4}
   \label{fig:sub2}
 \end{subfigure}
@@ -1170,17 +1202,17 @@ Another drawback that occurs when the number of robots is large is the high flow
 
 
 
-\begin{figure}
+\begin{figure}[H]
 \centering
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.9\linewidth]{shape5}
+  \includegraphics[width=.8\linewidth]{shape5}
   \caption{shape5}
   \label{fig:sub1}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.9\linewidth]{shape6}
+  \includegraphics[width=.8\linewidth]{shape6}
   \caption{shape6}
   \label{fig:sub2}
 \end{subfigure}
@@ -1195,7 +1227,7 @@ Another drawback that occurs when the number of robots is large is the high flow
 
 
 
-\begin{figure}
+\begin{figure}[H]
 \centering
 \begin{subfigure}{.5\textwidth}
   \centering
@@ -1220,17 +1252,17 @@ Another drawback that occurs when the number of robots is large is the high flow
 
 
 
-\begin{figure}
+\begin{figure}[H]
 \centering
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.8\linewidth]{shape9}
+  \includegraphics[width=.7\linewidth]{shape9}
   \caption{shape9}
   \label{fig:sub1}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.8\linewidth]{shape10}
+  \includegraphics[width=.7\linewidth]{shape10}
   \caption{shape10}
   \label{fig:sub2}
 \end{subfigure}
@@ -1240,6 +1272,18 @@ Another drawback that occurs when the number of robots is large is the high flow
 
 
 \end{figure}
+
+\subsection{Limitations And Future Work}
+
+Our solution works fine when the number of robots is 3, 4, or 5, but as long as the numbers increase, the performance also decreases. And this can be solved either by training more robots in the training phase, which leads to good results but requires more computational resources, or by using different types of algorithms that operate on a large number of agents. One of them is the MADDPG algorithm, which is a variant of the ddpg algorithm where the agents not only observe their local state but also the global state during the training, which helps the robot take actions not only based on their local state but also the global state.
+Another drawback that occurs when the number of robots is large is the high flow of information and communication with the central robots. This can also be solved by using the last-mentioned algorithm.
+
+
+
+
+
+
+
 
 
 

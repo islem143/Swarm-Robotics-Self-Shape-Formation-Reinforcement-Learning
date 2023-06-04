@@ -1,0 +1,1 @@
+\gdef\next #1#2{\a@puttt \hyper@linkstart \arab@tail }

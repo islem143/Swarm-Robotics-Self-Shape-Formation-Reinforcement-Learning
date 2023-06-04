@@ -40,7 +40,7 @@ class Dqn(Node):
         super().__init__('dqn')
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         #self.ep =255
-        self.ep =1900
+        self.ep =2000#650 2000
         self.test=True
         load_buffer=True
         load_model=True
@@ -48,9 +48,8 @@ class Dqn(Node):
                      
                        ACNetwork("robot-2",load_model, self.ep,load_buffer),
                        ACNetwork("robot-3",load_model, self.ep,load_buffer),
-                       ACNetwork("robot-4",load_model, self.ep,load_buffer),
-                       #ACNetwork("robot-2",load_model, self.ep,load_buffer),
-                     # ACNetwork("robot-4",load_model, self.ep,load_buffer),
+                       ACNetwork("robot-2",load_model, self.ep,load_buffer),
+                       #ACNetwork("robot-3",load_model, self.ep,load_buffer),
                    
                  
                       
@@ -79,7 +78,7 @@ class Dqn(Node):
         self.env_result_client = self.create_client(Mac, "env_result")
         self.reset_sim_client = self.create_client(Empty, "reset_sim")
         self.stop = True
-        self.save_every=100
+        self.save_every=50
         #std_dev = 0.2
         
  
@@ -111,7 +110,7 @@ class Dqn(Node):
                     
                     for i in range(self.num_agents):
                         self.current_states[i] = future.result(
-                        ).states[i*56:i*56+56]
+                        ).states[i*28:i*28+28]
                         
                 else:
                     self.get_logger().error(
@@ -182,7 +181,7 @@ class Dqn(Node):
                                
                                 if(not self.dones[i]):
                                     self.next_states[i] = future.result(
-                                    ).states[i*56:i*56+56]
+                                    ).states[i*28:i*28+28]
                                     self.rewards[i] = future.result().rewards[i]
                                     self.returns[i] += self.rewards[i]
 
@@ -210,7 +209,7 @@ class Dqn(Node):
                             agent.update_target(agent.target_critic.variables,agent.critic_model.variables, self.tau)
                        
                         self.current_states[index] = self.next_states[index]
-                        time.sleep(0.005)   
+                       # time.sleep(0.005)   
 
                        
                         

@@ -20,7 +20,7 @@ class Env(Node):
 
     def __init__(self):
         super().__init__('env')
-        self.num_agents = 5
+        self.num_agents = 4
         self.cmd_vel_pub = {}
         self.goal_reached_by = {}
         for i in range(self.num_agents):
@@ -81,18 +81,22 @@ class Env(Node):
             "obs3": [[0.0, 0.0], [1.0, 1.0], [1.0, -1.0], [-1.0, 1.0], [-1.0, -1.0], [-1.0, 0.0]]
 
         }
-        a=[-1.3,0.0,1.3]
+        a=[-1.0,0.0,1.0]
 
         self.num_crash=0
 
         c=[list(p) for p in itertools.product(a, repeat=2)]
 
-        perm_list = list(itertools.combinations(c,5))
+        perm_list = list(itertools.combinations(c,4))
 
-        self.goals=perm_list[0:84]
+        self.goals=[]
         self.goal_reached_by_id={0:0,1:0,2:0,3:0,4:0}
         self.don=[False for _ in range(self.num_agents)]
 
+        while len(self.goals)!=126:
+            s=random.choice(perm_list)
+            if(s not in self.goals):
+                self.goals.append(list(s))
         # self.goals = [[[0.0,0.0],[0.0,-2.0],[0.0,2.0]],
         #               [[1.0,0.0],[0.5,-1.5],[0.5,1.5]],
         #               [[0.0,1.0],[1.0,-1.0],[1.0,0.0]],
@@ -105,24 +109,24 @@ class Env(Node):
 
 
         #             ]
-        # self.goals = [[[0.0,-2.0],[0.0,2.0],[2.0,1.5],[2.0,-1.5]],
-        #               [[0.0,-1.0],[0.0,1.0],[2.0,0.5],[2.0,-0.5]],
-        #               [[1.0,-2.0],[-1.0,0.0],[0.0,0.0],[0.0,-1.0]],
-        #               [[-1.0,0.0],[1.0,2.0],[2.0,0.0],[0.0,0.0]],
-        #               [[-1.0,-1.0],[1.0,0.0],[0.0,1.0],[2.0,0.0]],
-        #               [[1.0,0.0],[-1.0,1.0],[2.0,2.0],[2.0,-2.0]],
-        #             #  [[-1.0,0.0],[-1.0,0.0],[2.0,0.0],[-2.0,0.0]],
-        #             # [[-1.0,-1.5],[-1.0,0.0],[2.0,0.0],[-2.0,0.0]],
-        #             #  [[0.5,-0.5],[-1.0,0.0],[2.0,0.0],[-2.0,0.0]],
-        #             #    [[-0.5,0.5],[-1.0,0.0],[2.0,0.0],[-2.0,0.0]],
+        # self.goals1 = [[[1.0,1.0],[0.0,0.0],[0.0,-1.0],[0.0,-2.0]],
+        #               [[1.0,-1.0],[1.0,0.0],[0.0,-1.0],[0.0,1.0]],
+        #               [[0.0,1.5],[1.0,-1.0],[-1.0,1.0],[-1.0,-1.0]],
+        #               [[0.0,-1.5],[-1.0,-1.0],[-1.0,1.0],[0.0,-1.0]],
+        #               [[1.5,0.0],[-1.0,0.0],[2.0,0.0],[-2.0,0.0]],
+        #               [[-1.5,0.0],[-1.0,0.0],[2.0,0.0],[-2.0,0.0]],
+        #              [[-1.0,0.0],[-1.0,0.0],[2.0,0.0],[-2.0,0.0]],
+        #             [[-1.0,-1.5],[-1.0,0.0],[2.0,0.0],[-2.0,0.0]],
+        #              [[0.5,-0.5],[-1.0,0.0],[2.0,0.0],[-2.0,0.0]],
+        #                [[-0.5,0.5],[-1.0,0.0],[2.0,0.0],[-2.0,0.0]],
 
 
         #               ]
   
-        self.goal_cords =self.goals[0]
+        self.goal_cords =[[1.0,1.0],[1.0,0.0],[1.0,-1.0],[-1.0,0.0]]
   
         self.goal_freq = 0
-        self.goal_re =0
+        self.goal_re =15
         self.dones = [False for _ in range(self.num_agents)]
 
         self.steps = 0
@@ -419,7 +423,7 @@ class Env(Node):
       
         
         #self.goal_cords = random.choice(self.goals)    
-        #if(self.goal_re >=10):
+        # if(self.goal_re >=10):
         #     random.shuffle(self.goal_cords)
         
         self.goal_cords=self.goals[0]
@@ -442,7 +446,7 @@ class Env(Node):
     def goal_reached(self, index):
         distance = self.get_distance_to_goal(index)
 
-        if (distance < 0.20):
+        if (distance < 0.2):
 
             return True
         return False
@@ -464,7 +468,7 @@ class Env(Node):
             
            
            
-            if (any(a < 0.40 for a in self.ldss[index])):
+            if (any(a < 0.45 for a in self.ldss[index])):
                 rewards[index] -= 50
          
 
@@ -545,7 +549,7 @@ class Env(Node):
             for index in range(self.num_agents):
                 self.stop_robots(index)
             # if(not self.test):
-            #time.sleep(1)
+            time.sleep(1)
             self.call_reset_sim()
             if(all(self.fails)):
                self.num_crash+=1

@@ -1,25 +1,26 @@
 \babel@toc {english}{}\relax 
-\contentsline {figure}{\numberline {1}{\ignorespaces swarm animals\relax }}{16}{figure.caption.4}%
-\contentsline {figure}{\numberline {2}{\ignorespaces ddpg}}{21}{figure.caption.5}%
-\contentsline {figure}{\numberline {3}{\ignorespaces formation}}{26}{figure.caption.6}%
-\contentsline {figure}{\numberline {4}{\ignorespaces equations}}{29}{figure.caption.7}%
-\contentsline {figure}{\numberline {5}{\ignorespaces lds mesurement}}{30}{figure.caption.8}%
-\contentsline {figure}{\numberline {6}{\ignorespaces simulation flow}}{32}{figure.caption.9}%
-\contentsline {figure}{\numberline {7}{\ignorespaces training flow}}{34}{figure.caption.10}%
-\contentsline {figure}{\numberline {8}{\ignorespaces Ros}}{37}{figure.caption.11}%
-\contentsline {figure}{\numberline {9}{\ignorespaces TurtleBot3}}{38}{figure.caption.12}%
-\contentsline {figure}{\numberline {10}{\ignorespaces Lds}}{39}{figure.caption.13}%
-\contentsline {figure}{\numberline {11}{\ignorespaces training phase}}{41}{figure.caption.14}%
-\contentsline {figure}{\numberline {12}{\ignorespaces deployment}}{42}{figure.caption.15}%
-\contentsline {figure}{\numberline {13}{\ignorespaces Actor model}}{44}{figure.caption.16}%
-\contentsline {figure}{\numberline {14}{\ignorespaces Critic model}}{45}{figure.caption.17}%
-\contentsline {figure}{\numberline {15}{\ignorespaces Critic Training}}{45}{figure.caption.18}%
-\contentsline {figure}{\numberline {16}{\ignorespaces Actor Training}}{45}{figure.caption.19}%
-\contentsline {figure}{\numberline {17}{\ignorespaces robot1}}{47}{figure.caption.20}%
-\contentsline {figure}{\numberline {18}{\ignorespaces robot2}}{47}{figure.caption.21}%
-\contentsline {figure}{\numberline {19}{\ignorespaces robot3}}{48}{figure.caption.22}%
-\contentsline {figure}{\numberline {20}{\ignorespaces shapes1\relax }}{49}{figure.caption.23}%
-\contentsline {figure}{\numberline {21}{\ignorespaces shapes2\relax }}{50}{figure.caption.24}%
-\contentsline {figure}{\numberline {22}{\ignorespaces shapes3\relax }}{50}{figure.caption.25}%
-\contentsline {figure}{\numberline {23}{\ignorespaces shapes4\relax }}{51}{figure.caption.26}%
-\contentsline {figure}{\numberline {24}{\ignorespaces shapes5\relax }}{51}{figure.caption.27}%
+\contentsline {figure}{\numberline {1}{\ignorespaces swarm animals\relax }}{15}{figure.caption.7}%
+\contentsline {figure}{\numberline {2}{\ignorespaces ddpg}}{20}{figure.caption.8}%
+\contentsline {figure}{\numberline {3}{\ignorespaces formation}}{26}{figure.caption.9}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Training flow}}{27}{figure.caption.10}%
+\contentsline {figure}{\numberline {5}{\ignorespaces equations}}{30}{figure.caption.11}%
+\contentsline {figure}{\numberline {6}{\ignorespaces lds mesurement}}{31}{figure.caption.12}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Ros}}{34}{figure.caption.13}%
+\contentsline {figure}{\numberline {8}{\ignorespaces TurtleBot3}}{35}{figure.caption.14}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Lds}}{36}{figure.caption.15}%
+\contentsline {figure}{\numberline {10}{\ignorespaces training phase}}{38}{figure.caption.16}%
+\contentsline {figure}{\numberline {11}{\ignorespaces deployment}}{39}{figure.caption.17}%
+\contentsline {figure}{\numberline {12}{\ignorespaces Actor model}}{39}{figure.caption.18}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Critic model}}{40}{figure.caption.19}%
+\contentsline {figure}{\numberline {14}{\ignorespaces Actor model}}{42}{figure.caption.20}%
+\contentsline {figure}{\numberline {15}{\ignorespaces Critic model}}{42}{figure.caption.21}%
+\contentsline {figure}{\numberline {16}{\ignorespaces Critic Training}}{43}{figure.caption.22}%
+\contentsline {figure}{\numberline {17}{\ignorespaces Actor Training}}{43}{figure.caption.23}%
+\contentsline {figure}{\numberline {18}{\ignorespaces Robot1 Returns}}{44}{figure.caption.24}%
+\contentsline {figure}{\numberline {19}{\ignorespaces Robot2 Returns}}{44}{figure.caption.25}%
+\contentsline {figure}{\numberline {20}{\ignorespaces Robot3 Returns}}{44}{figure.caption.26}%
+\contentsline {figure}{\numberline {21}{\ignorespaces shapes1\relax }}{46}{figure.caption.28}%
+\contentsline {figure}{\numberline {22}{\ignorespaces shapes2\relax }}{46}{figure.caption.29}%
+\contentsline {figure}{\numberline {23}{\ignorespaces shapes3\relax }}{46}{figure.caption.30}%
+\contentsline {figure}{\numberline {24}{\ignorespaces shapes4\relax }}{47}{figure.caption.31}%
+\contentsline {figure}{\numberline {25}{\ignorespaces shapes5\relax }}{47}{figure.caption.32}%

@@ -44,10 +44,12 @@ class Agent(Node):
         self.min_lds_dist=3.5
         self.task_finished=False
         if(self.id==1):
+            self.num_robots=4
+            self.counter=0
             self.goal_publisher=self.create_publisher(Goal,"generate_goa",10) 
             self.reached_service=self.create_service(Reach,"reach_goal",self.goal_reached)
             
-            #self.create_timer(2,self.pub_goal)
+            self.create_timer(2,self.pub_goal)
             self.start()
             
            
@@ -97,6 +99,7 @@ class Agent(Node):
     def goal_reached(self,request,response):
 
         print("goal reached by request id",request.id)
+        self.counter+=1
         response.ack=True
         return response   
     
