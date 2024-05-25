@@ -19,6 +19,7 @@ robots is 3, 4. and 88% on five robots, and 72% when tested on a group of six ro
 Swarm robotics, Reinforcement lerarning, DDPG,Ros,Pattern foram-
 tion,Gazebo
 
+### Figures:
 ![Actor Network](images/actor_net.png "Actor Network")
 ![Critic text](images/critic_net.png "Critic Network")
 
